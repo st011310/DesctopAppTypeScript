@@ -1,0 +1,16 @@
+@font-face {
+  font-family: CRfont;
+  src: url(space-invaders-extended.ttf);
+}
+
+body {
+  margin: 2rem;
+  background-color: #000000;
+  font-family: CRfont;
+  display: block;
+}
+
+#app{
+  display: flex;
+  justify-content: center;
+}

@@ -1,0 +1,39 @@
+#myCanvas {
+    width: 100%;
+  }
+  body {
+    -webkit-user-select:none;
+    -webkit-touch-callout: none;
+    background-color: black; 
+    margin: 0; 
+  }
+  #mobileControls {
+    display: flex;
+    position: relative;
+    padding: 50px 20px 0; 
+    background-color: black;
+  }
+  #mobileArrowControls {
+    position: relative; 
+    flex: 1; 
+    margin: auto;
+  }
+  @media (min-width: 768px) {
+    body {
+      background-image: none;
+    }
+    #myCanvas {
+      border: 1px solid white;
+      width:auto;
+      height:auto;
+      background-color: blue;
+    }
+    #mobileControls {
+      display: none;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+}

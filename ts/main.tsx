@@ -1,3 +1,4 @@
+
 window.onbeforeunload = function (e) {
     e = e || window.event;
     // For IE and Firefox prior to version 4
@@ -7157,11 +7158,15 @@ class PlayMode {
             flickerIntensity: 3,
         }
     }
-
+    /*
     static changeTemplate() {
-        const value = document.getElementById("templateHandler").value;
+        var templateHandler = document.getElementById("templateHandler");
+        if(templateHandler == null) return;
+        const value = (<HTMLInputElement>templateHandler).value;
         const templateArea = document.getElementById("sfxTemplateSummary");
+        if(templateArea == null) return;
         const attributesAccordion = document.getElementById("attributesAccordion");
+        if(attributesAccordion == null) return;
 
         if (value in this.defaultAttributeObjects) {
             attributesAccordion.style.display = "block";
@@ -7170,17 +7175,17 @@ class PlayMode {
         else {
             attributesAccordion.style.display = "none";
         }
-    }
+    }*/
 
     static removeLayer(index) {
-        WorldDataHandler.effects.splice(index, 1);
+        WorldDataHandler.effects?.splice(index, 1);
         tileMapHandler.effects = this.getCurrentLevelEffects(tileMapHandler.currentLevel);
         this.updateExistingSFXSection();
     }
 
     static updateExistingSFXSection() {
         let sfxSectionHtml = "";
-        WorldDataHandler.effects.forEach((effect, index) => {
+        WorldDataHandler.effects?.forEach((effect, index) => {
             let effectName = effect.type === this.effectTypes.SFXLayer ? "Particles" : effect.type;
             sfxSectionHtml += EffectHtmlRenderer.createExistingEffectsSection(effectName, index);
         });
@@ -7222,10 +7227,10 @@ class PlayMode {
         attributesObject.flickerIntensity = parseFloat(document.getElementById("noiseFlickerIntensity").value) || 8;
         return attributesObject;
     }
-
+    /*
     static addEffect(event, index) {
         event.preventDefault();
-        const value = document.getElementById("templateHandler").value;
+        const value = (<HTMLInputElement>document.getElementById("templateHandler")).value;
         let attributesObject = this.parseBasicEffectValues(value);
         if (value in this.parsersObject) {
             attributesObject = this.parsersObject[value](attributesObject);
@@ -7237,7 +7242,7 @@ class PlayMode {
         this.existingEffectsEl.style.display = "block";
         this.changeInitialColorModalVisibility();
     }
-
+    */
     static getSFXSpeed(speedId) {
         return {
             speedFrom: parseFloat(document.getElementById(speedId + "From").value) || 0,

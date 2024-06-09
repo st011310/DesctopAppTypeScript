@@ -1,3 +1,4 @@
+
 window.onbeforeunload = function (e) {
     e = e || window.event;
     // For IE and Firefox prior to version 4
@@ -7,6 +8,22 @@ window.onbeforeunload = function (e) {
     return 'Are you sure you want to close? Your progress will be lost.';
 };
 class Game {
+    static playMode: any;
+    static refreshRateCounter: any;
+	public PLAY_MODE: any;
+	static refreshRate: any;
+	static refreshRateHigher60: any;
+	static refreshRates: any;
+	static currentRetryToGetFps: any;
+	static maxRetriesToGetFps: any;
+	static averageFps: any;
+	static percentOfFpsHigher70: any;
+	public BUILD_MODE: any;
+	static fpsInterval: any;
+	static then: any;
+	static startTime: any;
+	static now: any;
+	static elapsed: any;
 
     static get PLAY_MODE() {
         return 'play';
@@ -33,7 +50,8 @@ class Game {
             window.requestAnimationFrame(play);
         }
         else if (this.playMode === this.BUILD_MODE) {
-            window.requestAnimationFrame(build);
+            console.log("Error");
+            //window.requestAnimationFrame(build);
         }
     }
 
@@ -80,34 +98,37 @@ class Game {
     static resetFpsInterval() {
         this.then = this.now - (this.elapsed % this.fpsInterval);
     }
-
+    /*
     static changeGameMode(firstTime = false) {
         const canvas = document.getElementById("myCanvas");
 
-        console.log("changeGameMode");
         if (this.playMode === this.PLAY_MODE) {
             this.playMode = this.BUILD_MODE;
             this.executeGameMode();
-            canvas.addEventListener("mousemove", (e) => { Controller.mouseMove(e) });
+            canvas?.addEventListener("mousemove", (e) => { Controller.mouseMove(e) });
             ObjectsTooltipElementsRenderer.renderPlayButton(firstTime);
             LevelSizeHandler.toggleSliderDisableAttr(false);
             tileMapHandler?.resetDynamicObjects();
             return null;
         }
         if (this.playMode === this.BUILD_MODE) {
-            /*Camera.viewport.width = Camera.viewport.width / 2;
-            Camera.viewport.height = Camera.viewport.height / 2;
-            Camera.viewport.halfWidth = Camera.viewport.halfWidth / 2;
-            Camera.viewport.halfHeight = Camera.viewport.halfHeight / 2;*/
+            //Camera.viewport.width = Camera.viewport.width / 2;
+            //Camera.viewport.height = Camera.viewport.height / 2;
+            //Camera.viewport.halfWidth = Camera.viewport.halfWidth / 2;
+            //Camera.viewport.halfHeight = Camera.viewport.halfHeight / 2;
             this.playMode = this.PLAY_MODE;
             this.executeGameMode();
-            canvas.removeEventListener("mousemove", (e) => { Controller.mouseMove(e) });
+            canvas?.removeEventListener("mousemove", (e) => { Controller.mouseMove(e) });
             ObjectsTooltipElementsRenderer.renderPauseButton(firstTime);
             LevelSizeHandler.toggleSliderDisableAttr(true);
             return null;
         }
-    }
+    }*/
 } class Display {
+	static ctx: any;
+	static canvasWidth: any;
+	static canvasHeight: any;
+	public tileSize: any;
 
     static staticConstructor(canvas, canvasWidth, canvasHeight) {
         this.ctx = canvas;
@@ -270,7 +291,8 @@ class Game {
         this.displayText(`Deaths: ${deathCounter}`, this.canvasWidth / 2, this.canvasHeight / 2 + 34 - extraPadding, 18, textColor);
         if (collectiblesExist) {
             const spriteIndex = SpritePixelArrays.getIndexOfSprite(ObjectTypes.COLLECTIBLE);
-            const { tileSize } = WorldDataHandler;
+            var { tileSize } = WorldDataHandler;
+            if(tileSize == undefined) tileSize = NaN;
             const canvasYSpritePos = spriteIndex * tileSize;
             const collectibleCollectedTextLength = this.ctx.measureText(collectibleCollectedText).width;
             Display.drawImage(spriteCanvas, 0, canvasYSpritePos, tileSize, tileSize,
@@ -302,18 +324,23 @@ class Game {
         const parcelAmount = 10;
         const parcelHeight = this.canvasHeight / parcelAmount;
         const widthParcelAmount = Math.ceil(this.canvasWidth / parcelHeight);
-
-        for (var i = 0; i <= widthParcelAmount; i++) {
-            for (var j = 0; j <= parcelAmount; j++) {
-                const relativeWidth = parcelHeight / 100 * percent + 1;
-                this.drawRectangle(i * parcelHeight + ((parcelHeight - relativeWidth) / 2) + Camera.viewport.left,
-                    j * parcelHeight + ((parcelHeight - relativeWidth) / 2) + Camera.viewport.top,
-                    relativeWidth,
-                    relativeWidth);
+        if( Camera.viewport != undefined){
+            for (var i = 0; i <= widthParcelAmount; i++) {
+                for (var j = 0; j <= parcelAmount; j++) {
+                    const relativeWidth = parcelHeight / 100 * percent + 1;
+                    this.drawRectangle(i * parcelHeight + ((parcelHeight - relativeWidth) / 2) + Camera.viewport.left,
+                        j * parcelHeight + ((parcelHeight - relativeWidth) / 2) + Camera.viewport.top,
+                        relativeWidth,
+                        relativeWidth);
+                }
             }
         }
     }
 } class Camera {
+	static follow: any;
+	static context: any;
+	static viewport: any;
+	static canvasWidth: any;
 
     static staticConstructor(context, canvasWidth, canvasHeight, worldWidth, worldHeight) {
         this.follow = { x: 0, y: 0 };
@@ -419,6 +446,13 @@ class Game {
         return { x: x + this.viewport.left, y: y + this.viewport.top };
     }
 } class AnimationHelper {
+	static walkingFrameDuration: any;
+	static defaultFrameDuration: any;
+	static facingDirections: any;
+	static switchableBlockColors: any;
+	static alignments: any;
+	static pathVariants: any;
+	static possibleDirections: any;
 
     static staticConstructor() {
         this.walkingFrameDuration = 7;
@@ -473,13 +507,15 @@ class Game {
         return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
     }
 
-    static hexToRGB(hex) {
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec("#" + hex);
-        return result = {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        };
+    static hexToRGB(hex):any {
+        var result: any = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec("#" + hex);
+        if(result != null){
+            return result = {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            };
+        }
     }
 
     static setSquishValues(obj, squishWidth, squishHeight, squishFrames = 10, direction = this.facingDirections.bottom) {
@@ -533,6 +569,8 @@ class Game {
         obj.squishYOffset = 0;
     }
 } class CustomSpriteHandler {
+	static customSpriteSelector: any;
+	static indexToDelete: any;
 
     static staticConstructor() {
         this.customSpriteSelector = document.getElementById('customSpriteSelector');
@@ -564,12 +602,12 @@ class Game {
         })
         this.addOptionToSelect("deco", "Deco");
     }
-
+    /*
     static initializeModal() {
         ModalHandler.showModal('customSpriteModal');
         this.populateSpriteSelectBox();
     }
-
+    */
     static getClonedObjectSprite(customSpriteName) {
         const spriteObject = SpritePixelArrays.getSpritesByName(customSpriteName)[0];
         const countExistingCustomSpritesOfThisType = SpritePixelArrays.getCustomSprites()?.filter(customSprite =>
@@ -579,16 +617,16 @@ class Game {
         clonedSprite.descriptiveName = `${spriteObject.descriptiveName} ${countExistingCustomSpritesOfThisType + 2}`;
         return clonedSprite;
     }
-
+    /*
     static showDeleteModal(index) {
         this.indexToDelete = index;
         ModalHandler.showModal('deleteCustomSpriteConfirmation')
-    }
-
+    }*/
+    /*
     static deleteSpriteConfirmed() {
         this.removeCustomSprite(this.indexToDelete);
         ModalHandler.closeModal('deleteCustomSpriteConfirmation')
-    }
+    }*/
 
     static getClonedDecoSprite() {
         const allDecoNumbers = SpritePixelArrays.getSpritesByType(SpritePixelArrays.SPRITE_TYPES.deko).map(deco => {
@@ -613,7 +651,7 @@ class Game {
         clonedSprite.descriptiveName = `Custom tile ${newTileValue}`;
         return clonedSprite;
     }
-
+    /*
     static spriteAddedOrDeleted() {
         tileMapHandler.setTileTypes();
         spriteSheetCreator.createSpriteSheet();
@@ -621,7 +659,7 @@ class Game {
         TabNavigation.drawSpritesByType();
         DrawSectionHandler.removeOptions();
         DrawSectionHandler.fillSelectBox();
-    }
+    }*/
 
     static removeTile(levelHeight, levelWidth, tileMap, spriteName) {
         for (var tilePosY = 0; tilePosY < levelHeight; tilePosY++) {
@@ -642,8 +680,8 @@ class Game {
     }
 
     static resetYIndexOfLevelObjects() {
-        tileMapHandler.levelObjects.forEach(levelObject => {
-            if (levelObject?.customName) {
+        tileMapHandler.levelObjects?.forEach(levelObject => {
+            if (levelObject?.customName && WorldDataHandler.tileSize != undefined) {
                 levelObject.canvasYSpritePos = SpritePixelArrays.getIndexOfSprite(levelObject.customName, 0, "descriptiveName") *
                     WorldDataHandler.tileSize;
             }
@@ -678,20 +716,22 @@ class Game {
                 this.resetYIndexOfDekoSprites(decoIndex)
             }
             else {
-                //objects
-                for (var i = tileMapHandler.levelObjects.length - 1; i >= 0; i--) {
-                    if (tileMapHandler.levelObjects[i]?.customName === sprite.descriptiveName) {
-                        tileMapHandler.levelObjects.splice(i, 1);
-                    }
-                }
-                WorldDataHandler.levels.forEach(level => {
-                    for (var i = level.levelObjects.length - 1; i >= 0; i--) {
-                        if (level.levelObjects[i]?.extraAttributes?.customName === sprite.descriptiveName) {
-                            level.levelObjects.splice(i, 1);
+                if (tileMapHandler.levelObjects != undefined){
+                    //objects
+                    for (var i = tileMapHandler.levelObjects.length - 1; i >= 0; i--) {
+                        if (tileMapHandler.levelObjects[i]?.customName === sprite.descriptiveName) {
+                            tileMapHandler.levelObjects.splice(i, 1);
                         }
                     }
-                })
-                this.resetYIndexOfLevelObjects();
+                    WorldDataHandler.levels.forEach(level => {
+                        for (var i = level.levelObjects.length - 1; i >= 0; i--) {
+                            if (level.levelObjects[i]?.extraAttributes?.customName === sprite.descriptiveName) {
+                                level.levelObjects.splice(i, 1);
+                            }
+                        }
+                    })
+                    this.resetYIndexOfLevelObjects();
+                }
             }
         }
         else {
@@ -704,10 +744,10 @@ class Game {
             })
         }
     }
-
+    /*
     static removeCustomSprite(index) {
         const spriteToRemove = TabNavigation.selectableSprites[index];
-        SpritePixelArrays.allSprites = SpritePixelArrays.allSprites.filter(obj =>
+        SpritePixelArrays.allSprites = SpritePixelArrays.allSprites?.filter(obj =>
             obj.descriptiveName !== spriteToRemove.descriptiveName
         );
         this.removeSpritesFromWorldData(spriteToRemove);
@@ -715,10 +755,10 @@ class Game {
         TabNavigation.selectableSprites.splice(index, 1);
         this.spriteAddedOrDeleted();
         if (DrawSectionHandler?.currentSprite?.sprite.descriptiveName === spriteToRemove.descriptiveName) {
-            DrawSectionHandler.changeSelectedSprite({ target: { value: SpritePixelArrays.TILE_1.descriptiveName } });
+            DrawSectionHandler.changeSelectedSprite({ target: { value: SpritePixelArrays.TILE_1?.descriptiveName } });
         }
-    }
-
+    }*/
+    /*
     static addSprite(event) {
         event.preventDefault();
         const customSpriteName = event.target?.elements?.customSpriteSelector?.value;
@@ -734,13 +774,15 @@ class Game {
             clonedSprite = this.getClonedObjectSprite(customSpriteName);
         }
 
-        SpritePixelArrays.allSprites.push(clonedSprite);
+        SpritePixelArrays.allSprites?.push(clonedSprite);
         this.spriteAddedOrDeleted();
         const customSpritesAmount = TabNavigation.selectableSprites.length;
         TabNavigation.handleSelectedSprite(customSpritesAmount - 1, Math.floor((customSpritesAmount - 1) / 3));
         ModalHandler.closeModal('customSpriteModal');
-    }
-} class Collision {
+    }*/
+}
+class Collision {
+	static tileMapHandler: any;
 
     static staticConstructor(tileMapHandler) {
         this.tileMapHandler = tileMapHandler;
@@ -759,7 +801,10 @@ class Game {
             point.y < obj.y + obj.height &&
             point.y > obj.y;
     }
-} class CharacterCollision {
+}
+class CharacterCollision {
+	static tileMapHandler: any;
+	static passableTiles: any;
 
     static staticConstructor(tileMapHandler) {
         this.tileMapHandler = tileMapHandler;
@@ -797,7 +842,7 @@ class Game {
                     obj);
                 if (collidedWithObject) {
                     obj.y = collidedWithObject.y - (obj.height);
-                    obj.hitUnpassableObject(AnimationHelper.facingDirections.bottom, collidedWithObject);
+                    obj.hitUnpassableObject(AnimationHelper.facingDirections?.bottom, collidedWithObject);
                 }
             }
             else if (obj.yspeed < 0) {
@@ -805,7 +850,7 @@ class Game {
                     obj);
                 if (collidedWithObject) {
                     obj.y = collidedWithObject.y + (obj.height);
-                    obj.hitUnpassableObject(AnimationHelper.facingDirections.top, collidedWithObject);
+                    obj.hitUnpassableObject(AnimationHelper.facingDirections?.top, collidedWithObject);
                 }
             }
             if (obj.xspeed < 0) {
@@ -813,7 +858,7 @@ class Game {
                     obj);
                 if (collidedWithObject) {
                     obj.x = collidedWithObject.x + (obj.width);
-                    obj.hitUnpassableObject(AnimationHelper.facingDirections.left, collidedWithObject);
+                    obj.hitUnpassableObject(AnimationHelper.facingDirections?.left, collidedWithObject);
                 }
             }
             else if (obj.xspeed > 0) {
@@ -821,7 +866,7 @@ class Game {
                     obj);
                 if (collidedWithObject) {
                     obj.x = collidedWithObject.x - (obj.width);
-                    obj.hitUnpassableObject(AnimationHelper.facingDirections.right, collidedWithObject);
+                    obj.hitUnpassableObject(AnimationHelper.facingDirections?.right, collidedWithObject);
                 }
             }
         }
@@ -839,13 +884,13 @@ class Game {
                     obj.bottom_left !== 5
                 ) {
                     obj.y = obj.bottom * tileMapHandler.tileSize - (obj.height + 1);
-                    obj.hitWall(AnimationHelper.facingDirections.bottom);
+                    obj.hitWall(AnimationHelper.facingDirections?.bottom);
 
                 } else {
                     //cloud
                     if (obj.prev_bottom < obj.bottom) {
                         obj.y = obj.bottom * tileMapHandler.tileSize - (obj.height + 1);
-                        obj.hitWall(AnimationHelper.facingDirections.bottom);
+                        obj.hitWall(AnimationHelper.facingDirections?.bottom);
                     }
                 }
             }
@@ -866,7 +911,7 @@ class Game {
             if (!this.passableTiles.includes(obj.top_left)
                 || !this.passableTiles.includes(obj.bottom_left)) {
                 obj.x = (obj.left + 1) * tileMapHandler.tileSize;
-                obj.hitWall(AnimationHelper.facingDirections.left);
+                obj.hitWall(AnimationHelper.facingDirections?.left);
             }
         }
 
@@ -875,7 +920,7 @@ class Game {
             if (!this.passableTiles.includes(obj.top_right)
                 || !this.passableTiles.includes(obj.bottom_right)) {
                 obj.x = obj.right * tileMapHandler.tileSize - (obj.width + 1);
-                obj.hitWall(AnimationHelper.facingDirections.right);
+                obj.hitWall(AnimationHelper.facingDirections?.right);
             }
         }
 
@@ -884,7 +929,7 @@ class Game {
 
     static correctTopPosition(obj) {
         obj.y = obj.bottom * tileMapHandler.tileSize + 1;
-        obj.hitWall(AnimationHelper.facingDirections.top)
+        obj.hitWall(AnimationHelper.facingDirections?.top)
     }
 
     static checkTopCornerCorrection(obj) {
@@ -966,9 +1011,18 @@ class Game {
         obj.bottom_left = tileMapHandler.getTileLayerValueByIndex(obj.bottom, obj.left);
         obj?.wallJumpChecked && obj.checkWallJumpReady();
     }
-} class WorldDataHandler {
+}
+class WorldDataHandler {
+	static initialPlayerPosition: any;
+	static levels: any;
+	static tileSize: number;
+	static gamesName: any;
+	static endingMessage: any;
+	static backgroundColor: any;
+	static textColor: any;
+	static effects: any;
 
-    static staticConstructor() {
+    static _staticConstructor() {
         this.initialPlayerPosition = { x: 2, y: 10 };
         this.levels = [this.createEmptyLevel(), this.exampleLevel(), this.createEmptyLevel()];
         this.tileSize = 24;
@@ -1038,6 +1092,30 @@ class Game {
         }
     }
 } class TileMapHandler {
+	public tileSize: any;
+	public pixelArrayUnitAmount: any;
+	public pixelArrayUnitSize: any;
+	public player: any;
+	public effects: any;
+	public currentLevel: any;
+	public spriteCanvas: any;
+	public currentGeneralFrameCounter: any;
+	public generalFrameCounterMax: any;
+	public TILE_TYPES: any;
+	public tileMap: any;
+	public levelObjects: any;
+	public deko: any;
+	public paths: any;
+	public levelWidth: any;
+	public levelHeight: any;
+	public speed: any;
+	public stopFrames: any;
+	public movementDirection: any;
+	public pathVariant: any;
+	public type: any;
+	public x: any;
+	public y: any;
+	public index: any;
 
     constructor(tileSize, startingLevel, spriteCanvas, player) {
         this.setTileTypes();
@@ -1100,7 +1178,7 @@ class Game {
     }
 
     createInitialPaths(initialPaths) {
-        var paths = [];
+        var paths: Path[] = [];
         initialPaths && initialPaths.forEach(initialPath => {
             const { speed, stopFrames, movementDirection, pathVariant } = initialPath;
             let newPath = new Path(this, speed, stopFrames, movementDirection);
@@ -1115,19 +1193,19 @@ class Game {
     }
 
     createInitialObjects(initialObjects) {
-        var levelObjects = [];
+        var levelObjects: (Spike | Deko | Canon | CanonBall | LaserCanon | Laser | SFX)[] = [];
         initialObjects && initialObjects.forEach(initialObject => {
             const { type, x, y } = initialObject;
 
             const extraAttributes = initialObject.extraAttributes ? initialObject.extraAttributes : {};
-            levelObjects.push(new ObjectTypes.objectToClass[type](x,
-                y, this.tileSize, type, this, extraAttributes));
+            var Type = ObjectTypes.objectToClass[type];
+            levelObjects.push(new Type(x, y, this.tileSize, type, this, extraAttributes, undefined, undefined, undefined));
         });
         return levelObjects;
     }
 
     createInitialDeko(initialDekos) {
-        var dekos = [];
+        var dekos:Deko[] = [];
         initialDekos && initialDekos.forEach(initialDeko => {
             const { x, y, index } = initialDeko;
             dekos.push(new Deko(x, y, this.tileSize, index));
@@ -1202,9 +1280,10 @@ class Game {
                 GameStatistics.stopTimer();
             }
             this.resetLevel(this.currentLevel);
+            /*
             if (typeof LevelNavigationHandler === 'function') {
                 LevelNavigationHandler.updateLevel();
-            }
+            }*/
         }
         else {
             console.log("error")
@@ -1254,6 +1333,39 @@ class Game {
         return this.currentLevel === 0 || this.currentLevel === WorldDataHandler.levels.length - 1;
     }
 } class Controller {
+	static down: any;
+	static left: any;
+	static right: any;
+	static up: any;
+	static jump: any;
+	static jumpReleased: any;
+	static confirm: any;
+	static ctrlPressed: any;
+	static alternativeActionButton: any;
+	static alternativeActionButtonReleased: any;
+	static enter: any;
+	static enterReleased: any;
+	static pause: any;
+	static pauseReleased: any;
+	static mouseX: any;
+	static mouseY: any;
+	static mouseXInDrawCanvas: any;
+	static mouseYInDrawCanvas: any;
+	static mousePressed: any;
+	static rightMousePressed: any;
+	static mouseInsideMainCanvas: any;
+	static mouseInsideDrawCanvas: any;
+	static xScroll: any;
+	static yScroll: any;
+	static gamepadIndex: any;
+	static mobileArrows: any;
+	static mobileControlsLeftPos: any;
+	static mobileControlsTopPos: any;
+	static mobileControlsWidth: any;
+	static mobileControlsHeight: any;
+	static mobileEnter: any;
+	public mobileEnterReleased: any;
+    static mobileEnterReleased: any;
 
     static staticConstructor() {
         this.down = false;
@@ -1353,23 +1465,23 @@ class Game {
             { elementName: "alternativeMobileControls", variableNames: ["alternativeActionButton"] },
             ].forEach(control => {
                 const element = document.getElementById(control.elementName);
-                element.addEventListener("touchstart", (e) => {
+                element?.addEventListener("touchstart", (e) => {
                     e.preventDefault();
                     if (control.variableNames.includes("enter")) {
                         this.mobileEnter = true;
                     }
                     control.variableNames.forEach(variable => this[variable] = true);
                 });
-                element.addEventListener("touchend", (e) => {
+                element?.addEventListener("touchend", (e) => {
                     e.preventDefault();
                     if (control.variableNames.includes("enter")) {
-                        this.mobileEnterReleased = true;
+                        this.enterReleased = true;
                     }
                     control.variableNames.forEach(variable => this[variable] = false);
                 });
-                element.addEventListener("touchcancel", (e) => {
+                element?.addEventListener("touchcancel", (e) => {
                     e.preventDefault();
-                    this[control.variableName] = false;
+                    this[control.variableNames.toString()] = false;
                 });
             });
         }
@@ -1486,16 +1598,118 @@ class Game {
     }
 
     static onResize() {
-        canvasOffsetLeft = document.getElementById("myCanvas").offsetLeft;
-        canvasOffsetTop = document.getElementById("myCanvas").offsetTop;
+        var myCanvas = document.getElementById("myCanvas");
+        if(myCanvas != undefined){
+            canvasOffsetLeft = myCanvas.offsetLeft;
+            canvasOffsetTop = myCanvas.offsetTop;
+        }
     }
-
+    /*
     static onScroll() {
         this.xScroll = window.scrollX;
         this.yScroll = window.scrollY;
         DrawSectionHandler.getBoundingRectPosition(0);
-    }
-} class Player {
+    }*/
+}
+class Player {
+	public tileSize: number;
+	public width: number;
+	public height: number;
+	public initialX: number;
+	public initialY: number;
+	public wallJumpDirection: any;
+	public dashDirection: any;
+	public maxJumpFrames: any;
+	public dashCooldown: any;
+	public maxDashFrames: any;
+	public coyoteDashFrames: any;
+	public currentCoyoteDashFrame: any;
+	public maxFallSpeed: any;
+	public coyoteJumpFrames: any;
+	public extraTrampolineJumpFrames: any;
+	public pushToSideWhileWallJumpingFrames: any;
+	public jumpSpeed: any;
+	public maxSpeed: any;
+	public groundFriction: any;
+	public air_friction: any;
+	public groundAcceleration: any;
+	public air_acceleration: any;
+	public gravity: any;
+	public wallJumpGravity: any;
+	public maxWaterFallSpeed: any;
+	public spriteCanvas: any;
+	public type: any;
+	public radians: any;
+	public maxSwimHeight: any;
+	public flapHeight: any;
+	public right: any;
+	public left: any;
+	public bottom: any;
+	public top: any;
+	public top_right_pos: any;
+	public top_left_pos: any;
+	public bottom_right_pos: any;
+	public bottom_left_pos: any;
+	public top_right: any;
+	public top_left: any;
+	public bottom_left: any;
+	public bottom_right: any;
+	public prev_bottom: any;
+	public wallJumpLeft: any;
+	public wallJumpRight: any;
+	public x: any;
+	public y: any;
+	public speed: any;
+	public xspeed: any;
+	public yspeed: any;
+	public wallJumpFrames: any;
+	public falling: any;
+	public jumping: any;
+	public jumpPressedToTheMax: any;
+	public wallJumping: any;
+	public dashing: any;
+	public forcedJumpSpeed: any;
+	public currentDashFrame: any;
+	public currentWallJumpCoyoteFrame: any;
+	public walljumpReady: any;
+	public swimming: any;
+	public friction: any;
+	public collidingWithNpcId: any;
+	public previousFrameSwimming: any;
+	public invisible: any;
+	public fixedSpeed: any;
+	public temporaryDoubleJump: any;
+	public fixedSpeedLeft: any;
+	public fixedSpeedRight: any;
+	public currentGravity: any;
+	public currentMaxFallSpeed: any;
+	public currentWallJumpGravity: any;
+	public bottom_left_pos_in_water: any;
+	public top_left_pos_in_water: any;
+	public top_right_pos_in_water: any;
+	public bottom_right_pos_in_water: any;
+	public jumpChecked: any;
+	public wallJumpChecked: any;
+	public doubleJumpChecked: any;
+	public dashChecked: any;
+	public runChecked: any;
+	public facingDirection: any;
+	public spriteIndexIdle: any;
+	public spriteIndexJump: any;
+	public spriteIndexWalk: any;
+	public animationLengths: any;
+	public spriteObject: any;
+	public currentSpriteIndex: any;
+	public currentAnimationIndex: any;
+	public squishXOffset: any;
+	public squishYOffset: any;
+	public drawWidth: any;
+	public drawHeight: any;
+	public jumpframes: any;
+	public currentCoyoteJumpFrame: any;
+	public doubleJumpActive: any;
+	public doubleJumpUsed: any;
+    death: any;
 
     constructor(initialX, initialY, tileSize) {
         this.tileSize = tileSize;
@@ -1508,7 +1722,7 @@ class Game {
         this.initialX = initialX * this.tileSize;
         this.initialY = initialY * this.tileSize;
         this.wallJumpDirection = 1;
-        this.dashDirection = AnimationHelper.facingDirections.left;
+        this.dashDirection = AnimationHelper.facingDirections?.left;
         this.maxJumpFrames = 18;
         this.dashCooldown = 3;
         this.maxDashFrames = 10 + this.dashCooldown;
@@ -1536,10 +1750,6 @@ class Game {
         this.setAbilities();
         this.resetAll();
         this.resetTemporaryAttributes();
-        this.top = undefined;
-        this.death = undefined;
-        this.top_right_pos = undefined;
-        this.top_left_pos = undefined;
     }
 
     adjustSwimAttributes(maxJumpFrames, jumpSpeed) {
@@ -1651,14 +1861,14 @@ class Game {
     }
 
     setAnimationProperties() {
-        this.facingDirection = AnimationHelper.facingDirections.right;
+        this.facingDirection = AnimationHelper.facingDirections?.right;
         this.spriteIndexIdle = SpritePixelArrays.getIndexOfSprite(ObjectTypes.PLAYER_IDLE);
         this.spriteIndexJump = SpritePixelArrays.getIndexOfSprite(ObjectTypes.PLAYER_JUMP);
         this.spriteIndexWalk = SpritePixelArrays.getIndexOfSprite(ObjectTypes.PLAYER_WALK);
         this.animationLengths = {
-            [this.spriteIndexIdle]: SpritePixelArrays.PLAYER_IDLE_SPRITE.animation.length,
-            [this.spriteIndexJump]: SpritePixelArrays.PLAYER_JUMP_SPRITE.animation.length,
-            [this.spriteIndexWalk]: SpritePixelArrays.PLAYER_WALK_SPRITE.animation.length,
+            [this.spriteIndexIdle]: SpritePixelArrays.PLAYER_IDLE_SPRITE?.animation.length,
+            [this.spriteIndexJump]: SpritePixelArrays.PLAYER_JUMP_SPRITE?.animation.length,
+            [this.spriteIndexWalk]: SpritePixelArrays.PLAYER_WALK_SPRITE?.animation.length,
         };
         this.spriteObject = SpritePixelArrays.PLAYER_JUMP_SPRITE;
         this.currentSpriteIndex = this.spriteIndexIdle;
@@ -1668,7 +1878,8 @@ class Game {
     resetAnimationAttributes() {
         this.clearAnimationInterval("runningAnimationInterval");
         this.clearAnimationInterval("walljumpAnimationInterval");
-        AnimationHelper.setInitialSquishValues(this, this.tileSize);
+        AnimationHelper.setInitialSquishValues(this);
+        //AnimationHelper.setInitialSquishValues(this, this.tileSize);
     }
 
     setAnimationState(newAnimationState) {
@@ -1681,7 +1892,7 @@ class Game {
     activateAnimationInterval(intervalName, xOffset = 0, yOffset = 0, intervalTime = 200, animationIndex = 8) {
         if (!this[intervalName]) {
             this[intervalName] = setInterval(() => {
-                SFXHandler.createSFX(this.x + xOffset, this.y + yOffset, animationIndex, AnimationHelper.facingDirections.bottom, 0, 0, true, 12);
+                SFXHandler.createSFX(this.x + xOffset, this.y + yOffset, animationIndex, AnimationHelper.facingDirections?.bottom, 0, 0, true, 12);
             }, intervalTime);
         }
     }
@@ -1696,11 +1907,11 @@ class Game {
     draw() {
         if (this.xspeed > 0) {
             this.fixedSpeedRight && this.activateAnimationInterval("runningAnimationInterval");
-            this.facingDirection = AnimationHelper.facingDirections.right;
+            this.facingDirection = AnimationHelper.facingDirections?.right;
         }
         else if (this.xspeed < 0) {
             this.fixedSpeedLeft && this.activateAnimationInterval("runningAnimationInterval");
-            this.facingDirection = AnimationHelper.facingDirections.left;
+            this.facingDirection = AnimationHelper.facingDirections?.left;
         }
         else {
             this.clearAnimationInterval("runningAnimationInterval");
@@ -1726,20 +1937,21 @@ class Game {
 
         const animationLength = this.animationLengths[this.currentSpriteIndex];
 
-        const frameDuration = this.currentSpriteIndex === this.spriteIndexIdle
+        var frameDuration = this.currentSpriteIndex === this.spriteIndexIdle
             ? AnimationHelper.defaultFrameDuration
             : AnimationHelper.walkingFrameDuration;
-
+        if (frameDuration == undefined){
+            frameDuration = NaN;
+        }
         this.currentAnimationIndex++;
         if (this.currentAnimationIndex >= frameDuration * animationLength || Game.playMode === Game.BUILD_MODE) {
             this.currentAnimationIndex = 0;
         }
-
         /*
             First, normal facing sprites are rendered, then mirrored sprites
             If we want to display mirrored sprites, we need to start at the end of the normal animation index
         */
-        const loop = this.facingDirection === AnimationHelper.facingDirections.left ? animationLength : 0;
+        const loop = this.facingDirection === AnimationHelper.facingDirections?.left ? animationLength : 0;
 
         //Animation index in regards to "FPS" (animation frame duration)
         const animationIndex = (Math.floor(this.currentAnimationIndex / frameDuration) + loop) || 0;
@@ -1776,16 +1988,16 @@ class Game {
 
     hitWall(direction) {
         switch (direction) {
-            case AnimationHelper.facingDirections.bottom:
+            case AnimationHelper.facingDirections?.bottom:
                 this.hitBottom();
                 break;
-            case AnimationHelper.facingDirections.top:
+            case AnimationHelper.facingDirections?.top:
                 this.hitTop();
                 break;
-            case AnimationHelper.facingDirections.left:
+            case AnimationHelper.facingDirections?.left:
                 this.horizontalHit();
                 break;
-            case AnimationHelper.facingDirections.right:
+            case AnimationHelper.facingDirections?.right:
                 this.horizontalHit();
         }
     }
@@ -1835,12 +2047,17 @@ class Game {
     setStretchAnimation() {
         AnimationHelper.setSquishValues(this, this.tileSize * 0.8, this.tileSize * 1.2);
     }
-} class PlayMode {
-    static _staticConstructor(player, tileMapHandler) {
-        throw new Error("Method not implemented.");
-    }
+}
+class PlayMode {
+	static player: any;
+	static tilemapHandler: any;
+	static deathPauseFrames: any;
+	static animationFrames: any;
+	static currentPauseFrames: any;
+	static animateToNextLevel: any;
+	static customExit: any;
 
-    static staticConstructor(player, tilemapHandler) {
+    static _staticConstructor(player, tilemapHandler) {
         this.player = player;
         this.tilemapHandler = tilemapHandler;
         this.deathPauseFrames = 24;
@@ -1864,15 +2081,16 @@ class Game {
     static startGame() {
         GameStatistics.resetPermanentObjects();
         tileMapHandler.currentLevel = 1;
+        /*
         if (typeof LevelNavigationHandler === 'function') {
             LevelNavigationHandler.updateLevel();
         }
-        else {
+        else {*/
             if (SoundHandler?.song?.sound?.src && !undefined) {
                 SoundHandler.song.stopAndPlay();
             }
             tileMapHandler.resetLevel(tileMapHandler.currentLevel);
-        }
+        //}
         GameStatistics.resetPlayerStatistics();
         GameStatistics.startTimer();
     }
@@ -2343,7 +2561,7 @@ class Game {
     }
 
     static checkActiveCheckPoints() {
-        let checkPointPos = null;
+        let checkPointPos: any = null;
         this.tilemapHandler && this.tilemapHandler.levelObjects.forEach(levelObject => {
             if (levelObject.type === ObjectTypes.CHECKPOINT && levelObject?.active) {
                 checkPointPos = {
@@ -2354,9 +2572,25 @@ class Game {
         });
         return checkPointPos;
     }
-}
-PlayMode.customExit = undefined;
- class LevelObject {
+} class LevelObject {
+	public initialX: any;
+	public initialY: any;
+	public x: any;
+	public y: any;
+	public width: any;
+	public height: any;
+	public type: any;
+	public tileSize: any;
+	public xspeed: any;
+	public yspeed: any;
+	public spriteIndex: any;
+	public spriteObject: any;
+	public canvasYSpritePos: any;
+	public canvasXSpritePos: any;
+	public squishXOffset: any;
+	public squishYOffset: any;
+	public drawWidth: any;
+	public drawHeight: any;
 
     constructor(x, y, tileSize, type) {
         this.initialX = x;
@@ -2370,7 +2604,8 @@ PlayMode.customExit = undefined;
         this.xspeed = 0;
         this.yspeed = 0;
         this.setSpriteAttributes(this.type);
-        AnimationHelper.setInitialSquishValues(this, this.tileSize);
+        AnimationHelper.setInitialSquishValues(this);
+        //AnimationHelper.setInitialSquishValues(this, this.tileSize);
     }
 
     setSpriteAttributes(type) {
@@ -2389,7 +2624,7 @@ PlayMode.customExit = undefined;
             this.tileSize, this.tileSize, this.x, this.y, this.tileSize, this.tileSize);
     }
 
-    draw(spriteCanvas, canvasYSpritePos) {
+    draw(spriteCanvas, canvasYSpritePos?) {
         const drawFunction = (canvasXSpritePos) => this.drawSingleFrame(spriteCanvas, canvasXSpritePos, canvasYSpritePos);
         this.checkFrameAndDraw(drawFunction);
     }
@@ -2443,6 +2678,12 @@ PlayMode.customExit = undefined;
         }
     }
 } class InteractiveLevelObject extends LevelObject {
+	public hitBoxOffset: any;
+	public changeableInBuildMode: any;
+	public facingDirections: any;
+	public currentFacingDirection: any;
+	public extraAttributes: any;
+	public key: any;
 
     constructor(x, y, tileSize, type, hitBoxOffset = 0, extraAttributes = {}) {
         super(x, y, tileSize, type);
@@ -2522,6 +2763,14 @@ PlayMode.customExit = undefined;
         PlayMode.playerDeath();
     }
 } class FinishFlag extends InteractiveLevelObject {
+	public collidedWithPlayer: any;
+	public tilemapHandler: any;
+	public closedFinishedFlagSpriteIndex: any;
+	public closedFinishedFlagYSpritePos: any;
+	public closed: any;
+	public persistentCollectibles: any;
+	public customExit: any;
+	public collectiblesNeeded: any;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
@@ -2595,6 +2844,8 @@ PlayMode.customExit = undefined;
         }
     }
 } class Checkpoint extends InteractiveLevelObject {
+	public active: any;
+	public tilemapHandler: any;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
@@ -2619,8 +2870,11 @@ PlayMode.customExit = undefined;
         super.drawSingleFrame(spriteCanvas, showSecond ? this.canvasXSpritePos + this.tileSize : this.canvasXSpritePos);
     }
 } class StartFlag extends InteractiveLevelObject {
+	public tilemapHandler: any;
+	public levelStartFlag: any;
+	public flagIndex: any;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
         this.tilemapHandler = tilemapHandler;
         this.changeableInBuildMode = true;
@@ -2679,6 +2933,10 @@ PlayMode.customExit = undefined;
     collisionEvent() {
     }
 } class Trampoline extends InteractiveLevelObject {
+	public player: any;
+	public tilemapHandler: any;
+	public unfoldedAnimationDuration: any;
+	public currentAnimationFrame: any;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
@@ -2723,6 +2981,11 @@ PlayMode.customExit = undefined;
         }
     }
 } class Npc extends InteractiveLevelObject {
+	public upReleased: any;
+	public arrowUpFrameIndex: any;
+	public upButtonReleased: any;
+	public dialogue: any;
+    key: string;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
@@ -2745,7 +3008,7 @@ PlayMode.customExit = undefined;
         }
         else {
             if (this.upButtonReleased && !DialogueHandler.active) {
-                const parsedDialogue = [];
+                const parsedDialogue: any[] = [];
                 this.dialogue.forEach(singleDialogue => {
                     const singleDialogueObject = DialogueHandler.createDialogObject(singleDialogue);
                     if (singleDialogueObject.textLength > 0) {
@@ -2774,6 +3037,8 @@ PlayMode.customExit = undefined;
         super.draw(spriteCanvas);
     }
 } class ShootingObject extends InteractiveLevelObject {
+	public tileMapHandler: any;
+	public shootFrames: any;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
@@ -2783,13 +3048,16 @@ PlayMode.customExit = undefined;
     getShootFrames() {
         const frequency = this[SpritePixelArrays.changeableAttributeTypes.frequency];
         const step = this.tileMapHandler.generalFrameCounterMax / frequency;
-        const shootFrames = [];
+        const shootFrames: any[] = [];
         for (var i = 1; i <= frequency; i++) {
             shootFrames.push(Math.round(step * i));
         }
         this.shootFrames = shootFrames;
     }
 } class Canon extends ShootingObject {
+	public top: any;
+	public right: any;
+	public bottom: any;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, tilemapHandler, extraAttributes);
@@ -2826,6 +3094,16 @@ PlayMode.customExit = undefined;
         }
     }
 } class CanonBall extends InteractiveLevelObject {
+	public tileMapHandler: any;
+	public facingDirection: any;
+	public movingSpeed: any;
+	public yCenter: any;
+	public left: any;
+	public top: any;
+	public right: any;
+	public xPos: any;
+	public yPos: any;
+    key: string;
 
     constructor(x, y, tileSize, type, tileMapHandler, facingDirection, speed = 3) {
         const hitBoxOffset = -tileSize / 6;
@@ -2872,8 +3150,7 @@ PlayMode.customExit = undefined;
     checkWallCollission(x, y, tileArray = [0, 5]) {
         const { xPos, yPos } = this.getTilePositions(x, y);
         var currentTileValue = this.tileMapHandler.getTileLayerValueByIndex(yPos, xPos);
-        if (!!typeof currentTileValue === 'undefined' || !tileArray.includes(currentTileValue)) {
-            console.log("CanonBall -> checkWallCollission");
+        if (!!(typeof currentTileValue === 'undefined') || !tileArray.includes(currentTileValue)) {
             if (currentTileValue === ObjectTypes.SPECIAL_BLOCK_VALUES.redBlueSwitch) {
                 const switchBlock = this.tileMapHandler.levelObjects.find(levelObject => levelObject.initialX === xPos && levelObject.initialY === yPos);
                 switchBlock && switchBlock.switchWasHit(this.facingDirection);
@@ -2882,6 +3159,17 @@ PlayMode.customExit = undefined;
         }
     }
 } class LaserCanon extends InteractiveLevelObject {
+	public tileMapHandler: any;
+	public possilbeTimers: any;
+	public currentTimer: any;
+	public createdLasers: any;
+	public currentLaserFrame: any;
+	public currentPauseFrame: any;
+	public solidTileInbetween: any;
+	public top: any;
+	public right: any;
+	public bottom: any;
+    key: string;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
@@ -2957,19 +3245,19 @@ PlayMode.customExit = undefined;
         }
         else if (this.currentFacingDirection === right) {
             const levelWidth = this.tileMapHandler.levelWidth;
-            for (var x = this.initialX + 1; x < levelWidth - 1; x++) {
+            for (let x = this.initialX + 1; x < levelWidth - 1; x++) {
                 this.handleSingleLaserPos(x, this.initialY, allowedTileValues);
             }
         }
         else if (this.currentFacingDirection === bottom) {
             const levelHeight = this.tileMapHandler.levelHeight;
             allowedTileValues = [0];
-            for (var y = this.initialY + 1; y < levelHeight - 1; y++) {
+            for (var y:number = this.initialY + 1; y < levelHeight - 1; y++) {
                 this.handleSingleLaserPos(this.initialX, y, allowedTileValues);
             }
         }
         else {
-            for (var x = this.initialX - 1; x > 0; x--) {
+            for (let x: number = this.initialX - 1; x > 0; x--) {
                 this.handleSingleLaserPos(x, this.initialY, allowedTileValues);
             }
         }
@@ -3010,6 +3298,13 @@ PlayMode.customExit = undefined;
         }
     }
 } class Laser extends InteractiveLevelObject {
+	public tileMapHandler: any;
+	public currentLifeTime: any;
+	public totalLifeTime: any;
+	public pauseTime: any;
+	public laserId: any;
+	public blinkingAllowed: any;
+    key: string;
 
     constructor(x, y, tileSize, type, tileMapHandler, facingDirection, lifeTime, pauseTime, laserId) {
         const hitBoxOffset = -tileSize / 6;
@@ -3037,6 +3332,10 @@ PlayMode.customExit = undefined;
         }
     }
 } class BarrelCannon extends InteractiveLevelObject {
+	public tilemapHandler: any;
+	public player: any;
+	public upButtonReleased: any;
+	public speed: any;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, -4, extraAttributes);
@@ -3098,6 +3397,18 @@ PlayMode.customExit = undefined;
         super.drawWithSquishing(spriteCanvas);
     }
 } class Stomper extends InteractiveLevelObject {
+	public tilemapHandler: any;
+	public distanceToCheckCollission: any;
+	public speed: any;
+	public pauseFrames: any;
+	public currentPauseFrame: any;
+	public yCheckDistance: any;
+	public xCheckDistance: any;
+	public unpassableObjects: any;
+	public goingBack: any;
+	public active: any;
+	BuildMode: any;
+    key: string;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, -1, extraAttributes);
@@ -3124,7 +3435,6 @@ PlayMode.customExit = undefined;
     turnObject() {
         super.turnObject();
         this.handleFacingDirection();
-        console.log("Stomper -> turnObject");
         this.BuildMode.rearrangeLevelObjectsByXAndYPos();
     }
 
@@ -3321,6 +3631,11 @@ PlayMode.customExit = undefined;
         }
     }
 } class ToggleMine extends InteractiveLevelObject {
+	public player: any;
+	public totalPauseFrames: any;
+	public collidedFirstTime: any;
+	public deadly: any;
+	public currentPauseFrame: any;
 
     constructor(x, y, tileSize, type, tileMapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
@@ -3356,6 +3671,11 @@ PlayMode.customExit = undefined;
         super.drawSingleFrame(spriteCanvas, this.deadly ? this.canvasXSpritePos + this.tileSize : this.canvasXSpritePos);
     }
 } class RocketLauncher extends ShootingObject {
+	public tileMapHandlerplayer: any;
+	public seeingPlayer: any;
+	public currentShootCounter: any;
+	public currentShootCounterWhileInactive: any;
+	public active: any;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, tilemapHandler, extraAttributes);
@@ -3423,6 +3743,13 @@ PlayMode.customExit = undefined;
             this.tileSize * 0.8, 5, AnimationHelper.facingDirections.left);
     }
 } class Rocket extends InteractiveLevelObject {
+	public tileMapHandler: any;
+	public movingSpeed: any;
+	public angle: any;
+	public rotationSpeed: any;
+	public rotationCounter: any;
+	public maxRotationCounter: any;
+    key: string;
 
     constructor(x, y, tileSize, type, tileMapHandler, speed = 3, angle = 0, rotationSpeed) {
         const hitBoxOffset = -tileSize / 6;
@@ -3514,6 +3841,14 @@ PlayMode.customExit = undefined;
         }
     }
 } class SwitchableBlock extends InteractiveLevelObject {
+	public tilemapHandler: any;
+	public color: any;
+	public activeTileIndex: any;
+	public active: any;
+	public top: any;
+	public right: any;
+	public bottom: any;
+	public left: any;
 
     constructor(x, y, tileSize, type, tilemapHandler, color, extraAttributes = {}) {
         super(x, y, tileSize, type, -4, extraAttributes);
@@ -3561,6 +3896,13 @@ PlayMode.customExit = undefined;
         super.drawSingleFrame(spriteCanvas, this.active ? this.canvasXSpritePos : this.canvasXSpritePos + this.tileSize);
     }
 } class RedBlueSwitch extends InteractiveLevelObject {
+	public tilemapHandler: any;
+	public collided: any;
+	public bottomLineHitBox: any;
+	public currentlyActiveColor: any;
+	public red: any;
+	public blue: any;
+    key: string;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, 2, extraAttributes);
@@ -3673,6 +4015,15 @@ PlayMode.customExit = undefined;
     collisionEvent() {
     }
 } class DisappearingBlock extends InteractiveLevelObject {
+	public tileMapHandler: any;
+	public player: any;
+	public disappearingFrameAmount: any;
+	public blockNotSolidAt: any;
+	public disappearingStepsAmount: any;
+	public disappearingFrameSteps: any;
+	public disappearingBoxHeight: any;
+	public collidedWithPlayer: any;
+	public currentDisappearingFrame: any;
 
     constructor(x, y, tileSize, type, tileMapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, 2, extraAttributes);
@@ -3735,6 +4086,16 @@ PlayMode.customExit = undefined;
         }
     }
 } class Portal extends InteractiveLevelObject {
+	public tilemapHandler: any;
+	public portalTypes: any;
+	public portalType: any;
+	public active: any;
+	public maxInactiveFrames: any;
+	public currentInactiveFrame: any;
+	public touchingPlayer: any;
+    key: string;
+    squishXOffset: number;
+    squishYOffset: number;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes) {
         const hitBoxOffset = -tileSize / 3;
@@ -3824,8 +4185,18 @@ PlayMode.customExit = undefined;
         else {
             super.draw(spriteCanvas);
         }
+    }/*
+    drawWidth(spriteCanvas: any, canvasXSpritePos: number | undefined, canvasYSpritePos: number | undefined, tileSize: any, tileSize1: any, arg5: number, arg6: number, drawWidth: any, drawHeight: any, arg9: number) {
+        throw new Error("Method not implemented.");
     }
+    drawHeight(spriteCanvas: any, canvasXSpritePos: number | undefined, canvasYSpritePos: number | undefined, tileSize: any, tileSize1: any, arg5: number, arg6: number, drawWidth: any, drawHeight: any, arg9: number) {
+        throw new Error("Method not implemented.");
+    }*/
 } class Collectible extends InteractiveLevelObject {
+	public tileMapHandler: any;
+	public touched: any;
+	public hide: any;
+	public collected: any;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, 2, extraAttributes);
@@ -3890,6 +4261,10 @@ PlayMode.customExit = undefined;
         }
     }
 } class JumpReset extends InteractiveLevelObject {
+	public tileMapHandler: any;
+	public touched: any;
+	public currentResetTimer: any;
+	public resetAfterFrames: any;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, -2, extraAttributes);
@@ -3952,6 +4327,8 @@ PlayMode.customExit = undefined;
         player.fixedSpeedLeft = false;
     }
 } class Water extends InteractiveLevelObject {
+	public tilemapHandler: any;
+	public player: any;
 
     constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
@@ -3990,6 +4367,29 @@ PlayMode.customExit = undefined;
         this.canvasYSpritePos = this.spriteIndex * this.tileSize;
     }
 } class SFX {
+	public x: any;
+	public y: any;
+	public width: any;
+	public height: any;
+	public type: any;
+	public tileSize: any;
+	public xspeed: any;
+	public yspeed: any;
+	public spriteIndex: any;
+	public animationFrames: any;
+	public xCanvasOffset: any;
+	public canvasYSpritePos: any;
+	public animationLength: any;
+	public totalAnimationFrames: any;
+	public currentFrame: any;
+	public ended: any;
+	public alpha: any;
+	public alphaReductionStep: any;
+	public reduceAlpha: any;
+	public growByTimes: any;
+	public growStep: any;
+	public growAmountByStep: any;
+
     constructor(x, y, tileSize, sfxIndex, direction, xspeed = 0, yspeed = 0, reduceAlpha = false, animationLength = 8, growByTimes = 0) {
         this.x = x;
         this.y = y;
@@ -4048,6 +4448,19 @@ PlayMode.customExit = undefined;
         }
     }
 } class SpriteSheetCreator {
+	public tileMapHandler: any;
+	public spriteCanvas: any;
+	public spriteCanvasWidth: any;
+	public spriteCanvasHeight: any;
+	public flipDirection: any;
+	public spriteCtx: any;
+	public tileSize: any;
+	public right: any;
+	public left: any;
+	public top: any;
+	public bottom: any;
+	public pixelArrayUnitSize: any;
+	public pixelArrayUnitAmount: any;
 
     constructor(tileMapHandler, spriteCanvas) {
         this.tileMapHandler = tileMapHandler;
@@ -4080,7 +4493,8 @@ PlayMode.customExit = undefined;
     redrawSprite(SpriteObject, spriteObjectIndex) {
         const { tileSize } = this.tileMapHandler;
         this.spriteCtx.clearRect(0, spriteObjectIndex * tileSize, this.spriteCanvasWidth, spriteObjectIndex * tileSize + tileSize);
-        this.createSpriteSheet(SpriteObject, spriteObjectIndex)
+        this.createSpriteSheet();
+        //this.createSpriteSheet(SpriteObject, spriteObjectIndex)
     }
 
     createSprite(SpriteObject, spriteObjectIndex) {
@@ -4143,7 +4557,7 @@ PlayMode.customExit = undefined;
     }
 
     flipSprite(SpritePixelArrayAnimation, flipDirection) {
-        let flippedAnimation = [];
+        let flippedAnimation:any[] = [];
         SpritePixelArrayAnimation.animation.map((animationFrame) => {
             if (flipDirection === this.flipDirection.horizontally) {
                 let flippedSprite = this.hflip(animationFrame.sprite);
@@ -4161,10 +4575,10 @@ PlayMode.customExit = undefined;
     }
 
     turnSprite(SpritePixelArrayAnimation, bigRotation = false) {
-        let turnedAnimation = [];
+        let turnedAnimation: any[] = [];
         SpritePixelArrayAnimation.animation.map((animationFrame) => {
 
-            var newArray = [];
+            var newArray:any[] = [];
 
             if (bigRotation) {
                 newArray = this.rotate270(animationFrame.sprite);
@@ -4241,6 +4655,34 @@ PlayMode.customExit = undefined;
         return b;
     }
 } class ObjectTypes {
+	public SPIKE: any;
+	public FINISH_FLAG: any;
+	public CHECKPOINT: any;
+	public START_FLAG: any;
+	public TRAMPOLINE: any;
+	public NPC: any;
+	public DISAPPEARING_BLOCK: any;
+	public DEKO: any;
+	public STOMPER: any;
+	public CANON: any;
+	public CANON_BALL: any;
+	public LASER_CANON: any;
+	public LASER: any;
+	public BARREL_CANNON: any;
+	public JUMP_RESET: any;
+	public SFX: any;
+	public RED_BLUE_BLOCK_SWITCH: any;
+	public RED_BLOCK: any;
+	public BLUE_BLOCK: any;
+	public FIXED_SPEED_RIGHT: any;
+	public FIXED_SPEED_STOPPER: any;
+	public WATER: any;
+	public TOGGLE_MINE: any;
+	public ROCKET_LAUNCHER: any;
+	public PORTAL: any;
+	public COLLECTIBLE: any;
+    static PLAYER_WALL_JUMP: any;
+
     static get SPIKE() {
         return 'spike';
     }
@@ -4416,11 +4858,88 @@ PlayMode.customExit = undefined;
             [this.COLLECTIBLE]: Collectible
         };
     }
-}
-ObjectTypes.PLAYER_WALL_JUMP = undefined;
- class SpritePixelArrays {
-
-    static staticConstructor() {
+} class SpritePixelArrays {
+	static pathMovementMapper: any;
+	static changeableAttributeFormElements: any;
+	static changeableAttributeTypes: any;
+	static backgroundSprites: any;
+	static customType: any;
+	static TILE_1: any;
+	static TILE_2: any;
+	static TILE_3: any;
+	static TILE_4: any;
+	static TILE_6: any;
+	static TILE_7: any;
+	static TILE_8: any;
+	static TILE_9: any;
+	static TILE_10: any;
+	static TILE_11: any;
+	static TILE_12: any;
+	static TILE_13: any;
+	static TILE_5: any;
+	static TILE_edge: any;
+	static PLAYER_IDLE_SPRITE: any;
+	static PLAYER_JUMP_SPRITE: any;
+	static PLAYER_WALL_JUMP_SPRITE: any;
+	static PLAYER_WALK_SPRITE: any;
+	static START_FLAG_SPRITE: any;
+	static CHECKPOINT_FLAG: any;
+	static FINISH_FLAG_SPRITE: any;
+	static FINISH_FLAG_CLOSED_SPRITE: any;
+	static SPIKE_SPRITE: any;
+	static TRAMPOLINE_SRPITE: any;
+	static CANON_SPRITE: any;
+	static STOMPER: any;
+	static TOGGLE_MINE: any;
+	static DISAPPEARING_BLOCK_SPRITE: any;
+	static WATER: any;
+	static RED_BLOCK: any;
+	static BLUE_BLOCK: any;
+	static RED_BLUE_BLOCK_SWITCH: any;
+	static ROCKET_LAUNCHER: any;
+	static NPC_SPRITE: any;
+	static CANON_BALL_SPRITE: any;
+	static ROCKET: any;
+	static PORTAL: any;
+	static PORTAL2: any;
+	static COLLECTIBLE: any;
+	static LASER_CANON: any;
+	static LASER: any;
+	static BARREL_CANNON: any;
+	static JUMP_RESET: any;
+	static FIXED_SPEED_RIGHT: any;
+	static FIXED_SPEED_STOPPER: any;
+	static PATH_SPRITE: any;
+	static DEKO_SPRITE: any;
+	static DEKO_SPRITE2: any;
+	static DEKO_SPRITE3: any;
+	static DEKO_SPRITE4: any;
+	static DEKO_SPRITE5: any;
+	static DEKO_SPRITE6: any;
+	static DEKO_SPRITE7: any;
+	static DEKO_SPRITE8: any;
+	static DEKO_SPRITE9: any;
+	static DEKO_SPRITE10: any;
+	static DEKO_SPRITE11: any;
+	static DEKO_SPRITE12: any;
+	static DEKO_SPRITE13: any;
+	static DEKO_SPRITE14: any;
+	static DEKO_SPRITE15: any;
+	static DEKO_SPRITE16: any;
+	static DEKO_SPRITE17: any;
+	static DEKO_SPRITE18: any;
+	static SFX1: any;
+	static SFX2: any;
+	static SFX3: any;
+	static SFX4: any;
+	static SFX5: any;
+	static SFX6: any;
+	static SFX7: any;
+	static SFX8: any;
+	static SFX9: any;
+	static allSprites: any;
+	static fillAllSprites: any;
+static staticConstructor() {
 
         this.pathMovementMapper = {
             1: 1,
@@ -6445,6 +6964,9 @@ ObjectTypes.PLAYER_WALL_JUMP = undefined;
         return indexInSpriteArray;
     }
 } class Sound {
+	public sound: any;
+	public errorWhileLoading: any;
+	public loaded: any;
 
     constructor(src, id = "", loop = false) {
         this.sound = document.createElement("audio");
@@ -6487,8 +7009,25 @@ ObjectTypes.PLAYER_WALL_JUMP = undefined;
         }
     }
 } class SoundHandler {
+	public sounds: any;
+	public song: any;
+    static sounds: { key: string; value: string; }[];
+    static song: Sound;
+    static guiSelect: any;
+    static bubble: any;
+    static shortJump: any;
+    static dash: any;
+    static hit: any;
+    static win: any;
+    static checkpoint: any;
+    static longJump: any;
+    static dialogueSound: any;
+    static barrel: any;
+    static allCoinsCollected: any;
+    static pickup: any;
+    static jumpReset: any;
 
-    static staticConstructor() {
+    static _staticConstructor() {
         this.sounds = [
             { key: "shortJump", value: "https://drive.google.com/uc?export=download&id=1Q54bi8oothHVvLPrqOMT5fmJA8tpoXLa" },
             { key: "longJump", value: "https://drive.google.com/uc?export=download&id=12m9FxLjEyBORA4FP3xwb6rxjBQvBb3U2" },
@@ -6519,53 +7058,49 @@ ObjectTypes.PLAYER_WALL_JUMP = undefined;
     static setVolume(audoElementId, volume = 1) {
         const sound = document.getElementById(audoElementId);
         if (sound) {
-            sound.volume = volume;
+            sound.setAttribute("volume", volume.toString());
         }
     };
 
     static fadeAudio(audoElementId, interval = 200) {
         if (audoElementId) {
             const sound = document.getElementById(audoElementId);
+            if (sound == null) return;
+            let _vol = sound.getAttribute('volume');
+            let vol = 0;
+            if (_vol != null) vol =  Number.parseInt(_vol.toString());
             if (sound) {
                 const fadeAudio = setInterval(() => {
-                    if ((sound.volume !== 0)) {
-                        sound.volume -= 0.1;
+                    if (vol !== 0) {
+                        vol -= 0.1;
+                        sound.setAttribute('volume', vol.toString());
                     }
 
-                    if (sound.volume < 0.11) {
+                    if (vol < 0.11) {
                         clearInterval(fadeAudio);
                     }
                 }, interval);
             }
         }
     }
-}
-SoundHandler.guiSelect = undefined;
-
-SoundHandler.bubble = undefined;
-
-SoundHandler.shortJump = undefined;
-
-SoundHandler.dash = undefined;
-
-SoundHandler.hit = undefined;
-
-SoundHandler.win = undefined;
-
-SoundHandler.checkpoint = undefined;
-
-SoundHandler.longJump = undefined;
-
-SoundHandler.dialogueSound = undefined;
-
-SoundHandler.barrel = undefined;
-
-SoundHandler.allCoinsCollected = undefined;
-
-SoundHandler.pickup = undefined;
-
-SoundHandler.jumpReset = undefined;
- class EffectsHandler {
+} class EffectsHandler {
+	public addEffectButton: any;
+	public existingEffectsEl: any;
+	public editingEffects: any;
+	public effectTypes: any;
+	public defaultAttributeObjects: any;
+	public parsersObject: any;
+	public noiseFlickerIntensities: any;
+	public effectsOrder: any;
+    static addEffectButton: HTMLElement | null;
+    static existingEffectsEl: HTMLElement | null;
+    static editingEffects: HTMLElement | null;
+    static effectTypes: { SFXLayer: string; Flashlight: string; BlackAndWhite: string; Noise: string; };
+    static defaultAttributeObjects: { [x: number]: (() => { sfxIndex: number; intensity: number; duration: number; growByStep: number; xSpeed: { speedFrom: number; speedTo: number; style: string; }; ySpeed: { speedFrom: number; speedTo: number; style: string; }; widthDimensions: string; heightDimensions: string; type: any; activeLevels: string[]; }) | (() => { radius: number; flickerRadius: number; position: string; color: string; type: any; activeLevels: string[]; }) | (() => { alpha: number; flickerIntensity: number; type: any; activeLevels: string[]; }); };
+    static parsersObject: { [x: number]: (attributesObject: any) => any; };
+    //static htmlTemplateObject: { [x: number]: (effectsObject: any) => any; };
+    static noiseFlickerIntensities: { 1: number; 2: number; 3: number; 4: number; };
+    static effectsOrder: any[];
 
     static staticConstructor() {
         this.addEffectButton = document.getElementById("addEffectButton");
@@ -6586,12 +7121,12 @@ SoundHandler.jumpReset = undefined;
             [this.effectTypes.SFXLayer]: (attributesObject) => { return this.parseSFXLayerValues(attributesObject) },
             [this.effectTypes.Flashlight]: (attributesObject) => { return this.parseFlashlightValues(attributesObject) },
             [this.effectTypes.Noise]: (attributesObject) => { return this.parseNoiseValues(attributesObject) },
-        };
+        };/*
         this.htmlTemplateObject = {
             [this.effectTypes.SFXLayer]: (effectsObject) => { return EffectHtmlRenderer.createSFXLayerTemplate(effectsObject) },
             [this.effectTypes.Flashlight]: (effectsObject) => { return EffectHtmlRenderer.createFlashlightTemplate(effectsObject) },
             [this.effectTypes.Noise]: (effectsObject) => { return EffectHtmlRenderer.createNoiseTemplate(effectsObject) },
-        }
+        }*/
         this.noiseFlickerIntensities = {
             1: 32,
             2: 16,
@@ -6649,11 +7184,15 @@ SoundHandler.jumpReset = undefined;
             flickerIntensity: 3,
         }
     }
-
+    /*
     static changeTemplate() {
-        const value = document.getElementById("templateHandler").value;
+        var templateHandler = document.getElementById("templateHandler");
+        if(templateHandler == null) return;
+        const value = (<HTMLInputElement>templateHandler).value;
         const templateArea = document.getElementById("sfxTemplateSummary");
+        if(templateArea == null) return;
         const attributesAccordion = document.getElementById("attributesAccordion");
+        if(attributesAccordion == null) return;
 
         if (value in this.defaultAttributeObjects) {
             attributesAccordion.style.display = "block";
@@ -6662,27 +7201,27 @@ SoundHandler.jumpReset = undefined;
         else {
             attributesAccordion.style.display = "none";
         }
-    }
-
+    }*/
+    /*
     static removeLayer(index) {
-        WorldDataHandler.effects.splice(index, 1);
+        WorldDataHandler.effects?.splice(index, 1);
         tileMapHandler.effects = this.getCurrentLevelEffects(tileMapHandler.currentLevel);
         this.updateExistingSFXSection();
-    }
-
+    }*/
+    /*
     static updateExistingSFXSection() {
         let sfxSectionHtml = "";
-        WorldDataHandler.effects.forEach((effect, index) => {
+        WorldDataHandler.effects?.forEach((effect, index) => {
             let effectName = effect.type === this.effectTypes.SFXLayer ? "Particles" : effect.type;
             sfxSectionHtml += EffectHtmlRenderer.createExistingEffectsSection(effectName, index);
         });
-        this.existingEffectsEl.innerHTML = sfxSectionHtml;
-    }
+        if(this.existingEffectsEl) this.existingEffectsEl.innerHTML = sfxSectionHtml;
+    }*/
 
     static parseBasicEffectValues(type) {
-        let attributesObject = { type: type, activeLevels: [] };
+        let attributesObject = { type: type, activeLevels: [] as any[] };
         WorldDataHandler.levels.forEach((_, index) => {
-            if (document.getElementById("levelChecked" + index).checked) {
+            if ((<HTMLInputElement>document.getElementById("levelChecked" + index)).checked) {
                 attributesObject.activeLevels.push(index);
             }
         })
@@ -6690,11 +7229,11 @@ SoundHandler.jumpReset = undefined;
     }
 
     static parseSFXLayerValues(attributesObject) {
-        attributesObject.intensity = 61 - parseInt(document.getElementById("intensity").value) || 4;
+        attributesObject.intensity = 61 - parseInt((<HTMLInputElement>document.getElementById("intensity")).value) || 4;
         ["sfxIndex", "duration"].forEach(attribute => {
-            attributesObject[attribute] = parseInt(document.getElementById(attribute).value) || 0;
+            attributesObject[attribute] = parseInt((<HTMLInputElement>document.getElementById(attribute)).value) || 0;
         });
-        attributesObject.growByStep = parseFloat(document.getElementById("growByStep").value) || 1;
+        attributesObject.growByStep = parseFloat((<HTMLInputElement>document.getElementById("growByStep")).value) || 1;
         attributesObject.xSpeed = this.getSFXSpeed("xSpeed");
         attributesObject.ySpeed = this.getSFXSpeed("ySpeed");
         attributesObject.widthDimensions = "full";
@@ -6703,21 +7242,21 @@ SoundHandler.jumpReset = undefined;
     }
 
     static parseFlashlightValues(attributesObject) {
-        attributesObject.radius = parseInt(document.getElementById("radius").value) || 140;
-        attributesObject.flickerRadius = parseInt(document.getElementById("flickerRadius").value) || 0;
-        attributesObject.position = document.querySelector('input[name="flashlightPosition"]:checked').value;
+        attributesObject.radius = parseInt((<HTMLInputElement>document.getElementById("radius")).value) || 140;
+        attributesObject.flickerRadius = parseInt((<HTMLInputElement>document.getElementById("flickerRadius"))?.value) || 0;
+        attributesObject.position = document.querySelector('input[name="flashlightPosition"]:checked')?.getAttribute('value');
         return attributesObject;
     }
 
     static parseNoiseValues(attributesObject) {
-        attributesObject.alpha = parseFloat(document.getElementById("noiseAlpha").value) || 0.07;
-        attributesObject.flickerIntensity = parseFloat(document.getElementById("noiseFlickerIntensity").value) || 8;
+        attributesObject.alpha = parseFloat((<HTMLInputElement>document.getElementById("noiseAlpha")).value) || 0.07;
+        attributesObject.flickerIntensity = parseFloat((<HTMLInputElement>document.getElementById("noiseFlickerIntensity")).value) || 8;
         return attributesObject;
     }
-
+    /*
     static addEffect(event, index) {
         event.preventDefault();
-        const value = document.getElementById("templateHandler").value;
+        const value = (<HTMLInputElement>document.getElementById("templateHandler")).value;
         let attributesObject = this.parseBasicEffectValues(value);
         if (value in this.parsersObject) {
             attributesObject = this.parsersObject[value](attributesObject);
@@ -6729,43 +7268,43 @@ SoundHandler.jumpReset = undefined;
         this.existingEffectsEl.style.display = "block";
         this.changeInitialColorModalVisibility();
     }
-
+    */
     static getSFXSpeed(speedId) {
         return {
-            speedFrom: parseFloat(document.getElementById(speedId + "From").value) || 0,
-            speedTo: parseFloat(document.getElementById(speedId + "To").value) || 0,
+            speedFrom: parseFloat((<HTMLInputElement>document.getElementById(speedId + "From")).value) || 0,
+            speedTo: parseFloat((<HTMLInputElement>document.getElementById(speedId + "To")).value) || 0,
             style: "fromNegativeToPositive"
         }
     }
-
+    /*
     static cancelEffect() {
         this.removeEffectTemplate();
-        this.existingEffectsEl.style.display = "block";
+        if(this.existingEffectsEl) this.existingEffectsEl.style.display = "block";
         this.changeInitialColorModalVisibility();
-    }
-
+    }*/
+    /*
     static changeInitialColorModalVisibility(display = "block") {
         document.getElementById('worldColorsSubmitButton').style.display = display;
         document.getElementById('worldColorModalColorSection').style.display = display;
-    }
-
+    }*/
+    /*
     static removeEffectTemplate() {
         this.editingEffects.innerHTML = "";
         this.addEffectButton.style.display = "block";
-    }
-
+    }*/
+    /*
     static addEffectTemplate(index = null) {
-        this.addEffectButton.style.display = "none";
-        this.existingEffectsEl.style.display = "none";
-        this.editingEffects.innerHTML = "";
+        if(this.addEffectButton) this.addEffectButton.style.display = "none";
+        if(this.existingEffectsEl) this.existingEffectsEl.style.display = "none";
+        if(this.editingEffects) this.editingEffects.innerHTML = "";
         const effectTemplate = EffectHtmlRenderer.createEffectTemplate(index);
         this.changeInitialColorModalVisibility("none");
         this.editingEffects.append(effectTemplate);
 
         const effectType = index !== null ? WorldDataHandler.effects[index].type : this.effectTypes.SFXLayer;
         const attributesAccordion = document.getElementById("attributesAccordion");
-        attributesAccordion.style.display = effectType in this.htmlTemplateObject ? "block" : "none";
-    }
+        if(attributesAccordion) attributesAccordion.style.display = effectType in this.htmlTemplateObject ? "block" : "none";
+    }*/
 
     static getFlashlightColors(effect, color) {
         effect.color = AnimationHelper.hexToRGB(color)
@@ -6793,9 +7332,26 @@ SoundHandler.jumpReset = undefined;
         });;
     }
 } class EffectsRenderer {
+	public tileMapHandler: any;
+	public noiseCanvas: any;
+	public noisePositions: any;
+	public intensity: any;
+	public sfxIndex: any;
+	public growByStep: any;
+	public duration: any;
+	public xSpeed: any;
+	public ySpeed: any;
+	public left: any;
+	public top: any;
+	public width: any;
+	public height: any;
+    static tileMapHandler: any;
+    static noiseCanvas: HTMLCanvasElement | null;
+    static noisePositions: { left: number; top: number; };
+
     static staticConstructor(tileMapHandler) {
         this.tileMapHandler = tileMapHandler;
-        this.noiseCanvas = document.getElementById("noiseCanvas");
+        this.noiseCanvas = <HTMLCanvasElement>document.getElementById("noiseCanvas");
         this.createNoiseCanvas();
         this.noisePositions = {
             left: 0,
@@ -6848,7 +7404,7 @@ SoundHandler.jumpReset = undefined;
     static displayFleshlight(currentLevel, playerx, playery, radius = 200, flickerIntensity = 0,
         orgColor = { r: 0, g: 0, b: 0 }, lighterColor = { r: 70, g: 70, b: 70 }) {
         if (currentLevel !== 0 && currentLevel !== WorldDataHandler.levels.length - 1) {
-            var radius = flickerIntensity ? MathHelpers.getRandomNumberBetweenTwoNumbers(radius, radius + flickerIntensity) : radius;
+            var radius: number = flickerIntensity ? MathHelpers.getRandomNumberBetweenTwoNumbers(radius, radius + flickerIntensity) : radius;
             Display.ctx.fillStyle = `rgb(${orgColor.r},${orgColor.g},${orgColor.b})`;
             Display.ctx.beginPath();
             Display.ctx.rect(Camera.viewport.left, Camera.viewport.top, Camera.viewport.width, Camera.viewport.height);
@@ -6866,10 +7422,13 @@ SoundHandler.jumpReset = undefined;
     }
 
     static createNoiseCanvas() {
-        const ctx = this.noiseCanvas.getContext("2d");
-        const noiseCanvasWidth = this.noiseCanvas.width;
-        const noiseCanvasHeight = this.noiseCanvas.height;
-        const pixelSize = 3;
+        var ctx = (this.noiseCanvas)?.getContext("2d");
+        var noiseCanvasWidth = this.noiseCanvas?.width;
+        var noiseCanvasHeight = this.noiseCanvas?.height;
+        var pixelSize = 3;
+        if(!noiseCanvasWidth) noiseCanvasWidth = NaN;
+        if(!noiseCanvasHeight) noiseCanvasHeight = NaN;
+        if(!ctx) return;
 
         const horizontalSteps = Math.round(noiseCanvasWidth / pixelSize);
         const verticalSteps = Math.round(noiseCanvasHeight / pixelSize);
@@ -6915,6 +7474,36 @@ SoundHandler.jumpReset = undefined;
         });
     }
 } class DialogueHandler {
+	public dialogueWidth: any;
+	public dialogueHeight: any;
+	public paddingFromBorder: any;
+	public upButtonReleased: any;
+	public animationDurationFrames: any;
+	public linesAmount: any;
+	public maxLineLength: any;
+	public active: any;
+	public dialogue: any;
+	public currentIndex: any;
+	public currentAnimationFrame: any;
+	public arrowUpFrameIndex: any;
+	public leftPos: any;
+	public topPos: any;
+	public pixelArrayUnitSize: any;
+	public tileSize: any;
+    static dialogueWidth: number;
+    static dialogueHeight: number;
+    static paddingFromBorder: number;
+    static upButtonReleased: boolean;
+    static animationDurationFrames: number;
+    static linesAmount: number;
+    static maxLineLength: number;
+    static active: boolean;
+    static dialogue: any[];
+    static currentIndex: number;
+    static currentAnimationFrame: number;
+    static arrowUpFrameIndex: number;
+    static leftPos: any;
+    static topPos: number;
 
     static staticConstructor() {
         this.setDialogueWindowToInactive();
@@ -7018,7 +7607,7 @@ SoundHandler.jumpReset = undefined;
 
     static calculateTextLines(dialogue) {
         let text = dialogue;
-        const lines = [];
+        const lines: any[] = [];
 
         for (var i = 0; i < this.linesAmount; i++) {
             if (text.length > 0) {
@@ -7059,6 +7648,10 @@ SoundHandler.jumpReset = undefined;
         }
     }
 } class SFXHandler {
+	static tileSize: any;
+	static spriteCanvas: any;
+	static sfxAnimations: any;
+	static backgroundSFX: any;
 
     static staticConstructor(tileSize, spriteCanvas) {
         this.tileSize = tileSize;
@@ -7081,20 +7674,20 @@ SoundHandler.jumpReset = undefined;
         this.backgroundSFX = [];
     }
 
-    static createSFX(x, y, sfxIndex, direction, xspeed = 0, yspeed = 0, reduceAlpha = false, animationLength = 8, growByTimes = 0, type = "sfxAnimations") {
+    static createSFX(x, y, sfxIndex, direction?, xspeed = 0, yspeed = 0, reduceAlpha = false, animationLength = 8, growByTimes = 0, type = "sfxAnimations") {
         const sfxAnimation = new SFX(x, y, this.tileSize, sfxIndex, direction, xspeed, yspeed, reduceAlpha, animationLength, growByTimes);
         this[type].push(sfxAnimation);
     }
 } class ModalHandler {
-
+    /*
     static showModal(id) {
         let el = document.getElementById(id);
         if (Game.playMode === Game.PLAY_MODE) {
             Game.changeGameMode();
-            el.setAttribute('data-initial-game-mode', Game.PLAY_MODE);
+            el?.setAttribute('data-initial-game-mode', Game.PLAY_MODE);
         }
         else {
-            el.setAttribute('data-initial-game-mode', Game.BUILD_MODE);
+            el?.setAttribute('data-initial-game-mode', Game.BUILD_MODE);
         }
 
         let body = document.querySelector("body");
@@ -7116,8 +7709,8 @@ SoundHandler.jumpReset = undefined;
             el.removeChild(closeButton);
         };
         el.appendChild(closeButton);
-    }
-
+    }*/
+    /*
     static closeModal(id) {
         let body = document.querySelector("body");
         let el = document.getElementById(id);
@@ -7128,9 +7721,12 @@ SoundHandler.jumpReset = undefined;
         let overlay = body.querySelector(".modal-js-overlay");
         el.classList.remove('on');
         body.removeChild(overlay);
-    }
+    }*/
 } class PlayerAttributesHandler {
-
+	static player: any;
+	static sliderValues: any;
+	static checkBoxValues: any;
+    /*
     static staticConstructor(player) {
         this.player = player;
         this.sliderValues = ["groundAcceleration", "air_acceleration", "maxSpeed", "groundFriction", "air_friction", "jumpSpeed", "maxFallSpeed"];
@@ -7158,8 +7754,9 @@ SoundHandler.jumpReset = undefined;
         this.checkBoxValues.forEach(checkBoxValue => {
             this.setInitialCheckboxValue(checkBoxValue);
         });
-    }
-
+        
+    }*/
+    /*
     static setInitialSliderValue(sliderValue) {
         let playerAttrValue = this.player[sliderValue];
         if (sliderValue === "jumpSpeed") {
@@ -7171,7 +7768,7 @@ SoundHandler.jumpReset = undefined;
         this[sliderValue + "Value"] = document.getElementById(sliderValue + "Value");
         this[sliderValue + "Value"].innerHTML = playerAttrValue;
         this.adjustAccelerationRelatedToSpeed(sliderValue, playerAttrValue);
-    }
+    }*/
 
     static adjustAccelerationRelatedToSpeed(sliderValue, playerAttrValue) {
         if (sliderValue === "maxSpeed") {
@@ -7189,7 +7786,7 @@ SoundHandler.jumpReset = undefined;
             });
         }
     }
-
+    /*
     static setInitialCheckboxValue(checkBoxValue) {
         let playerAttrValue = this.player[checkBoxValue];
         this[checkBoxValue + "CheckBox"] = document.getElementById(checkBoxValue);
@@ -7204,8 +7801,8 @@ SoundHandler.jumpReset = undefined;
                 this.player[checkBoxValue] = false;
             }
         }
-    }
-
+    }*/
+    /*
     static updateUniqueCheckboxes(checkBoxValue) {
         if (checkBoxValue === dashChecked) {
             this.updateCheckboxValueFromOutside(runChecked, false);
@@ -7213,23 +7810,23 @@ SoundHandler.jumpReset = undefined;
         else if (checkBoxValue === runChecked) {
             this.updateCheckboxValueFromOutside(dashChecked, false);
         }
-    }
+    }*/
 
     static updateCheckboxValueFromOutside(checkBoxValue, value) {
         this[checkBoxValue + "CheckBox"] = document.getElementById(checkBoxValue);
         this[checkBoxValue + "CheckBox"].checked = value;
         this.player[checkBoxValue] = value;
     }
-
+    /*
     static mapJumpValueToSliderValue(value) {
         const jumpSpeedObj = jumpSpeedMapValues.filter(jumpSpeedObj => jumpSpeedObj.jumpSpeed === value);
         return jumpSpeedObj;
-    }
-
+    }*/
+    /*
     static mapJumpSliderValueToRealValue(value) {
         const jumpSpeedObj = jumpSpeedMapValues.filter(jumpSpeedObj => jumpSpeedObj.sliderValue === value);
         return jumpSpeedObj;
-    }
+    }*/
 } class MathHelpers {
     static getRandomNumberBetweenTwoNumbers(min, max, round = true) {
         const randomNumber = Math.random() * (max - min) + min;
@@ -7264,6 +7861,27 @@ SoundHandler.jumpReset = undefined;
         return angle * Math.PI / 180;
     }
 } class Path {
+	public tileMapHandler: any;
+	public tileSize: any;
+	public pathPoints: any;
+	public objectsOnPath: any;
+	public speed: any;
+	public startPointKey: any;
+	public endPointKey: any;
+	public movementDirection: any;
+	public stopFrames: any;
+	public pathVariant: any;
+	public key: any;
+	public movementSteps: any;
+	public currentDirection: any;
+	public currentMovementStep: any;
+	public currentStopFrame: any;
+	public startPoint: any;
+	public endPoint: any;
+	public currentPathPoint: any;
+	public nextPathPoint: any;
+	public forwards: any;
+	public backwards: any;
 
     constructor(tileMapHandler, speed = 3, stopFrames = 10, movementDirection = AnimationHelper.possibleDirections.forwards) {
         this.tileMapHandler = tileMapHandler;
@@ -7337,7 +7955,7 @@ SoundHandler.jumpReset = undefined;
     }
 
     rearrangePathPointsAlignment() {
-        let endPoints = [];
+        let endPoints: any[] = [];
         this.pathPoints.forEach(pathPoint => {
             let rightTouched;
             let leftTouched;
@@ -7477,8 +8095,11 @@ SoundHandler.jumpReset = undefined;
         }
     }
 } class PathPoint extends LevelObject {
+	public alignment: any;
+	public changeableInBuildMode: any;
+	public key: any;
 
-    constructor(x, y, tileSize, alignment = AnimationHelper.alignments.horizontal) {
+    constructor(x, y, tileSize, alignment = AnimationHelper.alignments?.horizontal) {
         super(x, y, tileSize, ObjectTypes.PATH_POINT);
         this.alignment = alignment;
         this.changeableInBuildMode = true;
@@ -7486,7 +8107,7 @@ SoundHandler.jumpReset = undefined;
     }
 
     getPath() {
-        return tileMapHandler?.paths.find(path => {
+        return tileMapHandler?.paths?.find(path => {
             return path?.pathPoints.find(pathPoint =>
                 pathPoint.key === this.key
             )
@@ -7512,13 +8133,15 @@ SoundHandler.jumpReset = undefined;
 
     draw(spriteCanvas) {
         const animationLength = this?.spriteObject?.[0].animation.length || 0;
-        const cornerAlignment = this.alignment === AnimationHelper.alignments.corner;
-        const extraCanvasX = this.alignment === AnimationHelper.alignments.vertical || cornerAlignment
+        const cornerAlignment = this.alignment === AnimationHelper.alignments?.corner;
+        const extraCanvasX = this.alignment === AnimationHelper.alignments?.vertical || cornerAlignment
             ? animationLength * this.tileSize : 0;
 
         if (animationLength > 1 && Game.playMode === Game.PLAY_MODE) {
             const frameModulo = tileMapHandler.currentGeneralFrameCounter % 40;
-            this.displaySprite(spriteCanvas, frameModulo < AnimationHelper.defaultFrameDuration ? this.canvasXSpritePos : this.canvasXSpritePos + this.tileSize, extraCanvasX, cornerAlignment);
+            if(AnimationHelper.defaultFrameDuration != undefined){
+                this.displaySprite(spriteCanvas, frameModulo < AnimationHelper.defaultFrameDuration ? this.canvasXSpritePos : this.canvasXSpritePos + this.tileSize, extraCanvasX, cornerAlignment);
+            }
         }
         else {
             this.displaySprite(spriteCanvas, this.canvasXSpritePos, extraCanvasX, cornerAlignment);
@@ -7532,6 +8155,12 @@ SoundHandler.jumpReset = undefined;
         }
     }
 } class GameStatistics {
+	static startTime: any;
+    static alreadyStopped: boolean;
+    static deathCounter: number;
+    static endTime: any;
+    static timeBetweenPauses: number;
+    static timesPauseWasPressed: number;
 
     static staticConstructor() {
         this.resetPlayerStatistics();
@@ -7567,16 +8196,17 @@ SoundHandler.jumpReset = undefined;
     }
 
     static getTimeDifference() {
-        const endTime = this.endTime.getTime();
+        const endTime = this.endTime?.getTime();
         const startTime = this.startTime.getTime();
         if (startTime > endTime) {
-            return null;
+            return 0;
+            //return null;
         }
         return endTime - startTime + this.timeBetweenPauses;
     }
 
     static updateTimeBetweenPauses() {
-        if (!this.endTime || !this.startTime) {
+        if (!this.endTime || !this.startTimer) {
             return null;
         }
         /*
@@ -7591,10 +8221,11 @@ SoundHandler.jumpReset = undefined;
     }
 
     static getFinalTime() {
-        if (!this.endTime || !this.startTime) {
+        if (!this.endTime || !this.startTimer) {
             return null;
         }
         var diff = this.getTimeDifference();
+        if(diff == null) diff = 0;
 
         var msec = diff;
         var hh = Math.floor(msec / 1000 / 60 / 60);
@@ -7616,6 +8247,29 @@ SoundHandler.jumpReset = undefined;
         this.alreadyStopped = true;
     }
 } class PauseHandler {
+	public options: any;
+	public downArrowReleased: any;
+	public restartedGame: any;
+	public upArrowReleased: any;
+	public restartGameMaxFrames: any;
+	public justClosedPauseScreen: any;
+	public paused: any;
+	public currentRestartGameFrameCounter: any;
+	public currentOptionIndex: any;
+	public left: any;
+	public top: any;
+	public width: any;
+	public height: any;
+	public context: any;
+    static options: string[];
+    static downArrowReleased: boolean;
+    static restartedGame: boolean;
+    static upArrowReleased: boolean;
+    static restartGameMaxFrames: number;
+    static justClosedPauseScreen: boolean;
+    static paused: boolean;
+    static currentRestartGameFrameCounter: number;
+    static currentOptionIndex: number;
 
     static staticConstructor() {
         this.options = ["Continue", "Restart game"];
@@ -7724,31 +8378,39 @@ SoundHandler.jumpReset = undefined;
         }
     }
 } class TilemapHelpers {
+	public left: any;
+	public top: any;
+	public right: any;
+	public bottom: any;
+	public firstX: any;
+	public firstY: any;
+	public secondX: any;
+	public secondY: any;
 
     static check8DirectionsNeighbours(oX, oY, nX, nY) {
         if (nX === oX && nY === oY - 1) {
-            return { x: oX, y: oY - 1, alignment: AnimationHelper.alignments.vertical };
+            return { x: oX, y: oY - 1, alignment: AnimationHelper.alignments?.vertical };
         }
         else if (nX === oX && nY === oY + 1) {
-            return { x: oX, y: oY + 1, alignment: AnimationHelper.alignments.vertical };
+            return { x: oX, y: oY + 1, alignment: AnimationHelper.alignments?.vertical };
         }
         else if (nX === oX - 1 && nY === oY) {
-            return { x: oX - 1, y: oY + 1, alignment: AnimationHelper.alignments.horizontal };
+            return { x: oX - 1, y: oY + 1, alignment: AnimationHelper.alignments?.horizontal };
         }
         else if (nX === oX + 1 && nY === oY) {
-            return { x: oX + 1, y: oY + 1, alignment: AnimationHelper.alignments.horizontal };
+            return { x: oX + 1, y: oY + 1, alignment: AnimationHelper.alignments?.horizontal };
         }
         else if (nX === oX - 1 && nY === oY - 1) {
-            return { x: oX - 1, y: oY - 1, alignment: AnimationHelper.alignments.corner };
+            return { x: oX - 1, y: oY - 1, alignment: AnimationHelper.alignments?.corner };
         }
         else if (nX === oX + 1 && nY === oY - 1) {
-            return { x: oX + 1, y: oY - 1, alignment: AnimationHelper.alignments.corner };
+            return { x: oX + 1, y: oY - 1, alignment: AnimationHelper.alignments?.corner };
         }
         else if (nX === oX + 1 && nY === oY + 1) {
-            return { x: oX + 1, y: oY + 1, alignment: AnimationHelper.alignments.corner };
+            return { x: oX + 1, y: oY + 1, alignment: AnimationHelper.alignments?.corner };
         }
         else if (nX === oX - 1 && nY === oY + 1) {
-            return { x: oX - 1, y: oY + 1, alignment: AnimationHelper.alignments.corner };
+            return { x: oX - 1, y: oY + 1, alignment: AnimationHelper.alignments?.corner };
         }
         return null;
     }
@@ -7756,7 +8418,7 @@ SoundHandler.jumpReset = undefined;
     static sortArrayByXandY(firstEl, secondEl, firstElDir, secondElDir, firstElPos, secondElPos) {
         const bothStompers = firstEl.type === ObjectTypes.STOMPER && secondEl.type === ObjectTypes.STOMPER;
 
-        if (bothStompers) {
+        if (bothStompers && AnimationHelper.facingDirections != undefined) {
             const { left, top, right, bottom } = AnimationHelper.facingDirections;
             const bottomSame = firstElDir === bottom && secondElDir === bottom || !firstElDir && !secondElDir;
             const topSame = firstElDir === top && secondElDir === top;
@@ -7779,7 +8441,7 @@ SoundHandler.jumpReset = undefined;
     }
 
     static splitArrayIn2(array, filter) {
-        let pass = [], fail = [];
+        let pass: any[] = [], fail: any[] = [];
         array.forEach((e, idx, arr) => (filter(e, idx, arr) ? pass : fail).push(e));
         return [pass, fail];
     }
@@ -7794,7 +8456,7 @@ SoundHandler.jumpReset = undefined;
                 const neightbourAtDirection = TilemapHelpers.check8DirectionsNeighbours(arr[i].initialX, arr[i].initialY, arr[j].initialX, arr[j].initialY);
                 if (!(arr[i].key === startPoint.key && arr[j].key === endPoint.key) &&
                     arr[i + 1].key !== arr[j].key && i + 1 !== j && j > i && neightbourAtDirection &&
-                    (neightbourAtDirection.alignment === AnimationHelper.alignments.horizontal || neightbourAtDirection.alignment === AnimationHelper.alignments.vertical)) {
+                    (neightbourAtDirection.alignment === AnimationHelper.alignments?.horizontal || neightbourAtDirection.alignment === AnimationHelper.alignments?.vertical)) {
                     var temp = arr[j]
                     arr[j] = arr[i + 1]
                     arr[i + 1] = temp
@@ -7866,14 +8528,16 @@ SoundHandler.jumpReset = undefined;
     }
 }
 
-const canvas = document.getElementById("myCanvas");
-WorldDataHandler.staticConstructor();
+const canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
+WorldDataHandler._staticConstructor();
 const spriteCanvas = document.getElementById("sprites");
-SoundHandler.staticConstructor();
+SoundHandler._staticConstructor();
 AnimationHelper.staticConstructor();
 SpritePixelArrays.staticConstructor();
 const player = new Player(WorldDataHandler.initialPlayerPosition.x,
-    WorldDataHandler.initialPlayerPosition.y, WorldDataHandler.tileSize, spriteCanvas);
+    WorldDataHandler.initialPlayerPosition.y, WorldDataHandler.tileSize);
+//const player = new Player(WorldDataHandler.initialPlayerPosition.x,
+//    WorldDataHandler.initialPlayerPosition.y, WorldDataHandler.tileSize, spriteCanvas);
 Game.staticConstructor();
 
 const version = 1.1;
@@ -7898,11 +8562,11 @@ player["groundAcceleration"] = 0.8; player["air_acceleration"] = 0.8; player["ma
 let startLevel = 0;
 
 const canvasSize = WorldDataHandler.calucalteCanvasSize();
-canvas.width = canvasSize.width;
-canvas.height = canvasSize.height;
+if(canvas) canvas.width = canvasSize.width;
+if(canvas) canvas.height = canvasSize.height;
 const canvasWidth = canvasSize.width;
 const canvasHeight = canvasSize.height;
-canvas.style.backgroundColor = WorldDataHandler.backgroundColor;
+if(canvas) canvas.style.backgroundColor = WorldDataHandler.backgroundColor;
 var canvasOffsetLeft = canvas.offsetLeft;
 var canvasOffsetTop = canvas.offsetTop;
 const ctx = canvas.getContext("2d");
@@ -7910,13 +8574,14 @@ Camera.staticConstructor(ctx, canvasSize.width, canvasHeight, WorldDataHandler.l
     WorldDataHandler.levels[startLevel].tileData.length * WorldDataHandler.tileSize);
 EffectsHandler.staticConstructor();
 let tileMapHandler = new TileMapHandler(WorldDataHandler.tileSize, startLevel, spriteCanvas, player);
-DialogueHandler.staticConstructor(tileMapHandler);
+//DialogueHandler.staticConstructor(tileMapHandler);
+DialogueHandler.staticConstructor();
 Display.staticConstructor(ctx, canvasWidth, canvasHeight);
 Controller.staticConstructor();
 Collision.staticConstructor(tileMapHandler);
 const spriteSheetCreator = new SpriteSheetCreator(tileMapHandler, spriteCanvas);
 CharacterCollision.staticConstructor(tileMapHandler);
-PlayMode.staticConstructor(player, tileMapHandler);
+PlayMode._staticConstructor(player, tileMapHandler);
 SFXHandler.staticConstructor(tileMapHandler.tileSize, spriteCanvas);
 GameStatistics.staticConstructor();
 PauseHandler.staticConstructor();
@@ -7928,7 +8593,7 @@ function play(timestamp) {
     Game.updateFPSInterval(timestamp);
     // if enough time has elapsed, draw the next frame
     if (!Game.refreshRateHigher60 || Game.elapsed > Game.fpsInterval) {
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        ctx?.clearRect(0, 0, canvasWidth, canvasHeight);
         Camera.begin();
         tileMapHandler.displayLevel();
         if (tileMapHandler.currentLevel === 0) {
@@ -7971,12 +8636,12 @@ function loading() {
     })
     if (loadedAssets === SoundHandler.sounds.length) {
         Game.startAnimating(60);
-        console.log("loading -> loadedAssets == SoundHandler.sounds.length");
-        console.log(undefined);
-        undefined ? Game.changeGameMode(true) : Game.executeGameMode();
+        
+        //undefined ? Game.changeGameMode(true) : Game.executeGameMode();
+        Game.executeGameMode();
     }
     else {
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        ctx?.clearRect(0, 0, canvasWidth, canvasHeight);
         Display.displayLoadingScreen(loadedAssets, SoundHandler.sounds.length);
         window.requestAnimationFrame(loading);
     }

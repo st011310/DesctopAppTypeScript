@@ -1114,7 +1114,7 @@ class WorldDataHandler {
                     levelObjects.push(new Canon(x, y, this.tileSize, ObjectTypes.CANON, this, extraAttributes));
                     break;
                 case ObjectTypes.FIXED_SPEED_RIGHT:
-                    levelObjects.push(new FixedSpeedRight(x, y, this.tileSize, ObjectTypes.FIXED_SPEED_RIGHT, this, extraAttributes));
+                    //levelObjects.push(new FixedSpeedRight(x, y, this.tileSize, ObjectTypes.FIXED_SPEED_RIGHT, this, extraAttributes));
                     break;
                 case ObjectTypes.TOGGLE_MINE:
                     levelObjects.push(new ToggleMine(x, y, this.tileSize, ObjectTypes.TOGGLE_MINE, this, extraAttributes));
@@ -3509,7 +3509,8 @@ class PlayMode {
     }
 
     draw() {
-        if (this.collidedFirstTime && !Collision.objectsColliding(this.player, this) && !(this.currentPauseFrame < this.totalPauseFrames)) {
+        var tmp = !this.currentPauseFrame? 1:0;
+        if (this.collidedFirstTime && !Collision.objectsColliding(this.player, this) && tmp < this.totalPauseFrames) {
             this.currentPauseFrame++;
         }
         if (this.currentPauseFrame >= this.totalPauseFrames && !this.deadly) {
@@ -4033,13 +4034,7 @@ class PlayMode {
         else {
             super.draw(spriteCanvas);
         }
-    }/*
-    drawWidth(spriteCanvas: any, canvasXSpritePos: number | undefined, canvasYSpritePos: number | undefined, tileSize: any, tileSize1: any, arg5: number, arg6: number, drawWidth: any, drawHeight: any, arg9: number) {
-        throw new Error("Method not implemented.");
     }
-    drawHeight(spriteCanvas: any, canvasXSpritePos: number | undefined, canvasYSpritePos: number | undefined, tileSize: any, tileSize1: any, arg5: number, arg6: number, drawWidth: any, drawHeight: any, arg9: number) {
-        throw new Error("Method not implemented.");
-    }*/
 } class Collectible extends InteractiveLevelObject {
     public tileMapHandler: TileMapHandler;
     public touched: boolean;
@@ -6908,12 +6903,7 @@ class PlayMode {
             [this.effectTypes.SFXLayer]: (attributesObject: any) => { return this.parseSFXLayerValues(attributesObject) },
             [this.effectTypes.Flashlight]: (attributesObject: any) => { return this.parseFlashlightValues(attributesObject) },
             [this.effectTypes.Noise]: (attributesObject: any) => { return this.parseNoiseValues(attributesObject) },
-        };/*
-        this.htmlTemplateObject = {
-            [this.effectTypes.SFXLayer]: (effectsObject) => { return EffectHtmlRenderer.createSFXLayerTemplate(effectsObject) },
-            [this.effectTypes.Flashlight]: (effectsObject) => { return EffectHtmlRenderer.createFlashlightTemplate(effectsObject) },
-            [this.effectTypes.Noise]: (effectsObject) => { return EffectHtmlRenderer.createNoiseTemplate(effectsObject) },
-        }*/
+        };
         this.noiseFlickerIntensities = {
             1: 32,
             2: 16,
@@ -6971,40 +6961,6 @@ class PlayMode {
             flickerIntensity: 3,
         }
     }
-    /*
-    static changeTemplate() {
-        var templateHandler = document.getElementById("templateHandler");
-        if(templateHandler == null) return;
-        const value = (<HTMLInputElement>templateHandler).value;
-        const templateArea = document.getElementById("sfxTemplateSummary");
-        if(templateArea == null) return;
-        const attributesAccordion = document.getElementById("attributesAccordion");
-        if(attributesAccordion == null) return;
-
-        if (value in this.defaultAttributeObjects) {
-            attributesAccordion.style.display = "block";
-            templateArea.innerHTML = EffectHtmlRenderer.chooseSfxAttributesTemplate(this.defaultAttributeObjects[value]());
-        }
-        else {
-            attributesAccordion.style.display = "none";
-        }
-    }*/
-    /*
-    static removeLayer(index) {
-        WorldDataHandler.effects?.splice(index, 1);
-        tileMapHandler.effects = this.getCurrentLevelEffects(tileMapHandler.currentLevel);
-        this.updateExistingSFXSection();
-    }*/
-    /*
-    static updateExistingSFXSection() {
-        let sfxSectionHtml = "";
-        WorldDataHandler.effects?.forEach((effect, index) => {
-            let effectName = effect.type === this.effectTypes.SFXLayer ? "Particles" : effect.type;
-            sfxSectionHtml += EffectHtmlRenderer.createExistingEffectsSection(effectName, index);
-        });
-        if(this.existingEffectsEl) this.existingEffectsEl.innerHTML = sfxSectionHtml;
-    }*/
-
     static parseBasicEffectValues(type: any) {
         let attributesObject = { type: type, activeLevels: [] as any[] };
         WorldDataHandler.levels.forEach((_: any, index: string) => {
@@ -7040,22 +6996,6 @@ class PlayMode {
         attributesObject.flickerIntensity = parseFloat((<HTMLInputElement>document.getElementById("noiseFlickerIntensity")).value) || 8;
         return attributesObject;
     }
-    /*
-    static addEffect(event, index) {
-        event.preventDefault();
-        const value = (<HTMLInputElement>document.getElementById("templateHandler")).value;
-        let attributesObject = this.parseBasicEffectValues(value);
-        if (value in this.parsersObject) {
-            attributesObject = this.parsersObject[value](attributesObject);
-        }
-        index !== null ? WorldDataHandler.effects[index] = attributesObject : WorldDataHandler.effects.push(attributesObject);
-        tileMapHandler.effects = this.getCurrentLevelEffects(tileMapHandler.currentLevel);
-        this.removeEffectTemplate();
-        this.updateExistingSFXSection();
-        this.existingEffectsEl.style.display = "block";
-        this.changeInitialColorModalVisibility();
-    }
-    */
     static getSFXSpeed(speedId: string) {
         return {
             speedFrom: parseFloat((<HTMLInputElement>document.getElementById(speedId + "From")).value) || 0,
@@ -7063,35 +7003,6 @@ class PlayMode {
             style: "fromNegativeToPositive"
         }
     }
-    /*
-    static cancelEffect() {
-        this.removeEffectTemplate();
-        if(this.existingEffectsEl) this.existingEffectsEl.style.display = "block";
-        this.changeInitialColorModalVisibility();
-    }*/
-    /*
-    static changeInitialColorModalVisibility(display = "block") {
-        document.getElementById('worldColorsSubmitButton').style.display = display;
-        document.getElementById('worldColorModalColorSection').style.display = display;
-    }*/
-    /*
-    static removeEffectTemplate() {
-        this.editingEffects.innerHTML = "";
-        this.addEffectButton.style.display = "block";
-    }*/
-    /*
-    static addEffectTemplate(index = null) {
-        if(this.addEffectButton) this.addEffectButton.style.display = "none";
-        if(this.existingEffectsEl) this.existingEffectsEl.style.display = "none";
-        if(this.editingEffects) this.editingEffects.innerHTML = "";
-        const effectTemplate = EffectHtmlRenderer.createEffectTemplate(index);
-        this.changeInitialColorModalVisibility("none");
-        this.editingEffects.append(effectTemplate);
-
-        const effectType = index !== null ? WorldDataHandler.effects[index].type : this.effectTypes.SFXLayer;
-        const attributesAccordion = document.getElementById("attributesAccordion");
-        if(attributesAccordion) attributesAccordion.style.display = effectType in this.htmlTemplateObject ? "block" : "none";
-    }*/
 
     static getFlashlightColors(effect: { color: any; lighterColor: any; }, color: string) {
         effect.color = AnimationHelper.hexToRGB(color)

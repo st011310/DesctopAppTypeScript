@@ -7,6 +7,22 @@ window.onbeforeunload = function (e) {
     return 'Are you sure you want to close? Your progress will be lost.';
 };
 class Game {
+    static playMode: any;
+    static refreshRateCounter: any;
+    public PLAY_MODE: any;
+    static refreshRate: any;
+    static refreshRateHigher60: any;
+    static refreshRates: any;
+    static currentRetryToGetFps: any;
+    static maxRetriesToGetFps: any;
+    static averageFps: any;
+    static percentOfFpsHigher70: any;
+    public BUILD_MODE: any;
+    static fpsInterval: any;
+    static then: any;
+    static startTime: any;
+    static now: any;
+    static elapsed: any;
 
     static get PLAY_MODE() {
         return 'play';
@@ -33,17 +49,18 @@ class Game {
             window.requestAnimationFrame(play);
         }
         else if (this.playMode === this.BUILD_MODE) {
-            window.requestAnimationFrame(build);
+            console.log("Error");
+            //window.requestAnimationFrame(build);
         }
     }
 
-    static startAnimating(fps) {
+    static startAnimating(fps: any) {
         this.fpsInterval = 1000 / fps;
         this.then = 0;
         this.startTime = this.then;
     }
 
-    static updateFPSInterval(timestamp) {
+    static updateFPSInterval(timestamp: any) {
         this.now = timestamp;
         this.elapsed = this.now - this.then;
 
@@ -63,8 +80,8 @@ class Game {
                     this.refreshRate = null;
                 }
                 else {
-                    this.averageFps = this.refreshRates.reduce((partialSum, a) => partialSum + a, 0) / this.refreshRates.length;
-                    const refreshRateHigher70 = this.refreshRates.filter(refreshRate => refreshRate > 70);
+                    this.averageFps = this.refreshRates.reduce((partialSum: any, a: any) => partialSum + a, 0) / this.refreshRates.length;
+                    const refreshRateHigher70 = this.refreshRates.filter((refreshRate: any) => refreshRate > 70);
                     if (refreshRateHigher70.length > 0) {
                         this.percentOfFpsHigher70 = refreshRateHigher70.length / this.refreshRates.length * 100;
                         this.percentOfFpsHigher70 > 80 ? this.refreshRateHigher60 = true : this.refreshRateHigher60 = false;
@@ -80,43 +97,46 @@ class Game {
     static resetFpsInterval() {
         this.then = this.now - (this.elapsed % this.fpsInterval);
     }
-
+    /*
     static changeGameMode(firstTime = false) {
         const canvas = document.getElementById("myCanvas");
 
-        console.log("changeGameMode");
         if (this.playMode === this.PLAY_MODE) {
             this.playMode = this.BUILD_MODE;
             this.executeGameMode();
-            canvas.addEventListener("mousemove", (e) => { Controller.mouseMove(e) });
+            canvas?.addEventListener("mousemove", (e) => { Controller.mouseMove(e) });
             ObjectsTooltipElementsRenderer.renderPlayButton(firstTime);
             LevelSizeHandler.toggleSliderDisableAttr(false);
             tileMapHandler?.resetDynamicObjects();
             return null;
         }
         if (this.playMode === this.BUILD_MODE) {
-            /*Camera.viewport.width = Camera.viewport.width / 2;
-            Camera.viewport.height = Camera.viewport.height / 2;
-            Camera.viewport.halfWidth = Camera.viewport.halfWidth / 2;
-            Camera.viewport.halfHeight = Camera.viewport.halfHeight / 2;*/
+            //Camera.viewport.width = Camera.viewport.width / 2;
+            //Camera.viewport.height = Camera.viewport.height / 2;
+            //Camera.viewport.halfWidth = Camera.viewport.halfWidth / 2;
+            //Camera.viewport.halfHeight = Camera.viewport.halfHeight / 2;
             this.playMode = this.PLAY_MODE;
             this.executeGameMode();
-            canvas.removeEventListener("mousemove", (e) => { Controller.mouseMove(e) });
+            canvas?.removeEventListener("mousemove", (e) => { Controller.mouseMove(e) });
             ObjectsTooltipElementsRenderer.renderPauseButton(firstTime);
             LevelSizeHandler.toggleSliderDisableAttr(true);
             return null;
         }
-    }
+    }*/
 } class Display {
+    static ctx: any;
+    static canvasWidth: any;
+    static canvasHeight: any;
+    public tileSize: any;
 
-    static staticConstructor(canvas, canvasWidth, canvasHeight) {
+    static staticConstructor(canvas: CanvasRenderingContext2D, canvasWidth: any, canvasHeight: any) {
         this.ctx = canvas;
         //this.ctx.imageSmoothingEnabled = false;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
     }
 
-    static drawLine(x, y, endX, endY, color = "000000", strokeWidth = 1, ctx = this.ctx) {
+    static drawLine(x: any, y: any, endX: number, endY: number, color = "000000", strokeWidth = 1, ctx = this.ctx) {
         ctx.beginPath();
         ctx.moveTo(x, y);
         ctx.lineTo(endX, endY);
@@ -125,7 +145,7 @@ class Game {
         ctx.stroke();
     }
 
-    static drawRectangle(x, y, width, height, color = "000000", ctx = this.ctx) {
+    static drawRectangle(x: number, y: number, width: number, height: number, color = "000000", ctx = this.ctx) {
         ctx.beginPath();
         ctx.rect(Math.round(x), Math.round(y), width, height);
         ctx.fillStyle = "#" + color;
@@ -133,13 +153,13 @@ class Game {
         ctx.closePath();
     }
 
-    static drawRectangleWithAlpha(x, y, width, height, color = "000000", ctx = this.ctx, alpha = 0) {
+    static drawRectangleWithAlpha(x: any, y: any, width: any, height: any, color = "000000", ctx = this.ctx, alpha = 0) {
         this.ctx.globalAlpha = alpha;
         this.drawRectangle(x, y, width, height, color, ctx);
         this.ctx.globalAlpha = 1;
     }
 
-    static drawRectangleBorder(x, y, width, height, color = "000000", lineWidth = 1, ctx = this.ctx) {
+    static drawRectangleBorder(x: number, y: number, width: number, height: number, color = "000000", lineWidth = 1, ctx = this.ctx) {
         ctx.beginPath();
         ctx.rect(Math.round(x), Math.round(y), width, height);
         ctx.lineWidth = lineWidth;
@@ -148,7 +168,7 @@ class Game {
         ctx.closePath();
     }
 
-    static drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh) {
+    static drawImage(img: any, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number) {
         this.ctx.drawImage(
             img,
             Math.round(sx),
@@ -161,7 +181,7 @@ class Game {
             dh);
     }
 
-    static drawImageWithRotation(img, sx, sy, sw, sh, dx, dy, dw, dh, radians = 0) {
+    static drawImageWithRotation(img: any, sx: number, sy: number, sw: number, sh: number, dx: number, dy: number, dw: number, dh: number, radians = 0) {
         if (radians === 0) {
             this.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
         }
@@ -185,13 +205,13 @@ class Game {
         }
     }
 
-    static drawImageWithAlpha(img, sx, sy, sw, sh, dx, dy, dw, dh, alpha) {
+    static drawImageWithAlpha(img: HTMLCanvasElement | null, sx: number, sy: number, sw: any, sh: any, dx: number, dy: number, dw: any, dh: any, alpha: number) {
         this.ctx.globalAlpha = alpha;
         this.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
         this.ctx.globalAlpha = 1;
     }
 
-    static drawPixelArray(pixelArray, x, y, pixelArrayUnitSize, pixelArrayUnitAmount, ctx = this.ctx) {
+    static drawPixelArray(pixelArray: any[][], x: number, y: number, pixelArrayUnitSize: number, pixelArrayUnitAmount: number, ctx = this.ctx) {
         if (pixelArray) {
             for (var pixelArrayPosY = 0; pixelArrayPosY < pixelArrayUnitAmount; pixelArrayPosY++) {
                 for (var pixelArrayPosX = 0; pixelArrayPosX < pixelArrayUnitAmount; pixelArrayPosX++) {
@@ -204,7 +224,7 @@ class Game {
         }
     }
 
-    static drawGrid(width, height, distance, color = '383838', strokeWidth = 1, ctx = this.ctx) {
+    static drawGrid(width: number, height: number, distance: number, color = '383838', strokeWidth = 1, ctx = this.ctx) {
         for (var i = 0; i < width; i++) {
             this.drawLine(i * distance, 0, i * distance, height * distance, color, strokeWidth, ctx);
         }
@@ -213,7 +233,7 @@ class Game {
         }
     }
 
-    static displayLoadingScreen(loadedAssets, soundsLength) {
+    static displayLoadingScreen(loadedAssets: number, soundsLength: number) {
         const loadingBarWidth = this.canvasWidth / 3;
         const loadingBarHeight = 20;
         const leftPos = this.canvasWidth / 2 - loadingBarWidth / 2;
@@ -226,7 +246,7 @@ class Game {
             progressWidth, loadingBarHeight - progressPadding * 2, WorldDataHandler.textColor);
     }
 
-    static displayStartScreen(currentGeneralFrame, maxFrames) {
+    static displayStartScreen(currentGeneralFrame: number, maxFrames: number) {
         PlayMode.updateGeneralFrameCounter();
         const textColor = "#" + WorldDataHandler.textColor;
         this.displayText(WorldDataHandler.gamesName, this.canvasWidth / 2, this.canvasHeight / 2, 30, textColor);
@@ -237,18 +257,18 @@ class Game {
         }
     }
 
-    static measureText(text) {
+    static measureText(text: string) {
         const measurements = this.ctx.measureText(text);
         return { width: measurements.width, height: measurements.height };
     }
 
-    static displayEndingScreen(spriteCanvas, currentGeneralFrame, maxFrames) {
+    static displayEndingScreen(spriteCanvas: HTMLElement | null, currentGeneralFrame: number, maxFrames: number) {
         PlayMode.updateGeneralFrameCounter();
         let totalCollectibles = 0;
         let collectedCollectibles = 0;
 
-        WorldDataHandler.levels.forEach(level => {
-            level.levelObjects.forEach(levelObject => {
+        WorldDataHandler.levels.forEach((level: { levelObjects: any[]; }) => {
+            level.levelObjects.forEach((levelObject: { type: string; extraAttributes: { collected: any; }; }) => {
                 if (levelObject.type === ObjectTypes.COLLECTIBLE) {
                     totalCollectibles++;
                     if (levelObject.extraAttributes.collected) {
@@ -270,7 +290,8 @@ class Game {
         this.displayText(`Deaths: ${deathCounter}`, this.canvasWidth / 2, this.canvasHeight / 2 + 34 - extraPadding, 18, textColor);
         if (collectiblesExist) {
             const spriteIndex = SpritePixelArrays.getIndexOfSprite(ObjectTypes.COLLECTIBLE);
-            const { tileSize } = WorldDataHandler;
+            var { tileSize } = WorldDataHandler;
+            if (tileSize == undefined) tileSize = NaN;
             const canvasYSpritePos = spriteIndex * tileSize;
             const collectibleCollectedTextLength = this.ctx.measureText(collectibleCollectedText).width;
             Display.drawImage(spriteCanvas, 0, canvasYSpritePos, tileSize, tileSize,
@@ -290,32 +311,37 @@ class Game {
         PauseHandler.handleRestart();
     }
 
-    static displayText(text = "", xPos, yPos, size = 30, color = "white", alignPos = "center") {
+    static displayText(text = "", xPos: number, yPos: number, size = 30, color = "white", alignPos = "center") {
         this.ctx.font = size + "px DotGothic16";
         this.ctx.fillStyle = color;
         this.ctx.textAlign = alignPos;
         this.ctx.fillText(text, xPos, yPos);
     }
 
-    static animateFade(currentFrame, totalFrames) {
+    static animateFade(currentFrame: number, totalFrames: number) {
         const percent = currentFrame / totalFrames * 100;
         const parcelAmount = 10;
         const parcelHeight = this.canvasHeight / parcelAmount;
         const widthParcelAmount = Math.ceil(this.canvasWidth / parcelHeight);
-
-        for (var i = 0; i <= widthParcelAmount; i++) {
-            for (var j = 0; j <= parcelAmount; j++) {
-                const relativeWidth = parcelHeight / 100 * percent + 1;
-                this.drawRectangle(i * parcelHeight + ((parcelHeight - relativeWidth) / 2) + Camera.viewport.left,
-                    j * parcelHeight + ((parcelHeight - relativeWidth) / 2) + Camera.viewport.top,
-                    relativeWidth,
-                    relativeWidth);
+        if (Camera.viewport != undefined) {
+            for (var i = 0; i <= widthParcelAmount; i++) {
+                for (var j = 0; j <= parcelAmount; j++) {
+                    const relativeWidth = parcelHeight / 100 * percent + 1;
+                    this.drawRectangle(i * parcelHeight + ((parcelHeight - relativeWidth) / 2) + Camera.viewport.left,
+                        j * parcelHeight + ((parcelHeight - relativeWidth) / 2) + Camera.viewport.top,
+                        relativeWidth,
+                        relativeWidth);
+                }
             }
         }
     }
 } class Camera {
+    static follow: any;
+    static context: any;
+    static viewport: any;
+    static canvasWidth: any;
 
-    static staticConstructor(context, canvasWidth, canvasHeight, worldWidth, worldHeight) {
+    static staticConstructor(context: CanvasRenderingContext2D | null, canvasWidth: number, canvasHeight: number, worldWidth: number, worldHeight: number) {
         this.follow = { x: 0, y: 0 };
         this.context = context;
         this.viewport = {
@@ -355,12 +381,12 @@ class Game {
         this.viewport.top = this.follow.y - this.viewport.halfHeight;
     }
 
-    static zoomTo(z) {
+    static zoomTo(z: any) {
         this.canvasWidth = z;
         this.updateViewport();
     }
 
-    static followObject(x, y) {
+    static followObject(x: any, y: any) {
         let newFollowX;
         let newFollowY;
         let positionChanged = false;
@@ -381,7 +407,7 @@ class Game {
         }
     }
 
-    static outOfBoundsXCorrection(x) {
+    static outOfBoundsXCorrection(x: number) {
         if (x <= this.viewport.halfWidth) {
             return Math.round(this.viewport.halfWidth);
         }
@@ -393,7 +419,7 @@ class Game {
         }
     }
 
-    static outOfBoundsYCorrection(y) {
+    static outOfBoundsYCorrection(y: number) {
         if (y <= this.viewport.halfHeight) {
             return Math.round(this.viewport.halfHeight);
         }
@@ -405,20 +431,34 @@ class Game {
         }
     }
 
-    static moveTo(x, y) {
+    static moveTo(x: number, y: number) {
         this.follow.x = this.outOfBoundsXCorrection(x);
         this.follow.y = this.outOfBoundsYCorrection(y);
         this.updateViewport();
     }
 
-    static screenToWorld(x, y) {
+    static screenToWorld(x: number, y: number) {
         return { x: x - this.viewport.left, y: y - this.viewport.top };
     }
 
-    static worldToScreen(x, y) {
+    static worldToScreen(x: any, y: any) {
         return { x: x + this.viewport.left, y: y + this.viewport.top };
     }
 } class AnimationHelper {
+    static walkingFrameDuration: number;
+    static defaultFrameDuration: number;
+    static facingDirections: any;
+    static switchableBlockColors: any;
+    static alignments: {
+        vertical: "vertical",
+        horizontal: "horizontal",
+        corner: "corner"
+    };
+    static pathVariants: any;
+    static possibleDirections: {
+        forwards: "forwards",
+        backwards: "backwards"
+    };
 
     static staticConstructor() {
         this.walkingFrameDuration = 7;
@@ -449,7 +489,7 @@ class Game {
         }
     }
 
-    static lightenDarkenColor(col, amt) {
+    static lightenDarkenColor(col: string, amt: number) {
         var usePound = false;
         if (col[0] == "#") {
             col = col.slice(1);
@@ -473,16 +513,18 @@ class Game {
         return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
     }
 
-    static hexToRGB(hex) {
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec("#" + hex);
-        return result = {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        };
+    static hexToRGB(hex: string): any {
+        var result: any = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec("#" + hex);
+        if (result != null) {
+            return result = {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            };
+        }
     }
 
-    static setSquishValues(obj, squishWidth, squishHeight, squishFrames = 10, direction = this.facingDirections.bottom) {
+    static setSquishValues(obj: any, squishWidth: number, squishHeight: number, squishFrames = 10, direction = this.facingDirections.bottom) {
         const squishAble = obj.type === "player" ? obj?.spriteObject?.squishAble
             : obj?.spriteObject?.[0]?.squishAble;
         if (squishAble) {
@@ -500,7 +542,7 @@ class Game {
         }
     }
 
-    static checkSquishUpdate(obj) {
+    static checkSquishUpdate(obj: any) {
         if (obj.drawWidth !== obj.squishWidth) {
             obj.squishXOffset = (obj.drawWidth - obj.originalDrawWidth) / 2;
             obj.drawWidth += obj.squishWidthStep;
@@ -520,7 +562,7 @@ class Game {
         }
     }
 
-    static setInitialSquishValues(obj) {
+    static setInitialSquishValues(obj: any) {
         obj.drawWidth = obj.tileSize;
         obj.drawHeight = obj.tileSize;
         obj.squishWidth = obj.tileSize;
@@ -533,13 +575,15 @@ class Game {
         obj.squishYOffset = 0;
     }
 } class CustomSpriteHandler {
+    static customSpriteSelector: any;
+    static indexToDelete: any;
 
     static staticConstructor() {
         this.customSpriteSelector = document.getElementById('customSpriteSelector');
         this.indexToDelete = 0;
     }
 
-    static addOptionToSelect(value, text) {
+    static addOptionToSelect(value: string, text: string) {
         let opt = document.createElement("option");
         opt.value = value;
         opt.innerHTML = text;
@@ -556,46 +600,43 @@ class Game {
         this.addOptionToSelect(SpritePixelArrays.RED_BLOCK.name, SpritePixelArrays.RED_BLOCK.descriptiveName);
         this.addOptionToSelect(SpritePixelArrays.BLUE_BLOCK.name, SpritePixelArrays.BLUE_BLOCK.descriptiveName);
         const notCopyableSprites = [ObjectTypes.FINISH_FLAG_CLOSED, ObjectTypes.PORTAL2, ObjectTypes.PORTAL, ObjectTypes.PATH_POINT, ObjectTypes.COLLECTIBLE];
-        const copyableObjects = SpritePixelArrays.allSprites.filter(sprite =>
+        const copyableObjects = SpritePixelArrays.allSprites.filter((sprite: { type: string; name: string; custom: any; }) =>
             sprite.type === SpritePixelArrays.SPRITE_TYPES.object && !notCopyableSprites.includes(sprite.name)
             && !sprite.custom)
-        copyableObjects.forEach(copyableObject => {
+        copyableObjects.forEach((copyableObject: { name: any; descriptiveName: any; }) => {
             this.addOptionToSelect(copyableObject.name, copyableObject.descriptiveName);
         })
         this.addOptionToSelect("deco", "Deco");
     }
-
+    /*
     static initializeModal() {
         ModalHandler.showModal('customSpriteModal');
         this.populateSpriteSelectBox();
     }
-
-    static getClonedObjectSprite(customSpriteName) {
+    */
+    static getClonedObjectSprite(customSpriteName: any) {
         const spriteObject = SpritePixelArrays.getSpritesByName(customSpriteName)[0];
-        const countExistingCustomSpritesOfThisType = SpritePixelArrays.getCustomSprites()?.filter(customSprite =>
+        const countExistingCustomSpritesOfThisType = SpritePixelArrays.getCustomSprites()?.filter((customSprite: { name: any; }) =>
             customSprite.name === customSpriteName)?.length;
         const clonedSprite = JSON.parse(JSON.stringify(spriteObject));
         clonedSprite.custom = true;
         clonedSprite.descriptiveName = `${spriteObject.descriptiveName} ${countExistingCustomSpritesOfThisType + 2}`;
         return clonedSprite;
     }
-
+    /*
     static showDeleteModal(index) {
         this.indexToDelete = index;
         ModalHandler.showModal('deleteCustomSpriteConfirmation')
-    }
-
+    }*/
+    /*
     static deleteSpriteConfirmed() {
         this.removeCustomSprite(this.indexToDelete);
         ModalHandler.closeModal('deleteCustomSpriteConfirmation')
-    }
+    }*/
 
     static getClonedDecoSprite() {
-        const allDecoNumbers = SpritePixelArrays.getSpritesByType(SpritePixelArrays.SPRITE_TYPES.deko).map(deco => {
+        const allDecoNumbers = SpritePixelArrays.getSpritesByType(SpritePixelArrays.SPRITE_TYPES.deko).map((deco: { descriptiveName: string; }) => {
             var r = /\d+/;
-            var m = deco.descriptiveName.match(r);
-            console.log("r = " + r);
-            console.log("m = " + m);
             return deco.descriptiveName.match(r);
         })
         const clonedSprite = JSON.parse(JSON.stringify(SpritePixelArrays.DEKO_SPRITE));
@@ -607,7 +648,7 @@ class Game {
     static getClonedTileSprite() {
         const clonedSprite = JSON.parse(JSON.stringify(SpritePixelArrays.TILE_1));
         clonedSprite.custom = true;
-        const customTiles = SpritePixelArrays.getSpritesByType(SpritePixelArrays.SPRITE_TYPES.tile).filter(tile =>
+        const customTiles = SpritePixelArrays.getSpritesByType(SpritePixelArrays.SPRITE_TYPES.tile).filter((tile: { custom: any; descriptiveName: string | string[]; }) =>
             tile.custom && tile.descriptiveName.includes("Custom tile"));
         const newTileValue = customTiles.length + 1;
         const highestGenericTileValue = 17;
@@ -616,7 +657,7 @@ class Game {
         clonedSprite.descriptiveName = `Custom tile ${newTileValue}`;
         return clonedSprite;
     }
-
+    /*
     static spriteAddedOrDeleted() {
         tileMapHandler.setTileTypes();
         spriteSheetCreator.createSpriteSheet();
@@ -624,9 +665,9 @@ class Game {
         TabNavigation.drawSpritesByType();
         DrawSectionHandler.removeOptions();
         DrawSectionHandler.fillSelectBox();
-    }
+    }*/
 
-    static removeTile(levelHeight, levelWidth, tileMap, spriteName) {
+    static removeTile(levelHeight: number, levelWidth: number, tileMap: any, spriteName: any) {
         for (var tilePosY = 0; tilePosY < levelHeight; tilePosY++) {
             for (var tilePosX = 0; tilePosX < levelWidth; tilePosX++) {
                 if (tileMap[tilePosY][tilePosX] === spriteName) {
@@ -636,7 +677,7 @@ class Game {
         }
     }
 
-    static removeByDescriptiveName(dataArray, spriteName) {
+    static removeByDescriptiveName(dataArray: any[], spriteName: any) {
         for (var i = dataArray.length - 1; i >= 0; i--) {
             if (dataArray[i].spriteObject[0].descriptiveName === spriteName) {
                 dataArray.splice(i, 1);
@@ -645,16 +686,16 @@ class Game {
     }
 
     static resetYIndexOfLevelObjects() {
-        tileMapHandler.levelObjects.forEach(levelObject => {
-            if (levelObject?.customName) {
+        tileMapHandler.levelObjects?.forEach((levelObject: { customName: any; canvasYSpritePos: number; }) => {
+            if (levelObject?.customName && WorldDataHandler.tileSize != undefined) {
                 levelObject.canvasYSpritePos = SpritePixelArrays.getIndexOfSprite(levelObject.customName, 0, "descriptiveName") *
                     WorldDataHandler.tileSize;
             }
         })
     }
 
-    static resetYIndexOfDekoSprites(decoIndex) {
-        WorldDataHandler.levels.forEach(level => {
+    static resetYIndexOfDekoSprites(decoIndex: number) {
+        WorldDataHandler.levels.forEach((level: { deko: string | any[]; }) => {
             for (var i = level.deko.length - 1; i >= 0; i--) {
                 if (level.deko[i].index > decoIndex) {
                     level.deko[i].index -= 1;
@@ -664,14 +705,14 @@ class Game {
         tileMapHandler.deko = tileMapHandler.createInitialDeko(WorldDataHandler.levels[tileMapHandler.currentLevel].deko);
     }
 
-    static removeSpritesFromWorldData(sprite) {
-        if (isNaN(sprite?.name)) {
+    static removeSpritesFromWorldData(sprite: { name: string; descriptiveName: { match: (arg0: RegExp) => number; }; }) {
+        if (!sprite?.name) {
             if (sprite.name === ObjectTypes.DEKO) {
                 //deko
                 this.removeByDescriptiveName(tileMapHandler.deko, sprite.descriptiveName);
                 var r = /\d+/;
                 const decoIndex = sprite.descriptiveName.match(r) - 1;
-                WorldDataHandler.levels.forEach(level => {
+                WorldDataHandler.levels.forEach((level: { deko: any[]; }) => {
                     for (var i = level.deko.length - 1; i >= 0; i--) {
                         if (level.deko[i].index === decoIndex) {
                             level.deko.splice(i, 1);
@@ -681,36 +722,38 @@ class Game {
                 this.resetYIndexOfDekoSprites(decoIndex)
             }
             else {
-                //objects
-                for (var i = tileMapHandler.levelObjects.length - 1; i >= 0; i--) {
-                    if (tileMapHandler.levelObjects[i]?.customName === sprite.descriptiveName) {
-                        tileMapHandler.levelObjects.splice(i, 1);
-                    }
-                }
-                WorldDataHandler.levels.forEach(level => {
-                    for (var i = level.levelObjects.length - 1; i >= 0; i--) {
-                        if (level.levelObjects[i]?.extraAttributes?.customName === sprite.descriptiveName) {
-                            level.levelObjects.splice(i, 1);
+                if (tileMapHandler.levelObjects != undefined) {
+                    //objects
+                    for (var i = tileMapHandler.levelObjects.length - 1; i >= 0; i--) {
+                        if (tileMapHandler.levelObjects[i]?.customName === sprite.descriptiveName) {
+                            tileMapHandler.levelObjects.splice(i, 1);
                         }
                     }
-                })
-                this.resetYIndexOfLevelObjects();
+                    WorldDataHandler.levels.forEach((level: { levelObjects: any[]; }) => {
+                        for (var i = level.levelObjects.length - 1; i >= 0; i--) {
+                            if (level.levelObjects[i]?.extraAttributes?.customName === sprite.descriptiveName) {
+                                level.levelObjects.splice(i, 1);
+                            }
+                        }
+                    })
+                    this.resetYIndexOfLevelObjects();
+                }
             }
         }
         else {
             //tile
             this.removeTile(tileMapHandler.levelHeight, tileMapHandler.levelWidth, tileMapHandler.tileMap, sprite.name);
-            WorldDataHandler.levels.forEach(level => {
+            WorldDataHandler.levels.forEach((level: { tileData: string | any[]; }) => {
                 const levelHeight = level.tileData.length;
                 const levelWidth = level.tileData[0].length;
                 this.removeTile(levelHeight, levelWidth, level.tileData, sprite.name);
             })
         }
     }
-
+    /*
     static removeCustomSprite(index) {
         const spriteToRemove = TabNavigation.selectableSprites[index];
-        SpritePixelArrays.allSprites = SpritePixelArrays.allSprites.filter(obj =>
+        SpritePixelArrays.allSprites = SpritePixelArrays.allSprites?.filter(obj =>
             obj.descriptiveName !== spriteToRemove.descriptiveName
         );
         this.removeSpritesFromWorldData(spriteToRemove);
@@ -718,10 +761,10 @@ class Game {
         TabNavigation.selectableSprites.splice(index, 1);
         this.spriteAddedOrDeleted();
         if (DrawSectionHandler?.currentSprite?.sprite.descriptiveName === spriteToRemove.descriptiveName) {
-            DrawSectionHandler.changeSelectedSprite({ target: { value: SpritePixelArrays.TILE_1.descriptiveName } });
+            DrawSectionHandler.changeSelectedSprite({ target: { value: SpritePixelArrays.TILE_1?.descriptiveName } });
         }
-    }
-
+    }*/
+    /*
     static addSprite(event) {
         event.preventDefault();
         const customSpriteName = event.target?.elements?.customSpriteSelector?.value;
@@ -737,70 +780,75 @@ class Game {
             clonedSprite = this.getClonedObjectSprite(customSpriteName);
         }
 
-        SpritePixelArrays.allSprites.push(clonedSprite);
+        SpritePixelArrays.allSprites?.push(clonedSprite);
         this.spriteAddedOrDeleted();
         const customSpritesAmount = TabNavigation.selectableSprites.length;
         TabNavigation.handleSelectedSprite(customSpritesAmount - 1, Math.floor((customSpritesAmount - 1) / 3));
         ModalHandler.closeModal('customSpriteModal');
-    }
-} class Collision {
+    }*/
+}
+class Collision {
+    static tileMapHandler: any;
 
-    static staticConstructor(tileMapHandler) {
+    static staticConstructor(tileMapHandler: TileMapHandler) {
         this.tileMapHandler = tileMapHandler;
     }
 
-    static objectsColliding(obj1, obj2) {
+    static objectsColliding(obj1: Player, obj2: any) {
         return obj1.x < obj2.x + obj2.width + obj2.hitBoxOffset &&
             obj1.x + obj1.width > obj2.x - obj2.hitBoxOffset &&
             obj1.y < obj2.y + obj2.height + obj2.hitBoxOffset &&
             obj1.y + obj1.height > obj2.y - obj2.hitBoxOffset;
     }
 
-    static pointAndObjectColliding(point, obj) {
+    static pointAndObjectColliding(point: { x: any; y: any; }, obj: any) {
         return point.x < obj.x + obj.width &&
             point.x > obj.x &&
             point.y < obj.y + obj.height &&
             point.y > obj.y;
     }
-} class CharacterCollision {
+}
+class CharacterCollision {
+    static tileMapHandler: any;
+    static passableTiles: any;
 
-    static staticConstructor(tileMapHandler) {
+    static staticConstructor(tileMapHandler: TileMapHandler) {
         this.tileMapHandler = tileMapHandler;
         this.passableTiles = [0, 5];
     }
 
-    static checkHazardsCollision(obj) {
-        this.tileMapHandler.levelObjects.forEach(levelObject => {
+    static checkHazardsCollision(obj: any) {
+        this.tileMapHandler.levelObjects.forEach((levelObject: { collisionEvent: () => void; }) => {
             if (Collision.objectsColliding(obj, levelObject)) {
                 levelObject.collisionEvent();
             }
         });
     }
 
-    static checkCollisionsWithWorld(obj, cornerCorrection = false) {
+    static checkCollisionsWithWorld(obj: any, cornerCorrection = false) {
         this.checkHazardsCollision(obj);
         this.groundUnderFeet(obj);
         this.checkTileCollisions(obj, cornerCorrection);
     }
 
-    static checkPointCollissionsWithAllObjects(positions, obj) {
-        return this.tileMapHandler.levelObjects.find(levelObject => {
+    static checkPointCollissionsWithAllObjects(positions: any[], obj: { unpassableObjects: string | any[]; key: any; }) {
+        return this.tileMapHandler.levelObjects.find((levelObject: { type: any; key: any; }) => {
             if (obj.unpassableObjects.includes(levelObject.type) && levelObject.key !== obj.key) {
-                return positions.find(position => {
+                return positions.find((position: any) => {
                     return Collision.pointAndObjectColliding(position, levelObject);
                 });
             }
         });
     }
 
-    static checkMovementBasedObjectCollission(obj) {
+    static checkMovementBasedObjectCollission(obj: any) {
         if (obj?.unpassableObjects) {
             if (obj.yspeed > 0) {
                 const collidedWithObject = this.checkPointCollissionsWithAllObjects([obj.bottom_left_pos, obj.bottom_right_pos],
                     obj);
                 if (collidedWithObject) {
                     obj.y = collidedWithObject.y - (obj.height);
-                    obj.hitUnpassableObject(AnimationHelper.facingDirections.bottom, collidedWithObject);
+                    obj.hitUnpassableObject(AnimationHelper.facingDirections?.bottom, collidedWithObject);
                 }
             }
             else if (obj.yspeed < 0) {
@@ -808,7 +856,7 @@ class Game {
                     obj);
                 if (collidedWithObject) {
                     obj.y = collidedWithObject.y + (obj.height);
-                    obj.hitUnpassableObject(AnimationHelper.facingDirections.top, collidedWithObject);
+                    obj.hitUnpassableObject(AnimationHelper.facingDirections?.top, collidedWithObject);
                 }
             }
             if (obj.xspeed < 0) {
@@ -816,7 +864,7 @@ class Game {
                     obj);
                 if (collidedWithObject) {
                     obj.x = collidedWithObject.x + (obj.width);
-                    obj.hitUnpassableObject(AnimationHelper.facingDirections.left, collidedWithObject);
+                    obj.hitUnpassableObject(AnimationHelper.facingDirections?.left, collidedWithObject);
                 }
             }
             else if (obj.xspeed > 0) {
@@ -824,13 +872,13 @@ class Game {
                     obj);
                 if (collidedWithObject) {
                     obj.x = collidedWithObject.x - (obj.width);
-                    obj.hitUnpassableObject(AnimationHelper.facingDirections.right, collidedWithObject);
+                    obj.hitUnpassableObject(AnimationHelper.facingDirections?.right, collidedWithObject);
                 }
             }
         }
     }
 
-    static checkTileCollisions(obj, cornerCorrection = false) {
+    static checkTileCollisions(obj: any, cornerCorrection = false) {
         obj.y += obj.yspeed;
         this.getEdges(obj);
         // collision to the bottom
@@ -842,13 +890,13 @@ class Game {
                     obj.bottom_left !== 5
                 ) {
                     obj.y = obj.bottom * tileMapHandler.tileSize - (obj.height + 1);
-                    obj.hitWall(AnimationHelper.facingDirections.bottom);
+                    obj.hitWall(AnimationHelper.facingDirections?.bottom);
 
                 } else {
                     //cloud
                     if (obj.prev_bottom < obj.bottom) {
                         obj.y = obj.bottom * tileMapHandler.tileSize - (obj.height + 1);
-                        obj.hitWall(AnimationHelper.facingDirections.bottom);
+                        obj.hitWall(AnimationHelper.facingDirections?.bottom);
                     }
                 }
             }
@@ -869,7 +917,7 @@ class Game {
             if (!this.passableTiles.includes(obj.top_left)
                 || !this.passableTiles.includes(obj.bottom_left)) {
                 obj.x = (obj.left + 1) * tileMapHandler.tileSize;
-                obj.hitWall(AnimationHelper.facingDirections.left);
+                obj.hitWall(AnimationHelper.facingDirections?.left);
             }
         }
 
@@ -878,19 +926,19 @@ class Game {
             if (!this.passableTiles.includes(obj.top_right)
                 || !this.passableTiles.includes(obj.bottom_right)) {
                 obj.x = obj.right * tileMapHandler.tileSize - (obj.width + 1);
-                obj.hitWall(AnimationHelper.facingDirections.right);
+                obj.hitWall(AnimationHelper.facingDirections?.right);
             }
         }
 
         obj.prev_bottom = obj.bottom;
     }
 
-    static correctTopPosition(obj) {
+    static correctTopPosition(obj: any) {
         obj.y = obj.bottom * tileMapHandler.tileSize + 1;
-        obj.hitWall(AnimationHelper.facingDirections.top)
+        obj.hitWall(AnimationHelper.facingDirections?.top)
     }
 
-    static checkTopCornerCorrection(obj) {
+    static checkTopCornerCorrection(obj: { top_right_pos: { y: number; x: number; }; top_left_pos: { x: number; }; top_left: any; top_right: any; x: number; }) {
         const offset = Math.floor(this.tileMapHandler.tileSize / 4)
         const topY = obj.top_right_pos.y - Math.floor(this.tileMapHandler.tileSize / 2);
         const rightX = obj.top_right_pos.x - offset;
@@ -912,7 +960,7 @@ class Game {
         }
     }
 
-    static groundUnderFeet(obj) {
+    static groundUnderFeet(obj: { x: any; width: any; y: any; height: number; speed: any; swimming: any; air_acceleration: number; currentMaxSpeed: any; maxSpeed: number; friction: any; air_friction: any; jumpframes: number; maxJumpFrames: number; jumpPressedToTheMax: any; falling: boolean; yspeed: number; groundAcceleration: number; groundFriction: any; }) {
         const left_foot_x = this.tileMapHandler.getTileValueForPosition(obj.x);
         const right_foot_x = this.tileMapHandler.getTileValueForPosition(obj.x + obj.width);
         const foot_y = this.tileMapHandler.getTileValueForPosition(obj.y + (obj.height + 1));
@@ -947,7 +995,7 @@ class Game {
         }
     }
 
-    static getEdges(obj) {
+    static getEdges(obj: { hitBoxOffset: number; x: number; width: any; y: number; height: any; top_right_pos: { x: any; y: number; }; top_left_pos: { x: number; y: number; }; bottom_right_pos: { x: any; y: any; }; bottom_left_pos: { x: number; y: any; }; right: number; left: number; bottom: number; top: number; top_right: any; top_left: any; bottom_right: any; bottom_left: any; wallJumpChecked: any; checkWallJumpReady: () => any; }) {
         const hitBoxOffset = obj?.hitBoxOffset || 0;
         //Pixel values
         const rightX = obj.x + obj.width + hitBoxOffset;
@@ -969,9 +1017,18 @@ class Game {
         obj.bottom_left = tileMapHandler.getTileLayerValueByIndex(obj.bottom, obj.left);
         obj?.wallJumpChecked && obj.checkWallJumpReady();
     }
-} class WorldDataHandler {
+}
+class WorldDataHandler {
+    static initialPlayerPosition: any;
+    static levels: any;
+    static tileSize: number;
+    static gamesName: any;
+    static endingMessage: any;
+    static backgroundColor: any;
+    static textColor: any;
+    static effects: any;
 
-    static staticConstructor() {
+    static _staticConstructor() {
         this.initialPlayerPosition = { x: 2, y: 10 };
         this.levels = [this.createEmptyLevel(), this.exampleLevel(), this.createEmptyLevel()];
         this.tileSize = 24;
@@ -1041,8 +1098,32 @@ class Game {
         }
     }
 } class TileMapHandler {
+    public tileSize: number;
+    public pixelArrayUnitAmount: number;
+    public pixelArrayUnitSize: number;
+    public player: Player;
+    public effects: any;
+    public currentLevel: number;
+    public spriteCanvas: any;
+    public currentGeneralFrameCounter: any;
+    public generalFrameCounterMax: any;
+    public TILE_TYPES: any;
+    public tileMap: any;
+    public levelObjects: any;
+    public deko: any;
+    public paths: any;
+    public levelWidth: any;
+    public levelHeight: any;
+    public speed: any;
+    public stopFrames: any;
+    public movementDirection: any;
+    public pathVariant: any;
+    public type: any;
+    public x: any;
+    public y: any;
+    public index: any;
 
-    constructor(tileSize, startingLevel, spriteCanvas, player) {
+    constructor(tileSize: number, startingLevel: number, spriteCanvas: HTMLElement | null, player: Player) {
         this.setTileTypes();
         this.tileSize = tileSize;
         this.pixelArrayUnitAmount = 8;
@@ -1063,7 +1144,7 @@ class Game {
         });
     }
 
-    resetLevel(levelIndex) {
+    resetLevel(levelIndex: string | number) {
         SFXHandler.resetSfx();
         this.tileMap = WorldDataHandler.levels[levelIndex].tileData;
         this.updateLevelDimensions();
@@ -1077,10 +1158,10 @@ class Game {
         this.player.resetAll();
     }
 
-    setInitialPlayerAndCameraPos(levelIndex) {
+    setInitialPlayerAndCameraPos(levelIndex: string | number) {
         //This is a fallback, in case no flag was set in a level (start, ending, or if user forgot to set it)
         let initialPlayerValue = { x: 0, y: 0 };
-        WorldDataHandler.levels[levelIndex].levelObjects.forEach(levelObject => {
+        WorldDataHandler.levels[levelIndex].levelObjects.forEach((levelObject: { type: string; x: number; y: number; }) => {
             if (levelObject.type === ObjectTypes.START_FLAG) {
                 initialPlayerValue.x = levelObject.x * this.tileSize;
                 initialPlayerValue.y = levelObject.y * this.tileSize;
@@ -1102,13 +1183,13 @@ class Game {
         }
     }
 
-    createInitialPaths(initialPaths) {
-        var paths = [];
-        initialPaths && initialPaths.forEach(initialPath => {
+    createInitialPaths(initialPaths: any[]) {
+        var paths: Path[] = [];
+        initialPaths && initialPaths.forEach((initialPath: { pathPoints?: any; speed?: any; stopFrames?: any; movementDirection?: any; pathVariant?: any; }) => {
             const { speed, stopFrames, movementDirection, pathVariant } = initialPath;
             let newPath = new Path(this, speed, stopFrames, movementDirection);
             newPath.pathVariant = pathVariant;
-            newPath.pathPoints = initialPath.pathPoints.map(pathPoint =>
+            newPath.pathPoints = initialPath.pathPoints.map((pathPoint: { initialX: any; initialY: any; alignment: any; }) =>
                 new PathPoint(pathPoint.initialX, pathPoint.initialY, this.tileSize, pathPoint.alignment));
             newPath.checkObjectsOnPath();
             newPath.rearrangePathPoints();
@@ -1117,9 +1198,9 @@ class Game {
         return paths;
     }
 
-    createInitialObjects(initialObjects) {
-        var levelObjects = [];
-        initialObjects && initialObjects.forEach(initialObject => {
+    createInitialObjects(initialObjects: any[]) {
+        var levelObjects: any[] = [];
+        initialObjects && initialObjects.forEach((initialObject: { extraAttributes?: any; type: string; x: number; y: number; }) => {
             const { type, x, y } = initialObject;
 
             const extraAttributes = initialObject.extraAttributes ? initialObject.extraAttributes : {};
@@ -1173,18 +1254,16 @@ class Game {
                     levelObjects.push(new JumpReset(x,y,this.tileSize, ObjectTypes.JUMP_RESET, this, extraAttributes));
                     break;
                 default:
-                    levelObjects.push(new ObjectTypes.objectToClass[type](x,y, this.tileSize, type, this, extraAttributes));
-                    console.log(type);
+                    console.log("ERROR: " + type);
                     break;
             }
-            
         });
         return levelObjects;
     }
 
-    createInitialDeko(initialDekos) {
-        var dekos = [];
-        initialDekos && initialDekos.forEach(initialDeko => {
+    createInitialDeko(initialDekos: any[]) {
+        var dekos: Deko[] = [];
+        initialDekos && initialDekos.forEach((initialDeko: { x: any; y: any; index: any; }) => {
             const { x, y, index } = initialDeko;
             dekos.push(new Deko(x, y, this.tileSize, index));
         });
@@ -1216,7 +1295,7 @@ class Game {
         }
     }
 
-    displayObjects(arr) {
+    displayObjects(arr: string | any[]) {
         if (arr) {
             for (var i = arr.length - 1; i >= 0; i--) {
                 arr[i]?.draw(this.spriteCanvas);
@@ -1224,7 +1303,7 @@ class Game {
         }
     }
 
-    displayObjectsOrDeko(arr) {
+    displayObjectsOrDeko(arr: string | any[]) {
         if (arr) {
             for (var i = arr.length - 1; i >= 0; i--) {
                 arr[i].draw(this.spriteCanvas);
@@ -1239,7 +1318,7 @@ class Game {
                 return;
             }
         }
-        const [backgroundObjects, foregroundObjects] = TilemapHelpers.splitArrayIn2(this.levelObjects, (e) => SpritePixelArrays.backgroundSprites.includes(e.type));
+        const [backgroundObjects, foregroundObjects] = TilemapHelpers.splitArrayIn2(this.levelObjects, (e: { type: any; }) => SpritePixelArrays.backgroundSprites.includes(e.type));
         this.displayObjectsOrDeko(this.deko);
         isPlayMode && this.effects.length && EffectsRenderer.displayEffects();
         this.displayObjects(backgroundObjects);
@@ -1258,9 +1337,10 @@ class Game {
                 GameStatistics.stopTimer();
             }
             this.resetLevel(this.currentLevel);
+            /*
             if (typeof LevelNavigationHandler === 'function') {
                 LevelNavigationHandler.updateLevel();
-            }
+            }*/
         }
         else {
             console.log("error")
@@ -1278,12 +1358,12 @@ class Game {
                 this.levelObjects[i].resetObject();
             }
         }
-        this.paths.forEach(path => path.resetObjectsToInitialPosition());
+        this.paths.forEach((path: { resetObjectsToInitialPosition: () => any; }) => path.resetObjectsToInitialPosition());
         //Check here if tilemaphandler is missing objects from WorldDataHandler (if somethign was deleted)
     }
 
-    filterObjectsByTypes(types) {
-        return this.levelObjects.filter(levelObject => types.includes(levelObject.type));
+    filterObjectsByTypes(types: string | any[]) {
+        return this.levelObjects.filter((levelObject: { type: any; }) => types.includes(levelObject.type));
     }
 
     getLevelHeight() {
@@ -1294,15 +1374,15 @@ class Game {
         return this.tileMap[0].length;
     }
 
-    getTileValueForPosition(pos) {
+    getTileValueForPosition(pos: number) {
         return Math.floor(pos / this.tileSize);
     }
 
-    getTileLayerValueByIndex(y, x) {
+    getTileLayerValueByIndex(y: number, x: number) {
         return this.tileMap[y]?.[x];
     }
 
-    checkIfPositionAtTheEdge(tilePosX, tilePosY) {
+    checkIfPositionAtTheEdge(tilePosX: number, tilePosY: number) {
         return tilePosX === 0 || tilePosY === 0 || tilePosX === this.levelWidth - 1 || tilePosY === this.levelHeight - 1;
     }
 
@@ -1310,6 +1390,39 @@ class Game {
         return this.currentLevel === 0 || this.currentLevel === WorldDataHandler.levels.length - 1;
     }
 } class Controller {
+    static this_array: { [key: string]: boolean };
+    static down: any;
+    static left: any;
+    static right: any;
+    static up: any;
+    static jump: any;
+    static jumpReleased: any;
+    static confirm: any;
+    static ctrlPressed: any;
+    static alternativeActionButton: any;
+    static alternativeActionButtonReleased: any;
+    static enter: any;
+    static enterReleased: any;
+    static pause: any;
+    static pauseReleased: any;
+    static mouseX: any;
+    static mouseY: any;
+    static mouseXInDrawCanvas: any;
+    static mouseYInDrawCanvas: any;
+    static mousePressed: any;
+    static rightMousePressed: any;
+    static mouseInsideMainCanvas: any;
+    static mouseInsideDrawCanvas: any;
+    static xScroll: any;
+    static yScroll: any;
+    static gamepadIndex: any;
+    static mobileArrows: any;
+    static mobileControlsLeftPos: any;
+    static mobileControlsTopPos: any;
+    static mobileControlsWidth: any;
+    static mobileControlsHeight: any;
+    static mobileEnter: any;
+    static mobileEnterReleased: any;
 
     static staticConstructor() {
         this.down = false;
@@ -1358,7 +1471,7 @@ class Game {
         this.mobileControlsHeight = this.mobileArrows.height;
     }
 
-    static handleMobileArrowInput(e) {
+    static handleMobileArrowInput(e: { preventDefault: () => void; touches: { clientX: number; }[]; }) {
         e.preventDefault();
         if ((e.touches[0].clientX < this.mobileControlsLeftPos + (this.mobileControlsWidth / 2))
             || (e.touches[1] && e.touches[1].clientX < this.mobileControlsLeftPos + (this.mobileControlsWidth / 2))) {
@@ -1376,7 +1489,7 @@ class Game {
         }
     }
 
-    static handleMobileArrowTouchEnd(e) {
+    static handleMobileArrowTouchEnd(e: { preventDefault: () => void; }) {
         e.preventDefault();
         this.left = false;
         this.right = false;
@@ -1393,13 +1506,13 @@ class Game {
             window.addEventListener('orientationchange', () => {
                 this.getMobileControlsPositions();
             });
-            this.mobileArrows.addEventListener("touchstart", (e) => {
+            this.mobileArrows.addEventListener("touchstart", (e: any) => {
                 this.handleMobileArrowInput(e);
             });
-            this.mobileArrows.addEventListener("touchmove", (e) => {
+            this.mobileArrows.addEventListener("touchmove", (e: any) => {
                 this.handleMobileArrowInput(e);
             });
-            this.mobileArrows.addEventListener("touchend", (e) => {
+            this.mobileArrows.addEventListener("touchend", (e: any) => {
                 this.handleMobileArrowTouchEnd(e);
             });
 
@@ -1409,23 +1522,23 @@ class Game {
             { elementName: "alternativeMobileControls", variableNames: ["alternativeActionButton"] },
             ].forEach(control => {
                 const element = document.getElementById(control.elementName);
-                element.addEventListener("touchstart", (e) => {
+                element?.addEventListener("touchstart", (e) => {
                     e.preventDefault();
                     if (control.variableNames.includes("enter")) {
                         this.mobileEnter = true;
                     }
-                    control.variableNames.forEach(variable => this[variable] = true);
+                    control.variableNames.forEach((variable: string) => this.this_array[variable] = true);
                 });
-                element.addEventListener("touchend", (e) => {
+                element?.addEventListener("touchend", (e) => {
                     e.preventDefault();
                     if (control.variableNames.includes("enter")) {
-                        this.mobileEnterReleased = true;
+                        this.enterReleased = true;
                     }
-                    control.variableNames.forEach(variable => this[variable] = false);
+                    control.variableNames.forEach(variable => this.this_array[variable] = false);
                 });
-                element.addEventListener("touchcancel", (e) => {
+                element?.addEventListener("touchcancel", (e) => {
                     e.preventDefault();
-                    this[control.variableName] = false;
+                    this.this_array[control.variableNames.toString()] = false;
                 });
             });
         }
@@ -1455,7 +1568,7 @@ class Game {
         }
     }
 
-    static getControllerAxesCorrectedValue(value, DEADZONE) {
+    static getControllerAxesCorrectedValue(value: number, DEADZONE: number) {
         let v = value;
         if (Math.abs(v) < DEADZONE) {
             v = 0;
@@ -1471,7 +1584,7 @@ class Game {
        Checks key presses by code and sets the according variable to true or false.
        That way, the function can be reused for key-down and up
     */
-    static handleKeyPresses(pressed, e) {
+    static handleKeyPresses(pressed: boolean, e: { key: any; preventDefault: () => void; }) {
         const key = e.key;
         switch (key) {
             case "Enter": this.enter = pressed; break;
@@ -1488,11 +1601,11 @@ class Game {
         }
     }
 
-    static keyDown(e) {
+    static keyDown(e: KeyboardEvent) {
         this.handleKeyPresses(true, e)
     };
 
-    static keyUp(e) {
+    static keyUp(e: KeyboardEvent) {
         this.handleKeyPresses(false, e)
     }
 
@@ -1512,18 +1625,18 @@ class Game {
         this.mouseInsideDrawCanvas = true;
     }
 
-    static mouseMove(e) {
+    static mouseMove(e: { clientX: any; clientY: any; }) {
         const coordinatesWithoutTranslation = Camera.worldToScreen(e.clientX, e.clientY);
         this.mouseX = coordinatesWithoutTranslation.x - canvasOffsetLeft + this.xScroll;
         this.mouseY = coordinatesWithoutTranslation.y - canvasOffsetTop + this.yScroll;
     }
 
-    static mouseMoveDrawInCanvas(e) {
+    static mouseMoveDrawInCanvas(e: { clientX: any; clientY: any; }) {
         this.mouseXInDrawCanvas = e.clientX;
         this.mouseYInDrawCanvas = e.clientY;
     }
 
-    static mouseDown(evt) {
+    static mouseDown(evt: { which: any; }) {
         switch (evt.which) {
             case 1:
                 this.mousePressed = true;
@@ -1542,18 +1655,121 @@ class Game {
     }
 
     static onResize() {
-        canvasOffsetLeft = document.getElementById("myCanvas").offsetLeft;
-        canvasOffsetTop = document.getElementById("myCanvas").offsetTop;
+        var myCanvas = document.getElementById("myCanvas");
+        if (myCanvas != undefined) {
+            canvasOffsetLeft = myCanvas.offsetLeft;
+            canvasOffsetTop = myCanvas.offsetTop;
+        }
     }
-
+    /*
     static onScroll() {
         this.xScroll = window.scrollX;
         this.yScroll = window.scrollY;
         DrawSectionHandler.getBoundingRectPosition(0);
-    }
-} class Player {
+    }*/
+}
+class Player {
+    public this_array: { [key: string]: any } = {};
+    public tileSize: number;
+    public width: number;
+    public height: number;
+    public initialX: number;
+    public initialY: number;
+    public wallJumpDirection: any;
+    public dashDirection: any;
+    public maxJumpFrames: any;
+    public dashCooldown: any;
+    public maxDashFrames: any;
+    public coyoteDashFrames: any;
+    public currentCoyoteDashFrame: any;
+    public maxFallSpeed: any;
+    public coyoteJumpFrames: any;
+    public extraTrampolineJumpFrames: any;
+    public pushToSideWhileWallJumpingFrames: any;
+    public jumpSpeed: any;
+    public maxSpeed: any;
+    public groundFriction: any;
+    public air_friction: any;
+    public groundAcceleration: any;
+    public air_acceleration: any;
+    public gravity: any;
+    public wallJumpGravity: any;
+    public maxWaterFallSpeed: any;
+    public spriteCanvas: any;
+    public type: any;
+    public radians: any;
+    public maxSwimHeight: any;
+    public flapHeight: any;
+    public right: any;
+    public left: any;
+    public bottom: any;
+    public top: any;
+    public top_right_pos: any;
+    public top_left_pos: any;
+    public bottom_right_pos: any;
+    public bottom_left_pos: any;
+    public top_right: any;
+    public top_left: any;
+    public bottom_left: any;
+    public bottom_right: any;
+    public prev_bottom: any;
+    public wallJumpLeft: any;
+    public wallJumpRight: any;
+    public x: any;
+    public y: any;
+    public speed: any;
+    public xspeed: any;
+    public yspeed: any;
+    public wallJumpFrames: any;
+    public falling: any;
+    public jumping: any;
+    public jumpPressedToTheMax: any;
+    public wallJumping: any;
+    public dashing: any;
+    public forcedJumpSpeed: any;
+    public currentDashFrame: any;
+    public currentWallJumpCoyoteFrame: any;
+    public walljumpReady: any;
+    public swimming: any;
+    public friction: any;
+    public collidingWithNpcId: any;
+    public previousFrameSwimming: any;
+    public invisible: any;
+    public fixedSpeed: any;
+    public temporaryDoubleJump: any;
+    public fixedSpeedLeft: any;
+    public fixedSpeedRight: any;
+    public currentGravity: any;
+    public currentMaxFallSpeed: any;
+    public currentWallJumpGravity: any;
+    public bottom_left_pos_in_water: any;
+    public top_left_pos_in_water: any;
+    public top_right_pos_in_water: any;
+    public bottom_right_pos_in_water: any;
+    public jumpChecked: any;
+    public wallJumpChecked: any;
+    public doubleJumpChecked: any;
+    public dashChecked: any;
+    public runChecked: any;
+    public facingDirection: any;
+    public spriteIndexIdle: any;
+    public spriteIndexJump: any;
+    public spriteIndexWalk: any;
+    public animationLengths: any;
+    public spriteObject: any;
+    public currentSpriteIndex: any;
+    public currentAnimationIndex: any;
+    public squishXOffset: any;
+    public squishYOffset: any;
+    public drawWidth: any;
+    public drawHeight: any;
+    public jumpframes: any;
+    public currentCoyoteJumpFrame: any;
+    public doubleJumpActive: any;
+    public doubleJumpUsed: any;
+    death: any;
 
-    constructor(initialX, initialY, tileSize) {
+    constructor(initialX: number, initialY: number, tileSize: number) {
         this.tileSize = tileSize;
         this.width = this.tileSize - 2;
         /*
@@ -1564,7 +1780,7 @@ class Game {
         this.initialX = initialX * this.tileSize;
         this.initialY = initialY * this.tileSize;
         this.wallJumpDirection = 1;
-        this.dashDirection = AnimationHelper.facingDirections.left;
+        this.dashDirection = AnimationHelper.facingDirections?.left;
         this.maxJumpFrames = 18;
         this.dashCooldown = 3;
         this.maxDashFrames = 10 + this.dashCooldown;
@@ -1592,13 +1808,9 @@ class Game {
         this.setAbilities();
         this.resetAll();
         this.resetTemporaryAttributes();
-        this.top = undefined;
-        this.death = undefined;
-        this.top_right_pos = undefined;
-        this.top_left_pos = undefined;
     }
 
-    adjustSwimAttributes(maxJumpFrames, jumpSpeed) {
+    adjustSwimAttributes(maxJumpFrames: number, jumpSpeed: number) {
         const onePerfectOfMaxJumpHeight = -(maxJumpFrames - 1) * jumpSpeed / 100;
         this.maxSwimHeight = onePerfectOfMaxJumpHeight * 90;
         this.flapHeight = onePerfectOfMaxJumpHeight * 60 * -1;
@@ -1707,14 +1919,14 @@ class Game {
     }
 
     setAnimationProperties() {
-        this.facingDirection = AnimationHelper.facingDirections.right;
+        this.facingDirection = AnimationHelper.facingDirections?.right;
         this.spriteIndexIdle = SpritePixelArrays.getIndexOfSprite(ObjectTypes.PLAYER_IDLE);
         this.spriteIndexJump = SpritePixelArrays.getIndexOfSprite(ObjectTypes.PLAYER_JUMP);
         this.spriteIndexWalk = SpritePixelArrays.getIndexOfSprite(ObjectTypes.PLAYER_WALK);
         this.animationLengths = {
-            [this.spriteIndexIdle]: SpritePixelArrays.PLAYER_IDLE_SPRITE.animation.length,
-            [this.spriteIndexJump]: SpritePixelArrays.PLAYER_JUMP_SPRITE.animation.length,
-            [this.spriteIndexWalk]: SpritePixelArrays.PLAYER_WALK_SPRITE.animation.length,
+            [this.spriteIndexIdle]: SpritePixelArrays.PLAYER_IDLE_SPRITE?.animation.length,
+            [this.spriteIndexJump]: SpritePixelArrays.PLAYER_JUMP_SPRITE?.animation.length,
+            [this.spriteIndexWalk]: SpritePixelArrays.PLAYER_WALK_SPRITE?.animation.length,
         };
         this.spriteObject = SpritePixelArrays.PLAYER_JUMP_SPRITE;
         this.currentSpriteIndex = this.spriteIndexIdle;
@@ -1724,39 +1936,40 @@ class Game {
     resetAnimationAttributes() {
         this.clearAnimationInterval("runningAnimationInterval");
         this.clearAnimationInterval("walljumpAnimationInterval");
-        AnimationHelper.setInitialSquishValues(this, this.tileSize);
+        AnimationHelper.setInitialSquishValues(this);
+        //AnimationHelper.setInitialSquishValues(this, this.tileSize);
     }
 
-    setAnimationState(newAnimationState) {
+    setAnimationState(newAnimationState: any) {
         if (this.currentSpriteIndex !== newAnimationState) {
             this.currentAnimationIndex = 0;
         }
         this.currentSpriteIndex = newAnimationState;
     }
 
-    activateAnimationInterval(intervalName, xOffset = 0, yOffset = 0, intervalTime = 200, animationIndex = 8) {
-        if (!this[intervalName]) {
-            this[intervalName] = setInterval(() => {
-                SFXHandler.createSFX(this.x + xOffset, this.y + yOffset, animationIndex, AnimationHelper.facingDirections.bottom, 0, 0, true, 12);
+    activateAnimationInterval(intervalName: string, xOffset = 0, yOffset = 0, intervalTime = 200, animationIndex = 8) {
+        if (!this.this_array[intervalName]) {
+            this.this_array[intervalName] = setInterval(() => {
+                SFXHandler.createSFX(this.x + xOffset, this.y + yOffset, animationIndex, AnimationHelper.facingDirections?.bottom, 0, 0, true, 12);
             }, intervalTime);
         }
     }
 
-    clearAnimationInterval(intervalName) {
-        if (this[intervalName]) {
-            clearInterval(this[intervalName]);
-            this[intervalName] = null;
+    clearAnimationInterval(intervalName: string) {
+        if (this.this_array[intervalName]) {
+            clearInterval(this.this_array[intervalName]);
+            this.this_array[intervalName] = null;
         }
     }
 
     draw() {
         if (this.xspeed > 0) {
             this.fixedSpeedRight && this.activateAnimationInterval("runningAnimationInterval");
-            this.facingDirection = AnimationHelper.facingDirections.right;
+            this.facingDirection = AnimationHelper.facingDirections?.right;
         }
         else if (this.xspeed < 0) {
             this.fixedSpeedLeft && this.activateAnimationInterval("runningAnimationInterval");
-            this.facingDirection = AnimationHelper.facingDirections.left;
+            this.facingDirection = AnimationHelper.facingDirections?.left;
         }
         else {
             this.clearAnimationInterval("runningAnimationInterval");
@@ -1782,20 +1995,21 @@ class Game {
 
         const animationLength = this.animationLengths[this.currentSpriteIndex];
 
-        const frameDuration = this.currentSpriteIndex === this.spriteIndexIdle
+        var frameDuration = this.currentSpriteIndex === this.spriteIndexIdle
             ? AnimationHelper.defaultFrameDuration
             : AnimationHelper.walkingFrameDuration;
-
+        if (frameDuration == undefined) {
+            frameDuration = NaN;
+        }
         this.currentAnimationIndex++;
         if (this.currentAnimationIndex >= frameDuration * animationLength || Game.playMode === Game.BUILD_MODE) {
             this.currentAnimationIndex = 0;
         }
-
         /*
             First, normal facing sprites are rendered, then mirrored sprites
             If we want to display mirrored sprites, we need to start at the end of the normal animation index
         */
-        const loop = this.facingDirection === AnimationHelper.facingDirections.left ? animationLength : 0;
+        const loop = this.facingDirection === AnimationHelper.facingDirections?.left ? animationLength : 0;
 
         //Animation index in regards to "FPS" (animation frame duration)
         const animationIndex = (Math.floor(this.currentAnimationIndex / frameDuration) + loop) || 0;
@@ -1830,18 +2044,18 @@ class Game {
         this.wallJumpLeft = wallJumpTopLeftTile !== 0 && wallJumpTopLeftTile !== 5 || wallJumpBottomLeftTile !== 0 && wallJumpBottomLeftTile !== 5;
     }
 
-    hitWall(direction) {
+    hitWall(direction: any) {
         switch (direction) {
-            case AnimationHelper.facingDirections.bottom:
+            case AnimationHelper.facingDirections?.bottom:
                 this.hitBottom();
                 break;
-            case AnimationHelper.facingDirections.top:
+            case AnimationHelper.facingDirections?.top:
                 this.hitTop();
                 break;
-            case AnimationHelper.facingDirections.left:
+            case AnimationHelper.facingDirections?.left:
                 this.horizontalHit();
                 break;
-            case AnimationHelper.facingDirections.right:
+            case AnimationHelper.facingDirections?.right:
                 this.horizontalHit();
         }
     }
@@ -1891,12 +2105,17 @@ class Game {
     setStretchAnimation() {
         AnimationHelper.setSquishValues(this, this.tileSize * 0.8, this.tileSize * 1.2);
     }
-} class PlayMode {
-    static _staticConstructor(player, tileMapHandler) {
-        throw new Error("Method not implemented.");
-    }
+}
+class PlayMode {
+    static player: any;
+    static tilemapHandler: any;
+    static deathPauseFrames: any;
+    static animationFrames: any;
+    static currentPauseFrames: any;
+    static animateToNextLevel: any;
+    static customExit: any;
 
-    static staticConstructor(player, tilemapHandler) {
+    static _staticConstructor(player: Player, tilemapHandler: TileMapHandler) {
         this.player = player;
         this.tilemapHandler = tilemapHandler;
         this.deathPauseFrames = 24;
@@ -1920,15 +2139,16 @@ class Game {
     static startGame() {
         GameStatistics.resetPermanentObjects();
         tileMapHandler.currentLevel = 1;
+        /*
         if (typeof LevelNavigationHandler === 'function') {
             LevelNavigationHandler.updateLevel();
         }
-        else {
-            if (SoundHandler?.song?.sound?.src && !undefined) {
-                SoundHandler.song.stopAndPlay();
-            }
-            tileMapHandler.resetLevel(tileMapHandler.currentLevel);
+        else {*/
+        if (SoundHandler?.song?.sound?.src && !undefined) {
+            SoundHandler.song.stopAndPlay();
         }
+        tileMapHandler.resetLevel(tileMapHandler.currentLevel);
+        //}
         GameStatistics.resetPlayerStatistics();
         GameStatistics.startTimer();
     }
@@ -2242,7 +2462,7 @@ class Game {
         }
     }
 
-    static performJump(jumpSpeed, maxFrames) {
+    static performJump(jumpSpeed: number, maxFrames: number) {
         player.jumpframes++;
         var currentJumpSpeed = -(maxFrames - player.jumpframes) * jumpSpeed;
         if (currentJumpSpeed !== 0) {
@@ -2373,7 +2593,7 @@ class Game {
         }
     }
 
-    static resetWallJump(wallJumpDirection) {
+    static resetWallJump(wallJumpDirection: number) {
         this.player.wallJumpFrames = 0;
         this.player.currentWallJumpCoyoteFrame = 0;
         this.player.temporaryDoubleJump = false;
@@ -2399,8 +2619,8 @@ class Game {
     }
 
     static checkActiveCheckPoints() {
-        let checkPointPos = null;
-        this.tilemapHandler && this.tilemapHandler.levelObjects.forEach(levelObject => {
+        let checkPointPos: any = null;
+        this.tilemapHandler && this.tilemapHandler.levelObjects.forEach((levelObject: { type: string; active: any; initialX: number; initialY: number; }) => {
             if (levelObject.type === ObjectTypes.CHECKPOINT && levelObject?.active) {
                 checkPointPos = {
                     x: levelObject.initialX * this.tilemapHandler.tileSize,
@@ -2410,11 +2630,28 @@ class Game {
         });
         return checkPointPos;
     }
-}
-PlayMode.customExit = undefined;
- class LevelObject {
+} class LevelObject {
+    public this_array: { [key: string]: any } = {};
+    public initialX: number;
+    public initialY: number;
+    public x: number;
+    public y: number;
+    public width: number;
+    public height: number;
+    public type: any;
+    public tileSize: number;
+    public xspeed: number;
+    public yspeed: number;
+    public spriteIndex: any;
+    public spriteObject: any;
+    public canvasYSpritePos: any;
+    public canvasXSpritePos: any;
+    public squishXOffset: any;
+    public squishYOffset: any;
+    public drawWidth: any;
+    public drawHeight: any;
 
-    constructor(x, y, tileSize, type) {
+    constructor(x: number, y: number, tileSize: number, type: any) {
         this.initialX = x;
         this.initialY = y;
         this.x = x * tileSize;
@@ -2426,54 +2663,55 @@ PlayMode.customExit = undefined;
         this.xspeed = 0;
         this.yspeed = 0;
         this.setSpriteAttributes(this.type);
-        AnimationHelper.setInitialSquishValues(this, this.tileSize);
+        AnimationHelper.setInitialSquishValues(this);
+        //AnimationHelper.setInitialSquishValues(this, this.tileSize);
     }
 
-    setSpriteAttributes(type) {
+    setSpriteAttributes(type: string) {
         this.spriteIndex = SpritePixelArrays.getIndexOfSprite(type);
         this.spriteObject = SpritePixelArrays.getSpritesByName(type);
         this.canvasYSpritePos = this.spriteIndex * this.tileSize;
         this.canvasXSpritePos = 0;
     }
 
-    makeid(length) {
+    makeid(length: number) {
         return TilemapHelpers.makeid(length);
     }
 
-    drawSingleFrame(spriteCanvas, canvasXSpritePos, canvasYSpritePos = this.canvasYSpritePos) {
+    drawSingleFrame(spriteCanvas: HTMLElement | null, canvasXSpritePos: any, canvasYSpritePos = this.canvasYSpritePos) {
         Display.drawImage(spriteCanvas, canvasXSpritePos, canvasYSpritePos,
             this.tileSize, this.tileSize, this.x, this.y, this.tileSize, this.tileSize);
     }
 
-    draw(spriteCanvas, canvasYSpritePos) {
-        const drawFunction = (canvasXSpritePos) => this.drawSingleFrame(spriteCanvas, canvasXSpritePos, canvasYSpritePos);
+    draw(spriteCanvas: HTMLElement | null, canvasYSpritePos?: undefined) {
+        const drawFunction = (canvasXSpritePos: any) => this.drawSingleFrame(spriteCanvas, canvasXSpritePos, canvasYSpritePos);
         this.checkFrameAndDraw(drawFunction);
     }
 
-    drawSingleSquishingFrame(spriteCanvas, canvasXSpritePos) {
+    drawSingleSquishingFrame(spriteCanvas: any, canvasXSpritePos: number) {
         AnimationHelper.checkSquishUpdate(this);
         Display.drawImage(spriteCanvas, canvasXSpritePos, this.canvasYSpritePos,
             this.tileSize, this.tileSize, this.x - this.squishXOffset, this.y - this.squishYOffset, this.drawWidth, this.drawHeight);
     }
 
-    drawWithSquishing(spriteCanvas) {
-        const drawFunction = (canvasXSpritePos) => this.drawSingleSquishingFrame(spriteCanvas, canvasXSpritePos);
+    drawWithSquishing(spriteCanvas: any) {
+        const drawFunction = (canvasXSpritePos: any) => this.drawSingleSquishingFrame(spriteCanvas, canvasXSpritePos);
         this.checkFrameAndDraw(drawFunction);
     }
 
-    drawSingleAlphaFrame(spriteCanvas, alpha, canvasXSpritePos) {
+    drawSingleAlphaFrame(spriteCanvas: any, alpha: any, canvasXSpritePos: any) {
         AnimationHelper.checkSquishUpdate(this);
         Display.drawImageWithAlpha(spriteCanvas, canvasXSpritePos, this.canvasYSpritePos,
             this.tileSize, this.tileSize, this.x, this.y, this.tileSize, this.tileSize, alpha);
     }
 
-    drawWithAlpha(spriteCanvas, alpha) {
-        const drawFunction = (canvasXSpritePos) => this.drawSingleAlphaFrame(spriteCanvas, alpha, canvasXSpritePos);
+    drawWithAlpha(spriteCanvas: any, alpha: number) {
+        const drawFunction = (canvasXSpritePos: any) => this.drawSingleAlphaFrame(spriteCanvas, alpha, canvasXSpritePos);
         this.checkFrameAndDraw(drawFunction);
     }
 
-    drawWithRotation(spriteCanvas, angle = 0) {
-        let drawFunction = (canvasXSpritePos) => Display.drawImageWithRotation(spriteCanvas, canvasXSpritePos, this.canvasYSpritePos,
+    drawWithRotation(spriteCanvas: any, angle = 0) {
+        let drawFunction = (canvasXSpritePos: any) => Display.drawImageWithRotation(spriteCanvas, canvasXSpritePos, this.canvasYSpritePos,
             this.tileSize, this.tileSize, this.x, this.y, this.tileSize, this.tileSize, angle);
         //Included squishing function right here, because rotating enemies are so rare
         if (this.spriteObject?.[0].squishAble) {
@@ -2484,7 +2722,7 @@ PlayMode.customExit = undefined;
         this.checkFrameAndDraw(drawFunction);
     }
 
-    checkFrameAndDraw(drawFunction) {
+    checkFrameAndDraw(drawFunction: { (canvasXSpritePos: any): void; (canvasXSpritePos: any): void; (canvasXSpritePos: any): void; (canvasXSpritePos: any): void; (arg0: any): void; }) {
         if (this?.spriteObject?.[0].animation.length > 1 && Game.playMode === Game.PLAY_MODE) {
             const frameModulo = tileMapHandler.currentGeneralFrameCounter % 40;
             if (frameModulo < AnimationHelper.defaultFrameDuration) {
@@ -2499,8 +2737,14 @@ PlayMode.customExit = undefined;
         }
     }
 } class InteractiveLevelObject extends LevelObject {
+    public hitBoxOffset: any;
+    public changeableInBuildMode: boolean;
+    public facingDirections: any;
+    public currentFacingDirection: any;
+    public extraAttributes: any;
+    public key: any;
 
-    constructor(x, y, tileSize, type, hitBoxOffset = 0, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: any, hitBoxOffset = 0, extraAttributes: { [key: string]: any } = {}) {
         super(x, y, tileSize, type);
         this.hitBoxOffset = hitBoxOffset;
         this.changeableInBuildMode = false;
@@ -2511,14 +2755,15 @@ PlayMode.customExit = undefined;
         }
         if (this.spriteObject?.[0]?.changeableAttributes) {
             this.changeableInBuildMode = true;
-            this.spriteObject?.[0]?.changeableAttributes.forEach(attribute => {
-                this[attribute.name] = attribute.defaultValue;
+            this.spriteObject?.[0]?.changeableAttributes.forEach((attribute: { name: string; defaultValue: any }) => {
+                this.this_array[attribute.name] = attribute.defaultValue;
             });
         }
         this.extraAttributes = extraAttributes;
         if (extraAttributes) {
-            for (const [key, value] of Object.entries(extraAttributes)) {
-                this[key] = value;
+            for (const key of Object.keys(extraAttributes)) {
+                const value: any = extraAttributes[key];
+                this.this_array[key] = value;
                 if (key === "currentFacingDirection" && this.facingDirections) {
                     this.canvasXSpritePos = this.facingDirections.indexOf(value) * this.spriteObject[0].animation.length * this.tileSize;
                 }
@@ -2541,11 +2786,11 @@ PlayMode.customExit = undefined;
         this.addChangeableAttribute("currentFacingDirection", this.facingDirections[currentIndex]);
     }
 
-    addChangeableAttribute(attribute, value, levelToChange = null) {
+    addChangeableAttribute(attribute: string, value: any, levelToChange: number | null = null) {
         const levelIndex = levelToChange || tileMapHandler.currentLevel;
-        this[attribute] = value;
+        this.this_array[attribute] = value;
         if (WorldDataHandler.levels[levelIndex].levelObjects) {
-            WorldDataHandler.levels[levelIndex].levelObjects.forEach(levelObject => {
+            WorldDataHandler.levels[levelIndex].levelObjects.forEach((levelObject: { x: any; y: any; type: any; extraAttributes: {}; }) => {
                 if (levelObject.x === this.initialX && levelObject.y === this.initialY && levelObject.type === this.type) {
                     if (!levelObject.extraAttributes) {
                         levelObject.extraAttributes = {};
@@ -2557,7 +2802,7 @@ PlayMode.customExit = undefined;
     }
 
     //for now it's used for bullets (canonballs and rockets), which can be deleted during game-time
-    deleteObjectFromLevel(tilemapHandler, showSfx = true) {
+    deleteObjectFromLevel(tilemapHandler: { levelObjects: any[]; }, showSfx = true) {
         showSfx && SFXHandler.createSFX(this.x, this.y, 1)
         for (var i = tilemapHandler.levelObjects.length - 1; i >= 0; i--) {
             var levelObject = tilemapHandler.levelObjects[i];
@@ -2569,7 +2814,7 @@ PlayMode.customExit = undefined;
     }
 } class Spike extends InteractiveLevelObject {
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: any, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         const hitBoxOffset = -tileSize / 6;
         super(x, y, tileSize, type, hitBoxOffset, extraAttributes);
     }
@@ -2578,8 +2823,16 @@ PlayMode.customExit = undefined;
         PlayMode.playerDeath();
     }
 } class FinishFlag extends InteractiveLevelObject {
+    public collidedWithPlayer: any;
+    public tilemapHandler: any;
+    public closedFinishedFlagSpriteIndex: any;
+    public closedFinishedFlagYSpritePos: any;
+    public closed: any;
+    public persistentCollectibles: any;
+    public customExit: any;
+    public collectiblesNeeded: any;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: any, tilemapHandler: TileMapHandler, extraAttributes:any = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
         this.collidedWithPlayer = false;
         this.tilemapHandler = tilemapHandler;
@@ -2589,7 +2842,7 @@ PlayMode.customExit = undefined;
         this.closed = false;
         if (!undefined) {
             this.persistentCollectibles = WorldDataHandler.levels[this.tilemapHandler.currentLevel].levelObjects.filter(
-                levelObject => levelObject.type === ObjectTypes.COLLECTIBLE
+                (levelObject: { type: string; }) => levelObject.type === ObjectTypes.COLLECTIBLE
             );
         }
     }
@@ -2609,7 +2862,7 @@ PlayMode.customExit = undefined;
         }
     }
 
-    changeExit(text) {
+    changeExit(text: string) {
         if (text) {
             if (text === 'finishLevel') {
                 this.addChangeableAttribute("customExit", { levelIndex: WorldDataHandler.levels.length - 1 });
@@ -2624,16 +2877,16 @@ PlayMode.customExit = undefined;
         }
     }
 
-    checkIfAllCollectiblesCollected(collectibles) {
+    checkIfAllCollectiblesCollected(collectibles: any[]) {
         if (undefined) {
-            return collectibles.every(collectible => collectible.touched);
+            return collectibles.every((collectible: { touched: any; }) => collectible.touched);
         }
         else {
-            return this.persistentCollectibles.every(persistentCollectible => persistentCollectible.extraAttributes.collected);
+            return this.persistentCollectibles.every((persistentCollectible: { extraAttributes: { collected: any; }; }) => persistentCollectible.extraAttributes.collected);
         }
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         if (!this.collectiblesNeeded) {
             super.draw(spriteCanvas);
             this.closed = false;
@@ -2651,8 +2904,10 @@ PlayMode.customExit = undefined;
         }
     }
 } class Checkpoint extends InteractiveLevelObject {
+    public active: boolean;
+    public tilemapHandler: TileMapHandler;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: any, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
         this.active = false;
         this.tilemapHandler = tilemapHandler;
@@ -2660,7 +2915,7 @@ PlayMode.customExit = undefined;
 
     collisionEvent() {
         if (!this.active) {
-            this.tilemapHandler.levelObjects.forEach(levelObject => {
+            this.tilemapHandler.levelObjects.forEach((levelObject: { type: string; active: boolean; }) => {
                 if (levelObject.type === ObjectTypes.CHECKPOINT) {
                     levelObject.active = false;
                 }
@@ -2670,18 +2925,21 @@ PlayMode.customExit = undefined;
         }
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         const showSecond = this.active && this?.spriteObject?.[0].animation.length > 1;
         super.drawSingleFrame(spriteCanvas, showSecond ? this.canvasXSpritePos + this.tileSize : this.canvasXSpritePos);
     }
 } class StartFlag extends InteractiveLevelObject {
+    public tilemapHandler: TileMapHandler;
+    public levelStartFlag: any;
+    public flagIndex: any;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: any, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
         this.tilemapHandler = tilemapHandler;
         this.changeableInBuildMode = true;
 
-        const startFlagsInLevel = WorldDataHandler.levels[this.tilemapHandler.currentLevel].levelObjects.filter(levelObject => levelObject.type === ObjectTypes.START_FLAG);
+        const startFlagsInLevel = WorldDataHandler.levels[this.tilemapHandler.currentLevel].levelObjects.filter((levelObject: { type: string; }) => levelObject.type === ObjectTypes.START_FLAG);
 
         if (!extraAttributes?.levelStartFlag && startFlagsInLevel.length === 1) {
             this.levelStartFlag = true;
@@ -2692,10 +2950,10 @@ PlayMode.customExit = undefined;
             this.addChangeableAttribute("flagIndex", this.flagIndex, this.tilemapHandler.currentLevel);
         }
 
-        const customEntryFlag = startFlagsInLevel.find(startFlag =>
+        const customEntryFlag = startFlagsInLevel.find((startFlag: { extraAttributes: { flagIndex: any; }; }) =>
             PlayMode?.customExit?.flagIndex && startFlag?.extraAttributes?.flagIndex === PlayMode.customExit.flagIndex
         );
-        const levelStartFlag = startFlagsInLevel.find(startFlag =>
+        const levelStartFlag = startFlagsInLevel.find((startFlag: { extraAttributes: { levelStartFlag: any; }; }) =>
             startFlag?.extraAttributes?.levelStartFlag
         );
 
@@ -2717,12 +2975,12 @@ PlayMode.customExit = undefined;
         }
     }
 
-    updateLevelStartValue(levelStartValue) {
+    updateLevelStartValue(levelStartValue: any) {
         const startFlagsInTileMapHandler = this.tilemapHandler.filterObjectsByTypes(ObjectTypes.START_FLAG);
 
         if (levelStartValue) {
             //reset all other start flags, because there can only be 1 level starting flag
-            startFlagsInTileMapHandler.forEach(startFlagInTileMapHandler => {
+            startFlagsInTileMapHandler.forEach((startFlagInTileMapHandler: { addChangeableAttribute: (arg0: string, arg1: boolean) => void; }) => {
                 startFlagInTileMapHandler.addChangeableAttribute("levelStartFlag", false);
             });
             this.addChangeableAttribute("levelStartFlag", true);
@@ -2735,8 +2993,12 @@ PlayMode.customExit = undefined;
     collisionEvent() {
     }
 } class Trampoline extends InteractiveLevelObject {
+    public player: any;
+    public tilemapHandler: TileMapHandler;
+    public unfoldedAnimationDuration: any;
+    public currentAnimationFrame: any;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: any, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
         this.player = tilemapHandler.player;
         this.tilemapHandler = tilemapHandler;
@@ -2746,7 +3008,7 @@ PlayMode.customExit = undefined;
 
     collisionEvent() {
         if (this.player.yspeed > 0) {
-            this.tilemapHandler.levelObjects.forEach(levelObject => {
+            this.tilemapHandler.levelObjects.forEach((levelObject: { type: string; currentAnimationFrame: any; }) => {
                 if (levelObject.type === ObjectTypes.TRAMPOLINE) {
                     levelObject.currentAnimationFrame = this.unfoldedAnimationDuration;
                 }
@@ -2765,7 +3027,7 @@ PlayMode.customExit = undefined;
         }
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         this.currentAnimationFrame++;
         if (this.currentAnimationFrame < this.unfoldedAnimationDuration) {
             if (this.currentAnimationFrame === this.player.maxJumpFrames + this.player.extraTrampolineJumpFrames || this.currentAnimationFrame === this.unfoldedAnimationDuration - 1) {
@@ -2779,8 +3041,13 @@ PlayMode.customExit = undefined;
         }
     }
 } class Npc extends InteractiveLevelObject {
+    public upReleased: boolean;
+    public arrowUpFrameIndex: number;
+    public upButtonReleased: boolean;
+    public dialogue: any;
+    key: string;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: any, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
         this.upReleased = true;
         this.key = this.makeid(5);
@@ -2801,8 +3068,8 @@ PlayMode.customExit = undefined;
         }
         else {
             if (this.upButtonReleased && !DialogueHandler.active) {
-                const parsedDialogue = [];
-                this.dialogue.forEach(singleDialogue => {
+                const parsedDialogue: any[] = [];
+                this.dialogue.forEach((singleDialogue: any) => {
                     const singleDialogueObject = DialogueHandler.createDialogObject(singleDialogue);
                     if (singleDialogueObject.textLength > 0) {
                         parsedDialogue.push(singleDialogueObject);
@@ -2821,7 +3088,7 @@ PlayMode.customExit = undefined;
         }
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         if (player.collidingWithNpcId === this.key && !Collision.objectsColliding(player, this)) {
             player.collidingWithNpcId = null;
             this.arrowUpFrameIndex = 0;
@@ -2830,30 +3097,31 @@ PlayMode.customExit = undefined;
         super.draw(spriteCanvas);
     }
 } class ShootingObject extends InteractiveLevelObject {
+    public tileMapHandler: any;
+    public shootFrames: any;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
         this.tileMapHandler = tilemapHandler;
     }
 
     getShootFrames() {
-        const frequency = this[SpritePixelArrays.changeableAttributeTypes.frequency];
+        const frequency = this.this_array[SpritePixelArrays.changeableAttributeTypes.frequency];
         const step = this.tileMapHandler.generalFrameCounterMax / frequency;
-        const shootFrames = [];
+        const shootFrames: any[] = [];
         for (var i = 1; i <= frequency; i++) {
             shootFrames.push(Math.round(step * i));
         }
         this.shootFrames = shootFrames;
     }
 } class Canon extends ShootingObject {
-
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, tilemapHandler, extraAttributes);
         this.tileMapHandler.tileMap[this.y / this.tileSize][this.x / this.tileSize] = ObjectTypes.SPECIAL_BLOCK_VALUES.canon;
         this.getShootFrames();
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         super.drawWithSquishing(spriteCanvas);
         if (this.shootFrames.includes(this.tileMapHandler.currentGeneralFrameCounter)) {
             var canonBallX = this.initialX - 1;
@@ -2874,7 +3142,7 @@ PlayMode.customExit = undefined;
             var canonBallStartingTile = this.tileMapHandler.getTileLayerValueByIndex(canonBallY, canonBallX);
             if (canonBallStartingTile === 0 || canonBallStartingTile === 5) {
                 const canonBall = new CanonBall(canonBallX, canonBallY, this.tileSize, ObjectTypes.CANON_BALL,
-                    this.tileMapHandler, this.currentFacingDirection, this[SpritePixelArrays.changeableAttributeTypes.speed]);
+                    this.tileMapHandler, this.currentFacingDirection, this.this_array[SpritePixelArrays.changeableAttributeTypes.speed]);
                 this.tileMapHandler.levelObjects.push(canonBall);
                 AnimationHelper.setSquishValues(this, this.tileSize * 1.2,
                     this.tileSize * 0.8, 5, this.currentFacingDirection);
@@ -2882,8 +3150,18 @@ PlayMode.customExit = undefined;
         }
     }
 } class CanonBall extends InteractiveLevelObject {
+    public tileMapHandler: TileMapHandler;
+    public facingDirection: any;
+    public movingSpeed: number;
+    public yCenter: any;
+    public left: any;
+    public top: any;
+    public right: any;
+    public xPos: any;
+    public yPos: any;
+    key: string;
 
-    constructor(x, y, tileSize, type, tileMapHandler, facingDirection, speed = 3) {
+    constructor(x: number, y: number, tileSize: number, type: string, tileMapHandler: TileMapHandler, facingDirection: any = {}, speed: number = 3) {
         const hitBoxOffset = -tileSize / 6;
         super(x, y, tileSize, type, hitBoxOffset, { currentFacingDirection: facingDirection });
         this.tileMapHandler = tileMapHandler;
@@ -2921,25 +3199,35 @@ PlayMode.customExit = undefined;
         }
     }
 
-    getTilePositions(x, y) {
+    getTilePositions(x: any, y: any) {
         return { xPos: this.tileMapHandler.getTileValueForPosition(x), yPos: this.tileMapHandler.getTileValueForPosition(y) };
     }
 
-    checkWallCollission(x, y, tileArray = [0, 5]) {
+    checkWallCollission(x: any, y: any, tileArray = [0, 5]) {
         const { xPos, yPos } = this.getTilePositions(x, y);
         var currentTileValue = this.tileMapHandler.getTileLayerValueByIndex(yPos, xPos);
-        if (!!typeof currentTileValue === 'undefined' || !tileArray.includes(currentTileValue)) {
-            console.log("CanonBall -> checkWallCollission");
+        if (!!(typeof currentTileValue === 'undefined') || !tileArray.includes(currentTileValue)) {
             if (currentTileValue === ObjectTypes.SPECIAL_BLOCK_VALUES.redBlueSwitch) {
-                const switchBlock = this.tileMapHandler.levelObjects.find(levelObject => levelObject.initialX === xPos && levelObject.initialY === yPos);
+                const switchBlock = this.tileMapHandler.levelObjects.find((levelObject: { initialX: any; initialY: any; }) => levelObject.initialX === xPos && levelObject.initialY === yPos);
                 switchBlock && switchBlock.switchWasHit(this.facingDirection);
             }
             this.deleteObjectFromLevel(this.tileMapHandler);
         }
     }
 } class LaserCanon extends InteractiveLevelObject {
+    public tileMapHandler: TileMapHandler;
+    public possilbeTimers: any;
+    public currentTimer: any;
+    public createdLasers: any;
+    public currentLaserFrame: number = 0;
+    public currentPauseFrame: number = 0;
+    public solidTileInbetween: any;
+    public top: any;
+    public right: any;
+    public bottom: any;
+    key: string;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
         this.tileMapHandler = tilemapHandler;
         this.tileMapHandler.tileMap[this.y / this.tileSize][this.x / this.tileSize] = ObjectTypes.SPECIAL_BLOCK_VALUES.canon;
@@ -2958,13 +3246,13 @@ PlayMode.customExit = undefined;
         this.currentPauseFrame = 0;
     }
 
-    checkIfLasersExistsAndSet(y, x, allowedTileValues) {
+    checkIfLasersExistsAndSet(y: number, x: number, allowedTileValues: string | any[]) {
         if (allowedTileValues.includes(this.tileMapHandler.tileMap[y][x])) {
-            if (!this.createdLasers.find(createdLaser => createdLaser.x === x && createdLaser.y === y)) {
+            if (!this.createdLasers.find((createdLaser: { x: any; y: any; }) => createdLaser.x === x && createdLaser.y === y)) {
                 const laser = new Laser(x, y, this.tileSize, ObjectTypes.LASER, this.tileMapHandler,
                     this.currentFacingDirection,
-                    this[SpritePixelArrays.changeableAttributeTypes.laserDuration] - this.currentLaserFrame,
-                    this[SpritePixelArrays.changeableAttributeTypes.pauseDuration],
+                    this.this_array[SpritePixelArrays.changeableAttributeTypes.laserDuration] - this.currentLaserFrame,
+                    this.this_array[SpritePixelArrays.changeableAttributeTypes.pauseDuration],
                     this.key);
                 this.tileMapHandler.levelObjects.push(laser);
                 this.createdLasers.push({ x, y });
@@ -2977,22 +3265,22 @@ PlayMode.customExit = undefined;
         }
     }
 
-    removeFromCurrentCreatedLasers(x, y) {
-        const index = this.createdLasers.findIndex(laser => laser.x === x && laser.y === y);
+    removeFromCurrentCreatedLasers(x: any, y: any) {
+        const index = this.createdLasers.findIndex((laser: { x: any; y: any; }) => laser.x === x && laser.y === y);
         if (index > -1) {
             this.createdLasers.splice(index, 1);
         }
     }
 
-    findAndDeleteLasersAfterSolidTile(x, y) {
-        const laserAtPosition = this.tileMapHandler.levelObjects.find(levelObject =>
+    findAndDeleteLasersAfterSolidTile(x: any, y: any) {
+        const laserAtPosition = this.tileMapHandler.levelObjects.find((levelObject: { type: string; initialX: any; initialY: any; laserId: string; }) =>
             levelObject.type === ObjectTypes.LASER && levelObject.initialX === x && levelObject.initialY === y
             && levelObject.laserId === this.key);
         this.removeFromCurrentCreatedLasers(x, y);
         laserAtPosition && laserAtPosition.deleteObjectFromLevel(this.tileMapHandler, false);
     }
 
-    handleSingleLaserPos(x, y, allowedTileValues) {
+    handleSingleLaserPos(x: number, y: number, allowedTileValues: number[]) {
         if (!this.solidTileInbetween) {
             this.solidTileInbetween = this.checkIfLasersExistsAndSet(y, x, allowedTileValues)
         }
@@ -3013,25 +3301,25 @@ PlayMode.customExit = undefined;
         }
         else if (this.currentFacingDirection === right) {
             const levelWidth = this.tileMapHandler.levelWidth;
-            for (var x = this.initialX + 1; x < levelWidth - 1; x++) {
+            for (let x = this.initialX + 1; x < levelWidth - 1; x++) {
                 this.handleSingleLaserPos(x, this.initialY, allowedTileValues);
             }
         }
         else if (this.currentFacingDirection === bottom) {
             const levelHeight = this.tileMapHandler.levelHeight;
             allowedTileValues = [0];
-            for (var y = this.initialY + 1; y < levelHeight - 1; y++) {
+            for (var y: number = this.initialY + 1; y < levelHeight - 1; y++) {
                 this.handleSingleLaserPos(this.initialX, y, allowedTileValues);
             }
         }
         else {
-            for (var x = this.initialX - 1; x > 0; x--) {
+            for (let x: number = this.initialX - 1; x > 0; x--) {
                 this.handleSingleLaserPos(x, this.initialY, allowedTileValues);
             }
         }
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         super.drawWithSquishing(spriteCanvas);
 
         if (Game.playMode === Game.BUILD_MODE) {
@@ -3045,8 +3333,8 @@ PlayMode.customExit = undefined;
             this.handleLasers();
             this.currentLaserFrame++;
 
-            if (this.currentLaserFrame === this[SpritePixelArrays.changeableAttributeTypes.laserDuration]) {
-                if (this[SpritePixelArrays.changeableAttributeTypes.pauseDuration] > 0) {
+            if (this.currentLaserFrame === this.this_array[SpritePixelArrays.changeableAttributeTypes.laserDuration]) {
+                if (this.this_array[SpritePixelArrays.changeableAttributeTypes.pauseDuration] > 0) {
                     this.currentTimer = this.possilbeTimers.pauseTimer;
                     this.currentPauseFrame = 0;
                     this.createdLasers = [];
@@ -3059,15 +3347,23 @@ PlayMode.customExit = undefined;
         else if (this.currentTimer === this.possilbeTimers.pauseTimer) {
             this.currentPauseFrame++;
 
-            if (this.currentPauseFrame === this[SpritePixelArrays.changeableAttributeTypes.pauseDuration]) {
+            if (this.currentPauseFrame === this.this_array[SpritePixelArrays.changeableAttributeTypes.pauseDuration]) {
                 this.currentTimer = this.possilbeTimers.laserTimer;
                 this.currentLaserFrame = 0;
             }
         }
     }
 } class Laser extends InteractiveLevelObject {
+    public tileMapHandler: any;
+    public currentLifeTime: any;
+    public totalLifeTime: any;
+    public pauseTime: any;
+    public laserId: any;
+    public blinkingAllowed: any;
+    key: string;
 
-    constructor(x, y, tileSize, type, tileMapHandler, facingDirection, lifeTime, pauseTime, laserId) {
+    constructor(x: number, y: number, tileSize: number, type: string, tileMapHandler: TileMapHandler, facingDirection: any = {},
+        lifeTime: number = 0, pauseTime: any = 0, laserId: string = "") {
         const hitBoxOffset = -tileSize / 6;
         super(x, y, tileSize, type, hitBoxOffset, { currentFacingDirection: facingDirection });
         this.tileMapHandler = tileMapHandler;
@@ -3093,8 +3389,12 @@ PlayMode.customExit = undefined;
         }
     }
 } class BarrelCannon extends InteractiveLevelObject {
+    public tilemapHandler: TileMapHandler;
+    public player: Player;
+    public upButtonReleased: boolean;
+    public speed: number;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, -4, extraAttributes);
         this.tilemapHandler = tilemapHandler;
         this.player = this.tilemapHandler.player;
@@ -3150,12 +3450,24 @@ PlayMode.customExit = undefined;
         }
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         super.drawWithSquishing(spriteCanvas);
     }
 } class Stomper extends InteractiveLevelObject {
+    public tilemapHandler: TileMapHandler;
+    public distanceToCheckCollission: number;
+    public speed: number;
+    public pauseFrames: number;
+    public currentPauseFrame: number;
+    public yCheckDistance: number;
+    public xCheckDistance: number;
+    public unpassableObjects: string[];
+    public goingBack: boolean = false;
+    public active: boolean = false;
+    BuildMode: any;
+    key: string;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, -1, extraAttributes);
         this.tilemapHandler = tilemapHandler;
         this.distanceToCheckCollission = tileSize / 2;
@@ -3180,11 +3492,10 @@ PlayMode.customExit = undefined;
     turnObject() {
         super.turnObject();
         this.handleFacingDirection();
-        console.log("Stomper -> turnObject");
         this.BuildMode.rearrangeLevelObjectsByXAndYPos();
     }
 
-    updateMovingValues(yCheckDistance, yspeed, xCheckDistance, xspeed) {
+    updateMovingValues(yCheckDistance: number, yspeed: number, xCheckDistance: number, xspeed: number) {
         this.yCheckDistance = yCheckDistance;
         this.yspeed = yspeed;
         this.xCheckDistance = xCheckDistance;
@@ -3228,7 +3539,7 @@ PlayMode.customExit = undefined;
         else if (this.currentFacingDirection === AnimationHelper.facingDirections.right) {
             positionToCheck.x = positionToCheck.x + this.tileSize;
         }
-        this.tilemapHandler.levelObjects.forEach(levelObject => {
+        this.tilemapHandler.levelObjects.forEach((levelObject: any) => {
             if (levelObject.type === ObjectTypes.RED_BLUE_BLOCK_SWITCH
                 && Collision.pointAndObjectColliding(positionToCheck, levelObject)) {
                 levelObject.switchWasHit(this.currentFacingDirection);
@@ -3249,7 +3560,7 @@ PlayMode.customExit = undefined;
         this.currentPauseFrame = 0;
     }
 
-    checkIfTileFree(x, y) {
+    checkIfTileFree(x: any, y: any) {
         const currentTile = tileMapHandler.getTileLayerValueByIndex(tileMapHandler.getTileValueForPosition(y),
             tileMapHandler.getTileValueForPosition(x));
         if (this.currentFacingDirection === AnimationHelper.facingDirections.top && !this.goingBack) {
@@ -3302,7 +3613,7 @@ PlayMode.customExit = undefined;
         }
     }
 
-    hitUnpassableObject(direction, objectCollidedWith) {
+    hitUnpassableObject(direction: any, objectCollidedWith: any) {
         const attacking = this.isAttacking(this);
         const otherObjectStill = this.isStill(objectCollidedWith);
         /*  !(attacking && objectCollidedWith.currentPauseFrame === 0 &&
@@ -3340,7 +3651,7 @@ PlayMode.customExit = undefined;
         }
     }
 
-    drawSprite(spriteCanvas, secondSprite = false) {
+    drawSprite(spriteCanvas: any, secondSprite = false) {
         const showSecond = secondSprite && this?.spriteObject?.[0].animation.length > 1;
         super.drawSingleSquishingFrame(spriteCanvas, showSecond ? this.canvasXSpritePos + this.tileSize : this.canvasXSpritePos);
     }
@@ -3350,15 +3661,15 @@ PlayMode.customExit = undefined;
         CharacterCollision.checkMovementBasedObjectCollission(this);
     }
 
-    isStill(obj) {
+    isStill(obj: this) {
         return !obj.active && !obj.goingBack;
     }
 
-    isAttacking(obj) {
+    isAttacking(obj: this) {
         return obj.active && !obj.goingBack && obj.currentPauseFrame === 0;
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         if (this.isStill(this)) {
             Game.playMode === Game.PLAY_MODE && this.checkIfPlayerInTheWay();
             this.drawSprite(spriteCanvas);
@@ -3377,8 +3688,13 @@ PlayMode.customExit = undefined;
         }
     }
 } class ToggleMine extends InteractiveLevelObject {
+    public player: Player;
+    public totalPauseFrames: number;
+    public collidedFirstTime: boolean = true;
+    public deadly: any;
+    public currentPauseFrame: number = 0;
 
-    constructor(x, y, tileSize, type, tileMapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tileMapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
         this.resetObject();
         this.player = tileMapHandler.player;
@@ -3402,7 +3718,7 @@ PlayMode.customExit = undefined;
     }
 
     draw() {
-        if (this.collidedFirstTime && !Collision.objectsColliding(this.player, this) && !this.currentPauseFrame < this.totalPauseFrames) {
+        if (this.collidedFirstTime && !Collision.objectsColliding(this.player, this) && !(this.currentPauseFrame < this.totalPauseFrames)) {
             this.currentPauseFrame++;
         }
         if (this.currentPauseFrame >= this.totalPauseFrames && !this.deadly) {
@@ -3412,8 +3728,13 @@ PlayMode.customExit = undefined;
         super.drawSingleFrame(spriteCanvas, this.deadly ? this.canvasXSpritePos + this.tileSize : this.canvasXSpritePos);
     }
 } class RocketLauncher extends ShootingObject {
+    public tileMapHandlerplayer: any;
+    public seeingPlayer: any;
+    public currentShootCounter: any;
+    public currentShootCounterWhileInactive: any;
+    public active: any;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, tilemapHandler, extraAttributes);
         this.getShootFrames();
         this.resetObject();
@@ -3430,7 +3751,7 @@ PlayMode.customExit = undefined;
     collisionEvent() {
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         if (Game.playMode === Game.PLAY_MODE) {
             const angle = this.tileMapHandler.player ? MathHelpers.getAngle(this.tileMapHandler.player.x, this.tileMapHandler.player.y, this.x, this.y) : 0;
             //Check if rocket launcher sees player only every x frames because it's cost-intensive
@@ -3470,17 +3791,24 @@ PlayMode.customExit = undefined;
         }
     }
 
-    shoot(angle) {
+    shoot(angle: number | undefined) {
         this.currentShootCounter = 0;
         const rocket = new Rocket(this.x / this.tileSize, this.y / this.tileSize, this.tileSize, ObjectTypes.ROCKET,
-            this.tileMapHandler, this[SpritePixelArrays.changeableAttributeTypes.speed], angle, this[SpritePixelArrays.changeableAttributeTypes.rotationSpeed]);
+            this.tileMapHandler, this.this_array[SpritePixelArrays.changeableAttributeTypes.speed], angle, this.this_array[SpritePixelArrays.changeableAttributeTypes.rotationSpeed]);
         this.tileMapHandler.levelObjects.push(rocket);
         AnimationHelper.setSquishValues(this, this.tileSize * 1.2,
             this.tileSize * 0.8, 5, AnimationHelper.facingDirections.left);
     }
 } class Rocket extends InteractiveLevelObject {
+    public tileMapHandler: TileMapHandler;
+    public movingSpeed: number;
+    public angle: number;
+    public rotationSpeed: any;
+    public rotationCounter: number;
+    public maxRotationCounter: number;
+    key: string;
 
-    constructor(x, y, tileSize, type, tileMapHandler, speed = 3, angle = 0, rotationSpeed) {
+    constructor(x: number, y: number, tileSize: number, type: string, tileMapHandler: TileMapHandler, speed = 3, angle = 0, rotationSpeed: any = undefined) {
         const hitBoxOffset = -tileSize / 6;
         super(x, y, tileSize, type, hitBoxOffset);
         this.tileMapHandler = tileMapHandler;
@@ -3503,7 +3831,7 @@ PlayMode.customExit = undefined;
         PlayMode.playerDeath();
     }
 
-    checkIfRotationClockWiseFaster(currentAngle, targetAngle) {
+    checkIfRotationClockWiseFaster(currentAngle: number, targetAngle: number) {
         let aroundTheClockFaster = false;
         if (currentAngle > targetAngle) {
             const counterClockWiseDistance = currentAngle - targetAngle;
@@ -3515,14 +3843,14 @@ PlayMode.customExit = undefined;
         return (currentAngle < targetAngle && targetAngle - currentAngle < 180) || aroundTheClockFaster;
     }
 
-    checkCornerCollission(corners, tiles) {
-        const foundSolidTileInCollission = corners.find(corner => {
+    checkCornerCollission(corners: any[], tiles: string | any[]) {
+        const foundSolidTileInCollission = corners.find((corner: { x: any; y: any; }) => {
             const xPos = this.tileMapHandler.getTileValueForPosition(corner.x);
             const yPos = this.tileMapHandler.getTileValueForPosition(corner.y);
 
             const cornerTile = this.tileMapHandler.getTileLayerValueByIndex(yPos, xPos)
             if (cornerTile === ObjectTypes.SPECIAL_BLOCK_VALUES.redBlueSwitch) {
-                const switchBlock = this.tileMapHandler.levelObjects.find(levelObject => levelObject.initialX === xPos && levelObject.initialY === yPos);
+                const switchBlock = this.tileMapHandler.levelObjects.find((levelObject: { initialX: any; initialY: any; }) => levelObject.initialX === xPos && levelObject.initialY === yPos);
                 switchBlock && switchBlock.switchWasHit();
             }
             return !tiles.includes(cornerTile);
@@ -3534,7 +3862,7 @@ PlayMode.customExit = undefined;
         return false;
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         this.rotationCounter++;
         const newAngle = this.tileMapHandler?.player ?
             MathHelpers.getAngle(this.tileMapHandler.player.x, this.tileMapHandler.player.y, this.x, this.y) : 0;
@@ -3570,21 +3898,29 @@ PlayMode.customExit = undefined;
         }
     }
 } class SwitchableBlock extends InteractiveLevelObject {
+    public tilemapHandler: TileMapHandler;
+    public color: any;
+    public activeTileIndex: number;
+    public active: boolean = false;
+    public top: any;
+    public right: any;
+    public bottom: any;
+    public left: any;
 
-    constructor(x, y, tileSize, type, tilemapHandler, color, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, color: any = {}, extraAttributes = {}) {
         super(x, y, tileSize, type, -4, extraAttributes);
         this.tilemapHandler = tilemapHandler;
         this.color = color;
         this.activeTileIndex = ObjectTypes.SPECIAL_BLOCK_VALUES.switchableBlock;
     }
 
-    setBlockState(tileIndex, activeState) {
+    setBlockState(tileIndex: number, activeState: boolean) {
         this.tilemapHandler.tileMap[this.y / this.tileSize][this.x / this.tileSize] = tileIndex;
         this.active = activeState;
         this.checkIfPlayerIsInTheWay(activeState);
     }
 
-    checkIfPlayerIsInTheWay(activeState) {
+    checkIfPlayerIsInTheWay(activeState: any) {
         if (activeState) {
             const { top, right, bottom, left } = this.tilemapHandler.player;
             const positions = [{ y: top, x: right }, { y: top, x: left }, { y: bottom, x: right }, { y: bottom, x: left }];
@@ -3595,30 +3931,37 @@ PlayMode.customExit = undefined;
         }
     }
 
-    switchActiveState(tileIndex, activeState) {
+    switchActiveState(tileIndex: number, activeState: boolean) {
         this.setBlockState(tileIndex, activeState);
         //Check if colliding with canons at the moment where block became solid.
         //That's more performant than checking if canon collides with it all the time
-        this.tilemapHandler.levelObjects.forEach(levelObject => {
+        this.tilemapHandler.levelObjects.forEach((levelObject: any) => {
             if ((levelObject.type === ObjectTypes.CANON_BALL || levelObject.type === ObjectTypes.ROCKET || levelObject.type === ObjectTypes.LASER) && Collision.objectsColliding(levelObject, this)) {
                 levelObject.deleteObjectFromLevel(this.tilemapHandler);
             }
         });
     }
 
-    switchChanged(color) {
+    switchChanged(color: any) {
         color === this.color ? this.switchActiveState(this.activeTileIndex, true) : this.switchActiveState(0, false);
     }
 
     collisionEvent() {
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         super.drawSingleFrame(spriteCanvas, this.active ? this.canvasXSpritePos : this.canvasXSpritePos + this.tileSize);
     }
 } class RedBlueSwitch extends InteractiveLevelObject {
+    public tilemapHandler: TileMapHandler;
+    public collided: boolean;
+    public bottomLineHitBox: {x: number; y: number; width: number; height: number};
+    public currentlyActiveColor: any;
+    public red: any;
+    public blue: any;
+    key: string;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 2, extraAttributes);
         this.tilemapHandler = tilemapHandler;
         this.collided = false;
@@ -3629,7 +3972,7 @@ PlayMode.customExit = undefined;
     }
 
     checkOtherSwitchesCurrentColor() {
-        const result = this?.tilemapHandler?.levelObjects && this.tilemapHandler.levelObjects.find(levelObject => levelObject.type === ObjectTypes.RED_BLUE_BLOCK_SWITCH);
+        const result = this?.tilemapHandler?.levelObjects && this.tilemapHandler.levelObjects.find((levelObject: { type: string; }) => levelObject.type === ObjectTypes.RED_BLUE_BLOCK_SWITCH);
         this.currentlyActiveColor = result?.currentlyActiveColor ? result.currentlyActiveColor : AnimationHelper.switchableBlockColors.red;
     }
 
@@ -3657,7 +4000,7 @@ PlayMode.customExit = undefined;
         const { red, blue } = AnimationHelper.switchableBlockColors;
         this.currentlyActiveColor = this.currentlyActiveColor === red ? blue : red;
         this.collided = true;
-        this?.tilemapHandler?.levelObjects && this.tilemapHandler.levelObjects.forEach(levelObject => {
+        this?.tilemapHandler?.levelObjects && this.tilemapHandler.levelObjects.forEach((levelObject: { type: string; key: string; collided: boolean; currentlyActiveColor: any; switchChanged: (arg0: any) => void; }) => {
             if (levelObject.type === ObjectTypes.RED_BLUE_BLOCK_SWITCH && levelObject.key !== this.key) {
                 levelObject.collided = true;
                 levelObject.currentlyActiveColor = this.currentlyActiveColor;
@@ -3669,7 +4012,7 @@ PlayMode.customExit = undefined;
         });
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         if (this.collided && !Collision.objectsColliding(player, this)) {
             this.collided = false;
         }
@@ -3678,7 +4021,7 @@ PlayMode.customExit = undefined;
     }
 } class RedBlock extends SwitchableBlock {
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, tilemapHandler, AnimationHelper.switchableBlockColors.red, extraAttributes);
         this.setBlockState(this.activeTileIndex, true);
         this.checkCurrentlyActiveBlock();
@@ -3691,7 +4034,7 @@ PlayMode.customExit = undefined;
     }
 
     checkCurrentlyActiveBlock() {
-        const result = this?.tilemapHandler?.levelObjects && this.tilemapHandler.levelObjects.find(levelObject => levelObject.type === ObjectTypes.RED_BLUE_BLOCK_SWITCH);
+        const result = this?.tilemapHandler?.levelObjects && this.tilemapHandler.levelObjects.find((levelObject: { type: string; }) => levelObject.type === ObjectTypes.RED_BLUE_BLOCK_SWITCH);
         if (!result) {
             this.setBlockState(this.activeTileIndex, true);
         }
@@ -3707,7 +4050,7 @@ PlayMode.customExit = undefined;
     }
 } class BlueBlock extends SwitchableBlock {
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, tilemapHandler, AnimationHelper.switchableBlockColors.blue, extraAttributes);
         this.setBlockState(0, false);
         this.checkCurrentlyActiveBlock();
@@ -3720,7 +4063,7 @@ PlayMode.customExit = undefined;
     }
 
     checkCurrentlyActiveBlock() {
-        const result = this?.tilemapHandler?.levelObjects && this.tilemapHandler.levelObjects.find(levelObject => levelObject.type === ObjectTypes.RED_BLUE_BLOCK_SWITCH);
+        const result = this?.tilemapHandler?.levelObjects && this.tilemapHandler.levelObjects.find((levelObject: { type: string; }) => levelObject.type === ObjectTypes.RED_BLUE_BLOCK_SWITCH);
         if (result?.currentlyActiveColor === this.color) {
             this.setBlockState(this.activeTileIndex, true);
         }
@@ -3729,8 +4072,17 @@ PlayMode.customExit = undefined;
     collisionEvent() {
     }
 } class DisappearingBlock extends InteractiveLevelObject {
+    public tileMapHandler: TileMapHandler;
+    public player: any;
+    public disappearingFrameAmount: number;
+    public blockNotSolidAt: number;
+    public disappearingStepsAmount: number;
+    public disappearingFrameSteps: number;
+    public disappearingBoxHeight: number;
+    public collidedWithPlayer: boolean = false;
+    public currentDisappearingFrame: number = 0;
 
-    constructor(x, y, tileSize, type, tileMapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: any, tileMapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 2, extraAttributes);
         this.tileMapHandler = tileMapHandler;
         this.player = tileMapHandler.player;
@@ -3752,7 +4104,7 @@ PlayMode.customExit = undefined;
         this.collidedWithPlayer = false;
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         if (this.collidedWithPlayer) {
             this.currentDisappearingFrame++;
             let currentDisappearingDrawFrame = Math.floor((this.blockNotSolidAt - this.currentDisappearingFrame)
@@ -3776,7 +4128,7 @@ PlayMode.customExit = undefined;
                 if (Collision.objectsColliding(this.player, this)) {
                     currentlyCollidingWithInteractiveObject = true;
                 }
-                this.tileMapHandler.levelObjects.forEach(levelObject => {
+                this.tileMapHandler.levelObjects.forEach((levelObject: any) => {
                     if (levelObject?.type === ObjectTypes.STOMPER && (levelObject.active || levelObject.goingBack)) {
                         if (Collision.objectsColliding(levelObject, this)) {
                             currentlyCollidingWithInteractiveObject = true;
@@ -3791,8 +4143,18 @@ PlayMode.customExit = undefined;
         }
     }
 } class Portal extends InteractiveLevelObject {
+    public tilemapHandler: TileMapHandler;
+    public portalTypes: { blue: "blue", orange: "orange" };
+    public portalType: string;
+    public active: boolean;
+    public maxInactiveFrames: number;
+    public currentInactiveFrame: number;
+    public touchingPlayer: boolean;
+    key: string;
+    squishXOffset: number = 0;
+    squishYOffset: number = 0;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         const hitBoxOffset = -tileSize / 3;
         super(x, y, tileSize, type, hitBoxOffset);
         this.tilemapHandler = tilemapHandler;
@@ -3824,7 +4186,7 @@ PlayMode.customExit = undefined;
 
     findOtherExit() {
         const portalsInLevel = this.tilemapHandler.filterObjectsByTypes([ObjectTypes.PORTAL, ObjectTypes.PORTAL2]);
-        let indexOfCurrentPortal = portalsInLevel.findIndex(portalInArray => portalInArray.key === this.key);
+        let indexOfCurrentPortal = portalsInLevel.findIndex((portalInArray: { key: string; }) => portalInArray.key === this.key);
         let otherExit;
 
         if (this.portalType === this.portalTypes.blue && portalsInLevel[indexOfCurrentPortal + 1]) {
@@ -3855,7 +4217,7 @@ PlayMode.customExit = undefined;
     }
 
     touchingOtherPortals() {
-        return this.tilemapHandler.levelObjects.find(levelObject =>
+        return this.tilemapHandler.levelObjects.find((levelObject: { type: string; key: string; touchingPlayer: any; }) =>
             levelObject.type === ObjectTypes.PORTAL && levelObject.key !== this.key && levelObject.touchingPlayer);
     }
 
@@ -3864,7 +4226,7 @@ PlayMode.customExit = undefined;
         this.active = false;
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLCanvasElement) {
         if (this.touchingPlayer && !Collision.objectsColliding(this.tilemapHandler.player, this)) {
             this.touchingPlayer = false;
         }
@@ -3880,10 +4242,20 @@ PlayMode.customExit = undefined;
         else {
             super.draw(spriteCanvas);
         }
+    }/*
+    drawWidth(spriteCanvas: any, canvasXSpritePos: number | undefined, canvasYSpritePos: number | undefined, tileSize: any, tileSize1: any, arg5: number, arg6: number, drawWidth: any, drawHeight: any, arg9: number) {
+        throw new Error("Method not implemented.");
     }
+    drawHeight(spriteCanvas: any, canvasXSpritePos: number | undefined, canvasYSpritePos: number | undefined, tileSize: any, tileSize1: any, arg5: number, arg6: number, drawWidth: any, drawHeight: any, arg9: number) {
+        throw new Error("Method not implemented.");
+    }*/
 } class Collectible extends InteractiveLevelObject {
+    public tileMapHandler: TileMapHandler;
+    public touched: boolean;
+    public hide: boolean;
+    public collected: any;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 2, extraAttributes);
         this.tileMapHandler = tilemapHandler;
         this.touched = false;
@@ -3914,13 +4286,13 @@ PlayMode.customExit = undefined;
 
     playCorrectSound() {
         const finishFlags = this.tileMapHandler.filterObjectsByTypes(ObjectTypes.FINISH_FLAG);
-        const finishFlagsNeedingCoins = finishFlags.some(finishFlag => finishFlag.collectiblesNeeded);
+        const finishFlagsNeedingCoins = finishFlags.some((finishFlag: { collectiblesNeeded: any; }) => finishFlag.collectiblesNeeded);
 
         if (finishFlagsNeedingCoins) {
             const collectibles = undefined ? this.tileMapHandler.filterObjectsByTypes(ObjectTypes.COLLECTIBLE) :
-                WorldDataHandler.levels[this.tileMapHandler.currentLevel].levelObjects.filter(levelObject => levelObject.type === ObjectTypes.COLLECTIBLE);
-            const untouchedCollectibles = undefined ? collectibles.filter(collectible => !collectible.touched || collectible.collected) :
-                collectibles.filter(collectible => !collectible.extraAttributes.collected);
+                WorldDataHandler.levels[this.tileMapHandler.currentLevel].levelObjects.filter((levelObject: { type: string; }) => levelObject.type === ObjectTypes.COLLECTIBLE);
+            const untouchedCollectibles = undefined ? collectibles.filter((collectible: { touched: any; collected: any; }) => !collectible.touched || collectible.collected) :
+                collectibles.filter((collectible: { extraAttributes: { collected: any; }; }) => !collectible.extraAttributes.collected);
             untouchedCollectibles.length === 1 ? SoundHandler.allCoinsCollected.stopAndPlay() : SoundHandler.pickup.play();
         }
         else {
@@ -3929,7 +4301,7 @@ PlayMode.customExit = undefined;
     }
 
     setPersistentAttribute() {
-        WorldDataHandler.levels[this.tileMapHandler.currentLevel].levelObjects.forEach(levelObject => {
+        WorldDataHandler.levels[this.tileMapHandler.currentLevel].levelObjects.forEach((levelObject: { x: any; y: any; type: any; extraAttributes: { collected: boolean; }; }) => {
             if (levelObject.x === this.initialX && levelObject.y === this.initialY && levelObject.type === this.type) {
                 levelObject.extraAttributes = { collected: true };
             }
@@ -3937,7 +4309,7 @@ PlayMode.customExit = undefined;
         this.collected = true;
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         if (this.hide || this.collected) {
             super.drawWithAlpha(spriteCanvas, 0.1);
         }
@@ -3946,8 +4318,12 @@ PlayMode.customExit = undefined;
         }
     }
 } class JumpReset extends InteractiveLevelObject {
+    public tileMapHandler: TileMapHandler;
+    public touched: boolean;
+    public currentResetTimer: number;
+    public resetAfterFrames: number;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, -2, extraAttributes);
         this.tileMapHandler = tilemapHandler;
         this.touched = false;
@@ -3968,7 +4344,7 @@ PlayMode.customExit = undefined;
         }
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         if (this.touched) {
             super.drawWithAlpha(spriteCanvas, 0.1)
             this.currentResetTimer++;
@@ -3983,7 +4359,7 @@ PlayMode.customExit = undefined;
     }
 } class FixedSpeedRight extends InteractiveLevelObject {
 
-    constructor(x, y, tileSize, type, tileMapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tileMapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
     }
 
@@ -3999,7 +4375,7 @@ PlayMode.customExit = undefined;
     }
 } class FixedSpeedStopper extends InteractiveLevelObject {
 
-    constructor(x, y, tileSize, type) {
+    constructor(x: number, y: number, tileSize: number, type: string, _: any | null = null) {
         super(x, y, tileSize, type, 0);
     }
 
@@ -4008,8 +4384,10 @@ PlayMode.customExit = undefined;
         player.fixedSpeedLeft = false;
     }
 } class Water extends InteractiveLevelObject {
+    public tilemapHandler: TileMapHandler;
+    public player: any;
 
-    constructor(x, y, tileSize, type, tilemapHandler, extraAttributes = {}) {
+    constructor(x: number, y: number, tileSize: number, type: string, tilemapHandler: TileMapHandler, extraAttributes: any = {}) {
         super(x, y, tileSize, type, 0, extraAttributes);
         this.tilemapHandler = tilemapHandler;
     }
@@ -4031,27 +4409,51 @@ PlayMode.customExit = undefined;
         //we need this initial check, because when the game starts, there are no edges yet. we check if one of the edges exists
         if (player.top_right_pos) {
             ["top_right_pos", "top_left_pos", "bottom_right_pos", "bottom_left_pos"].forEach(corner => {
-                if (!player[corner + "_in_water"]) {
-                    player[corner + "_in_water"] = Collision.pointAndObjectColliding(player[corner], this);
+                if (!player.this_array[corner + "_in_water"]) {
+                    player.this_array[corner + "_in_water"] = Collision.pointAndObjectColliding(player.this_array[corner], this);
                 }
             });
         }
     }
 } class Deko extends LevelObject {
 
-    constructor(x, y, tileSize, index) {
+    constructor(x: number, y: number, tileSize: number, index: number, _: any = null, __: any = null) {
         super(x, y, tileSize, ObjectTypes.DEKO);
         this.spriteIndex = SpritePixelArrays.getIndexOfSprite(this.type, index);
         this.spriteObject = [SpritePixelArrays.getSpritesByIndex(this.spriteIndex)];
         this.canvasYSpritePos = this.spriteIndex * this.tileSize;
     }
 } class SFX {
-    constructor(x, y, tileSize, sfxIndex, direction, xspeed = 0, yspeed = 0, reduceAlpha = false, animationLength = 8, growByTimes = 0) {
+    public x: number;
+    public y: number;
+    public width: number;
+    public height: number;
+    public type: string;
+    public tileSize: number;
+    public xspeed: any;
+    public yspeed: any;
+    public spriteIndex: any;
+    public animationFrames: any;
+    public xCanvasOffset: any;
+    public canvasYSpritePos: any;
+    public animationLength: any;
+    public totalAnimationFrames: any;
+    public currentFrame: any;
+    public ended: any;
+    public alpha: any;
+    public alphaReductionStep: any;
+    public reduceAlpha: any;
+    public growByTimes: any;
+    public growStep: any;
+    public growAmountByStep: any;
+
+    constructor(x: number, y: number, tileSize: number, type: string = ObjectTypes.SFX, sfxIndex: number | undefined,
+        direction: any = {}, xspeed = 0, yspeed = 0, reduceAlpha = false, animationLength = 8, growByTimes = 0) {
         this.x = x;
         this.y = y;
         this.width = tileSize;
         this.height = tileSize;
-        this.type = ObjectTypes.SFX;
+        this.type = type;
         this.tileSize = tileSize;
         this.xspeed = xspeed;
         this.yspeed = yspeed;
@@ -4079,7 +4481,7 @@ PlayMode.customExit = undefined;
         }
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: any) {
         if (this.currentFrame < this.totalAnimationFrames) {
             this.x += this.xspeed;
             this.y += this.yspeed;
@@ -4104,8 +4506,21 @@ PlayMode.customExit = undefined;
         }
     }
 } class SpriteSheetCreator {
+    public tileMapHandler: TileMapHandler;
+    public spriteCanvas: HTMLCanvasElement;
+    public spriteCanvasWidth: any;
+    public spriteCanvasHeight: any;
+    public flipDirection: any;
+    public spriteCtx: any;
+    public tileSize: any;
+    public right: any;
+    public left: any;
+    public top: any;
+    public bottom: any;
+    public pixelArrayUnitSize: any;
+    public pixelArrayUnitAmount: any;
 
-    constructor(tileMapHandler, spriteCanvas) {
+    constructor(tileMapHandler: TileMapHandler, spriteCanvas: HTMLCanvasElement) {
         this.tileMapHandler = tileMapHandler;
         this.spriteCanvas = spriteCanvas;
         this.spriteCanvasWidth = this.spriteCanvas.width;
@@ -4126,20 +4541,21 @@ PlayMode.customExit = undefined;
 
     createSpriteSheet() {
         this.spriteCtx.clearRect(0, 0, this.spriteCanvasWidth, this.spriteCanvasHeight);
-        SpritePixelArrays.allSprites.forEach((SpriteObject, spriteObjectIndex) => {
+        SpritePixelArrays.allSprites.forEach((SpriteObject: { animation: any; directions: string | any[]; }, spriteObjectIndex: any) => {
             if (SpriteObject.animation) {
                 this.createSprite(SpriteObject, spriteObjectIndex)
             }
         });
     }
 
-    redrawSprite(SpriteObject, spriteObjectIndex) {
+    redrawSprite(SpriteObject: any, spriteObjectIndex: number) {
         const { tileSize } = this.tileMapHandler;
         this.spriteCtx.clearRect(0, spriteObjectIndex * tileSize, this.spriteCanvasWidth, spriteObjectIndex * tileSize + tileSize);
-        this.createSpriteSheet(SpriteObject, spriteObjectIndex)
+        this.createSpriteSheet();
+        //this.createSpriteSheet(SpriteObject, spriteObjectIndex)
     }
 
-    createSprite(SpriteObject, spriteObjectIndex) {
+    createSprite(SpriteObject: { directions: string | any[]; animation: any; }, spriteObjectIndex: any) {
         if (SpriteObject?.directions) {
             const { right, left, top, bottom } = AnimationHelper.facingDirections;
             if (SpriteObject.directions[0] === bottom || SpriteObject.directions[0] === top) {
@@ -4189,18 +4605,18 @@ PlayMode.customExit = undefined;
     }
 
     //loop variable is there, so you can add more sprite on the same y-axis (f.e. for flipped sprites)
-    drawAnimation(animation, yIndex, loop = 0) {
+    drawAnimation(animation: any[], yIndex: number, loop = 0) {
         const { tileSize, pixelArrayUnitSize, pixelArrayUnitAmount } = this.tileMapHandler;
-        animation.forEach((SpritePixelArray, spriteIndex) => {
+        animation.forEach((SpritePixelArray: { sprite: any; }, spriteIndex: number) => {
             Display.drawPixelArray(SpritePixelArray.sprite, (spriteIndex + (animation.length * loop)) * tileSize,
                 yIndex * tileSize, pixelArrayUnitSize,
                 pixelArrayUnitAmount, this.spriteCtx);
         });
     }
 
-    flipSprite(SpritePixelArrayAnimation, flipDirection) {
-        let flippedAnimation = [];
-        SpritePixelArrayAnimation.animation.map((animationFrame) => {
+    flipSprite(SpritePixelArrayAnimation: { animation: any[]; }, flipDirection: any) {
+        let flippedAnimation: any[] = [];
+        SpritePixelArrayAnimation.animation.map((animationFrame: { sprite: any; }) => {
             if (flipDirection === this.flipDirection.horizontally) {
                 let flippedSprite = this.hflip(animationFrame.sprite);
                 flippedAnimation.push({ sprite: flippedSprite });
@@ -4216,11 +4632,11 @@ PlayMode.customExit = undefined;
         return flippedSpriteObject;
     }
 
-    turnSprite(SpritePixelArrayAnimation, bigRotation = false) {
-        let turnedAnimation = [];
-        SpritePixelArrayAnimation.animation.map((animationFrame) => {
+    turnSprite(SpritePixelArrayAnimation: { animation: any[]; }, bigRotation = false) {
+        let turnedAnimation: any[] = [];
+        SpritePixelArrayAnimation.animation.map((animationFrame: { sprite: any; }) => {
 
-            var newArray = [];
+            var newArray: any[] = [];
 
             if (bigRotation) {
                 newArray = this.rotate270(animationFrame.sprite);
@@ -4235,7 +4651,7 @@ PlayMode.customExit = undefined;
         return turnedSpriteObject;
     }
 
-    hflip(a) {
+    hflip(a: string | any[]) {
         const h = a.length;
         let b = new Array(h);
 
@@ -4248,7 +4664,7 @@ PlayMode.customExit = undefined;
         return b;
     }
 
-    vflip(a) {
+    vflip(a: string | any[]) {
         const h = a.length;
         let b = new Array(h);
 
@@ -4265,7 +4681,7 @@ PlayMode.customExit = undefined;
         return b;
     }
 
-    rotate90(a) {
+    rotate90(a: string | any[]) {
         const w = a.length;
         const h = a[0].length;
         let b = new Array(h);
@@ -4281,7 +4697,7 @@ PlayMode.customExit = undefined;
         return b;
     }
 
-    rotate270(a) {
+    rotate270(a: string | any[]) {
         const w = a.length;
         const h = a[0].length;
         let b = new Array(h);
@@ -4297,6 +4713,8 @@ PlayMode.customExit = undefined;
         return b;
     }
 } class ObjectTypes {
+    static PLAYER_WALL_JUMP: any;
+
     static get SPIKE() {
         return 'spike';
     }
@@ -4472,10 +4890,114 @@ PlayMode.customExit = undefined;
             [this.COLLECTIBLE]: Collectible
         };
     }
-}
-ObjectTypes.PLAYER_WALL_JUMP = undefined;
- class SpritePixelArrays {
-
+} class SpritePixelArrays {
+    static this_array: { [key: string]: any } = {};
+    static pathMovementMapper: {
+        1: 1,
+        2: 2,
+        3: 3,
+        4: 4,
+        5: 6,
+        6: 8,
+        7: 12,
+    };
+    static changeableAttributeFormElements: {
+        toggle: "toggle",
+    };
+    static changeableAttributeTypes: {
+        frequency: "frequency",
+        speed: "speed",
+        dialogue: "dialogue",
+        stopFrames: "stopFrames",
+        movementDirection: "movementDirection",
+        rotationSpeed: "rotationSpeed",
+        collectiblesNeeded: "collectiblesNeeded",
+        laserDuration: "laserDuration",
+        pauseDuration: "pauseDuration"
+    };;
+    static backgroundSprites: string[];
+    static customType: string;
+    static TILE_1: {
+        name: number,
+        descriptiveName: string,
+        description: string,
+        type: string,
+        animation: { sprite: string[][] }[];
+    };
+    static TILE_2: typeof this.TILE_1;
+    static TILE_3: typeof this.TILE_1;
+    static TILE_4: typeof this.TILE_1;
+    static TILE_6: typeof this.TILE_1;
+    static TILE_7: typeof this.TILE_1;
+    static TILE_8: typeof this.TILE_1;
+    static TILE_9: typeof this.TILE_1;
+    static TILE_10: typeof this.TILE_1;
+    static TILE_11: typeof this.TILE_1;
+    static TILE_12: typeof this.TILE_1;
+    static TILE_13: typeof this.TILE_1;
+    static TILE_5: typeof this.TILE_1;
+    static TILE_edge: any;
+    static PLAYER_IDLE_SPRITE: any;
+    static PLAYER_JUMP_SPRITE: any;
+    static PLAYER_WALL_JUMP_SPRITE: any;
+    static PLAYER_WALK_SPRITE: any;
+    static START_FLAG_SPRITE: any;
+    static CHECKPOINT_FLAG: any;
+    static FINISH_FLAG_SPRITE: any;
+    static FINISH_FLAG_CLOSED_SPRITE: any;
+    static SPIKE_SPRITE: any;
+    static TRAMPOLINE_SRPITE: any;
+    static CANON_SPRITE: any;
+    static STOMPER: any;
+    static TOGGLE_MINE: any;
+    static DISAPPEARING_BLOCK_SPRITE: any;
+    static WATER: any;
+    static RED_BLOCK: any;
+    static BLUE_BLOCK: any;
+    static RED_BLUE_BLOCK_SWITCH: any;
+    static ROCKET_LAUNCHER: any;
+    static NPC_SPRITE: any;
+    static CANON_BALL_SPRITE: any;
+    static ROCKET: any;
+    static PORTAL: any;
+    static PORTAL2: any;
+    static COLLECTIBLE: any;
+    static LASER_CANON: any;
+    static LASER: any;
+    static BARREL_CANNON: any;
+    static JUMP_RESET: any;
+    static FIXED_SPEED_RIGHT: any;
+    static FIXED_SPEED_STOPPER: any;
+    static PATH_SPRITE: any;
+    static DEKO_SPRITE: any;
+    static DEKO_SPRITE2: any;
+    static DEKO_SPRITE3: any;
+    static DEKO_SPRITE4: any;
+    static DEKO_SPRITE5: any;
+    static DEKO_SPRITE6: any;
+    static DEKO_SPRITE7: any;
+    static DEKO_SPRITE8: any;
+    static DEKO_SPRITE9: any;
+    static DEKO_SPRITE10: any;
+    static DEKO_SPRITE11: any;
+    static DEKO_SPRITE12: any;
+    static DEKO_SPRITE13: any;
+    static DEKO_SPRITE14: any;
+    static DEKO_SPRITE15: any;
+    static DEKO_SPRITE16: any;
+    static DEKO_SPRITE17: any;
+    static DEKO_SPRITE18: any;
+    static SFX1: any;
+    static SFX2: any;
+    static SFX3: any;
+    static SFX4: any;
+    static SFX5: any;
+    static SFX6: any;
+    static SFX7: any;
+    static SFX8: any;
+    static SFX9: any;
+    static allSprites: any;
+    static fillAllSprites: any;
     static staticConstructor() {
 
         this.pathMovementMapper = {
@@ -6424,12 +6946,9 @@ ObjectTypes.PLAYER_WALL_JUMP = undefined;
         this.allSprites = [];
 
         this.fillAllSprites = () => {
-            //console.log("Typeof fillAllSprites = " + typeof this.fillAllSprites);
-            //console.log("Typeof allSprites = " + typeof this.allSprites);
-
-            this.allSprites = Object.entries(this).filter(key =>
-                this[key[0]]?.descriptiveName
-            ).map(object => object[1])
+            this.allSprites = Object.entries(this.this_array).filter((key: any[]) =>
+                this.this_array[key[0]]?.descriptiveName
+            ).map((object: any[]) => object[1])
         };
 
         this.fillAllSprites();
@@ -6437,7 +6956,7 @@ ObjectTypes.PLAYER_WALL_JUMP = undefined;
 
     static allTileSprites() {
         return [
-            ...this.allSprites.filter(sprite => Number.isInteger(sprite.name)),
+            ...this.allSprites.filter((sprite: { name: unknown; }) => Number.isInteger(sprite.name)),
             this.TILE_edge
         ];
     }
@@ -6466,32 +6985,30 @@ ObjectTypes.PLAYER_WALL_JUMP = undefined;
         }
     }
 
-    static getSpritesByIndex(index) {
+    static getSpritesByIndex(index: string | number) {
         return this.allSprites[index];
     }
 
-    static getSpritesByName(name) {
-        return this.allSprites.filter(sprite => sprite.name === name);
+    static getSpritesByName(name: string) {
+        return this.allSprites.filter((sprite: { name: any; }) => sprite.name === name);
     }
 
     static getCustomSprites() {
-        console.log(this.allSprites);
-        console.log(this.allSprites.filter(sprite => sprite.custom));
-        return this.allSprites.filter(sprite => sprite.custom);
+        return this.allSprites.filter((sprite: { custom: any; }) => sprite.custom);
     }
 
-    static getSpritesByType(type) {
-        return this.allSprites.filter(sprite => sprite.type === type && !sprite.hiddenSprite);
+    static getSpritesByType(type: string) {
+        return this.allSprites.filter((sprite: { type: any; hiddenSprite: any; }) => sprite.type === type && !sprite.hiddenSprite);
     }
 
-    static getSpritesByDescrpitiveName(descriptiveName) {
-        return this.allSprites.filter(sprite => sprite.descriptiveName === descriptiveName);
+    static getSpritesByDescrpitiveName(descriptiveName: any) {
+        return this.allSprites.filter((sprite: { descriptiveName: any; }) => sprite.descriptiveName === descriptiveName);
     }
 
-    static getIndexOfSprite(searchValue, index = 0, searchKey = "name") {
+    static getIndexOfSprite(searchValue: string, index: number = 0, searchKey = "name") {
         let indexInSpriteArray = 0;
         let currentIndexForSameSprites = 0;
-        this.allSprites.every((sprite, spriteIndex) => {
+        this.allSprites.every((sprite: { [x: string]: any; }, spriteIndex: number) => {
             if (sprite[searchKey] === searchValue) {
                 if (currentIndexForSameSprites === index) {
                     indexInSpriteArray = spriteIndex;
@@ -6506,8 +7023,11 @@ ObjectTypes.PLAYER_WALL_JUMP = undefined;
         return indexInSpriteArray;
     }
 } class Sound {
+    public sound: any;
+    public errorWhileLoading: any;
+    public loaded: any;
 
-    constructor(src, id = "", loop = false) {
+    constructor(src: string, id = "", loop = false) {
         this.sound = document.createElement("audio");
         this.sound.src = src;
         if (id) {
@@ -6548,8 +7068,24 @@ ObjectTypes.PLAYER_WALL_JUMP = undefined;
         }
     }
 } class SoundHandler {
+    static this_array: {[key: string]:any};
+    static sounds: { key: string; value: string; }[];
+    static song: Sound;
+    static guiSelect: any;
+    static bubble: any;
+    static shortJump: any;
+    static dash: any;
+    static hit: any;
+    static win: any;
+    static checkpoint: any;
+    static longJump: any;
+    static dialogueSound: any;
+    static barrel: any;
+    static allCoinsCollected: any;
+    static pickup: any;
+    static jumpReset: any;
 
-    static staticConstructor() {
+    static _staticConstructor() {
         this.sounds = [
             { key: "shortJump", value: "https://drive.google.com/uc?export=download&id=1Q54bi8oothHVvLPrqOMT5fmJA8tpoXLa" },
             { key: "longJump", value: "https://drive.google.com/uc?export=download&id=12m9FxLjEyBORA4FP3xwb6rxjBQvBb3U2" },
@@ -6572,61 +7108,57 @@ ObjectTypes.PLAYER_WALL_JUMP = undefined;
             if (sound.key === "song" && undefined) {
                 this.song = new Sound("", "mainSong", true);
             } else {
-                this[sound.key] = new Sound(sound.value);
+                this.this_array[sound.key] = new Sound(sound.value);
             }
         });
     }
 
-    static setVolume(audoElementId, volume = 1) {
+    static setVolume(audoElementId: string, volume = 1) {
         const sound = document.getElementById(audoElementId);
         if (sound) {
-            sound.volume = volume;
+            sound.setAttribute("volume", volume.toString());
         }
     };
 
-    static fadeAudio(audoElementId, interval = 200) {
+    static fadeAudio(audoElementId: string, interval = 200) {
         if (audoElementId) {
             const sound = document.getElementById(audoElementId);
+            if (sound == null) return;
+            let _vol = sound.getAttribute('volume');
+            let vol = 0;
+            if (_vol != null) vol = Number.parseInt(_vol.toString());
             if (sound) {
                 const fadeAudio = setInterval(() => {
-                    if ((sound.volume !== 0)) {
-                        sound.volume -= 0.1;
+                    if (vol !== 0) {
+                        vol -= 0.1;
+                        sound.setAttribute('volume', vol.toString());
                     }
 
-                    if (sound.volume < 0.11) {
+                    if (vol < 0.11) {
                         clearInterval(fadeAudio);
                     }
                 }, interval);
             }
         }
     }
-}
-SoundHandler.guiSelect = undefined;
-
-SoundHandler.bubble = undefined;
-
-SoundHandler.shortJump = undefined;
-
-SoundHandler.dash = undefined;
-
-SoundHandler.hit = undefined;
-
-SoundHandler.win = undefined;
-
-SoundHandler.checkpoint = undefined;
-
-SoundHandler.longJump = undefined;
-
-SoundHandler.dialogueSound = undefined;
-
-SoundHandler.barrel = undefined;
-
-SoundHandler.allCoinsCollected = undefined;
-
-SoundHandler.pickup = undefined;
-
-SoundHandler.jumpReset = undefined;
- class EffectsHandler {
+} class EffectsHandler {
+    public addEffectButton: any;
+    public existingEffectsEl: any;
+    public editingEffects: any;
+    public effectTypes: any;
+    public defaultAttributeObjects: any;
+    public parsersObject: any;
+    public noiseFlickerIntensities: any;
+    public effectsOrder: any;
+    static addEffectButton: HTMLElement | null;
+    static existingEffectsEl: HTMLElement | null;
+    static editingEffects: HTMLElement | null;
+    static effectTypes: { SFXLayer: string; Flashlight: string; BlackAndWhite: string; Noise: string; };
+    static defaultAttributeObjects: { [x: number]: (() => { sfxIndex: number; intensity: number; duration: number; growByStep: number; xSpeed: { speedFrom: number; speedTo: number; style: string; }; ySpeed: { speedFrom: number; speedTo: number; style: string; }; widthDimensions: string; heightDimensions: string; type: any; activeLevels: string[]; }) | (() => { radius: number; flickerRadius: number; position: string; color: string; type: any; activeLevels: string[]; }) | (() => { alpha: number; flickerIntensity: number; type: any; activeLevels: string[]; }); };
+    static parsersObject: { [x: number]: (attributesObject: any) => any; };
+    //static htmlTemplateObject: { [x: number]: (effectsObject: any) => any; };
+    static noiseFlickerIntensities: { [i: number]: number };
+    static effectsOrder: any[];
 
     static staticConstructor() {
         this.addEffectButton = document.getElementById("addEffectButton");
@@ -6644,15 +7176,15 @@ SoundHandler.jumpReset = undefined;
             [this.effectTypes.Noise]: () => { return this.getNoiseObject() },
         };
         this.parsersObject = {
-            [this.effectTypes.SFXLayer]: (attributesObject) => { return this.parseSFXLayerValues(attributesObject) },
-            [this.effectTypes.Flashlight]: (attributesObject) => { return this.parseFlashlightValues(attributesObject) },
-            [this.effectTypes.Noise]: (attributesObject) => { return this.parseNoiseValues(attributesObject) },
-        };
+            [this.effectTypes.SFXLayer]: (attributesObject: any) => { return this.parseSFXLayerValues(attributesObject) },
+            [this.effectTypes.Flashlight]: (attributesObject: any) => { return this.parseFlashlightValues(attributesObject) },
+            [this.effectTypes.Noise]: (attributesObject: any) => { return this.parseNoiseValues(attributesObject) },
+        };/*
         this.htmlTemplateObject = {
             [this.effectTypes.SFXLayer]: (effectsObject) => { return EffectHtmlRenderer.createSFXLayerTemplate(effectsObject) },
             [this.effectTypes.Flashlight]: (effectsObject) => { return EffectHtmlRenderer.createFlashlightTemplate(effectsObject) },
             [this.effectTypes.Noise]: (effectsObject) => { return EffectHtmlRenderer.createNoiseTemplate(effectsObject) },
-        }
+        }*/
         this.noiseFlickerIntensities = {
             1: 32,
             2: 16,
@@ -6662,7 +7194,7 @@ SoundHandler.jumpReset = undefined;
         this.effectsOrder = [this.effectTypes.Flashlight, this.effectTypes.SFXLayer, this.effectTypes.Noise, this.effectTypes.BlackAndWhite];
     }
 
-    static getBasicAttributes(name) {
+    static getBasicAttributes(name: string) {
         return {
             type: name,
             activeLevels: [
@@ -6710,11 +7242,15 @@ SoundHandler.jumpReset = undefined;
             flickerIntensity: 3,
         }
     }
-
+    /*
     static changeTemplate() {
-        const value = document.getElementById("templateHandler").value;
+        var templateHandler = document.getElementById("templateHandler");
+        if(templateHandler == null) return;
+        const value = (<HTMLInputElement>templateHandler).value;
         const templateArea = document.getElementById("sfxTemplateSummary");
+        if(templateArea == null) return;
         const attributesAccordion = document.getElementById("attributesAccordion");
+        if(attributesAccordion == null) return;
 
         if (value in this.defaultAttributeObjects) {
             attributesAccordion.style.display = "block";
@@ -6723,39 +7259,39 @@ SoundHandler.jumpReset = undefined;
         else {
             attributesAccordion.style.display = "none";
         }
-    }
-
+    }*/
+    /*
     static removeLayer(index) {
-        WorldDataHandler.effects.splice(index, 1);
+        WorldDataHandler.effects?.splice(index, 1);
         tileMapHandler.effects = this.getCurrentLevelEffects(tileMapHandler.currentLevel);
         this.updateExistingSFXSection();
-    }
-
+    }*/
+    /*
     static updateExistingSFXSection() {
         let sfxSectionHtml = "";
-        WorldDataHandler.effects.forEach((effect, index) => {
+        WorldDataHandler.effects?.forEach((effect, index) => {
             let effectName = effect.type === this.effectTypes.SFXLayer ? "Particles" : effect.type;
             sfxSectionHtml += EffectHtmlRenderer.createExistingEffectsSection(effectName, index);
         });
-        this.existingEffectsEl.innerHTML = sfxSectionHtml;
-    }
+        if(this.existingEffectsEl) this.existingEffectsEl.innerHTML = sfxSectionHtml;
+    }*/
 
-    static parseBasicEffectValues(type) {
-        let attributesObject = { type: type, activeLevels: [] };
-        WorldDataHandler.levels.forEach((_, index) => {
-            if (document.getElementById("levelChecked" + index).checked) {
+    static parseBasicEffectValues(type: any) {
+        let attributesObject = { type: type, activeLevels: [] as any[] };
+        WorldDataHandler.levels.forEach((_: any, index: string) => {
+            if ((<HTMLInputElement>document.getElementById("levelChecked" + index)).checked) {
                 attributesObject.activeLevels.push(index);
             }
         })
         return attributesObject;
     }
 
-    static parseSFXLayerValues(attributesObject) {
-        attributesObject.intensity = 61 - parseInt(document.getElementById("intensity").value) || 4;
+    static parseSFXLayerValues(attributesObject: any) {
+        attributesObject.intensity = 61 - parseInt((<HTMLInputElement>document.getElementById("intensity")).value) || 4;
         ["sfxIndex", "duration"].forEach(attribute => {
-            attributesObject[attribute] = parseInt(document.getElementById(attribute).value) || 0;
+            attributesObject[attribute] = parseInt((<HTMLInputElement>document.getElementById(attribute)).value) || 0;
         });
-        attributesObject.growByStep = parseFloat(document.getElementById("growByStep").value) || 1;
+        attributesObject.growByStep = parseFloat((<HTMLInputElement>document.getElementById("growByStep")).value) || 1;
         attributesObject.xSpeed = this.getSFXSpeed("xSpeed");
         attributesObject.ySpeed = this.getSFXSpeed("ySpeed");
         attributesObject.widthDimensions = "full";
@@ -6763,22 +7299,22 @@ SoundHandler.jumpReset = undefined;
         return attributesObject;
     }
 
-    static parseFlashlightValues(attributesObject) {
-        attributesObject.radius = parseInt(document.getElementById("radius").value) || 140;
-        attributesObject.flickerRadius = parseInt(document.getElementById("flickerRadius").value) || 0;
-        attributesObject.position = document.querySelector('input[name="flashlightPosition"]:checked').value;
+    static parseFlashlightValues(attributesObject: { radius: number; flickerRadius: number; position: string | null | undefined; }) {
+        attributesObject.radius = parseInt((<HTMLInputElement>document.getElementById("radius")).value) || 140;
+        attributesObject.flickerRadius = parseInt((<HTMLInputElement>document.getElementById("flickerRadius"))?.value) || 0;
+        attributesObject.position = document.querySelector('input[name="flashlightPosition"]:checked')?.getAttribute('value');
         return attributesObject;
     }
 
-    static parseNoiseValues(attributesObject) {
-        attributesObject.alpha = parseFloat(document.getElementById("noiseAlpha").value) || 0.07;
-        attributesObject.flickerIntensity = parseFloat(document.getElementById("noiseFlickerIntensity").value) || 8;
+    static parseNoiseValues(attributesObject: { alpha: number; flickerIntensity: number; }) {
+        attributesObject.alpha = parseFloat((<HTMLInputElement>document.getElementById("noiseAlpha")).value) || 0.07;
+        attributesObject.flickerIntensity = parseFloat((<HTMLInputElement>document.getElementById("noiseFlickerIntensity")).value) || 8;
         return attributesObject;
     }
-
+    /*
     static addEffect(event, index) {
         event.preventDefault();
-        const value = document.getElementById("templateHandler").value;
+        const value = (<HTMLInputElement>document.getElementById("templateHandler")).value;
         let attributesObject = this.parseBasicEffectValues(value);
         if (value in this.parsersObject) {
             attributesObject = this.parsersObject[value](attributesObject);
@@ -6790,73 +7326,90 @@ SoundHandler.jumpReset = undefined;
         this.existingEffectsEl.style.display = "block";
         this.changeInitialColorModalVisibility();
     }
-
-    static getSFXSpeed(speedId) {
+    */
+    static getSFXSpeed(speedId: string) {
         return {
-            speedFrom: parseFloat(document.getElementById(speedId + "From").value) || 0,
-            speedTo: parseFloat(document.getElementById(speedId + "To").value) || 0,
+            speedFrom: parseFloat((<HTMLInputElement>document.getElementById(speedId + "From")).value) || 0,
+            speedTo: parseFloat((<HTMLInputElement>document.getElementById(speedId + "To")).value) || 0,
             style: "fromNegativeToPositive"
         }
     }
-
+    /*
     static cancelEffect() {
         this.removeEffectTemplate();
-        this.existingEffectsEl.style.display = "block";
+        if(this.existingEffectsEl) this.existingEffectsEl.style.display = "block";
         this.changeInitialColorModalVisibility();
-    }
-
+    }*/
+    /*
     static changeInitialColorModalVisibility(display = "block") {
         document.getElementById('worldColorsSubmitButton').style.display = display;
         document.getElementById('worldColorModalColorSection').style.display = display;
-    }
-
+    }*/
+    /*
     static removeEffectTemplate() {
         this.editingEffects.innerHTML = "";
         this.addEffectButton.style.display = "block";
-    }
-
+    }*/
+    /*
     static addEffectTemplate(index = null) {
-        this.addEffectButton.style.display = "none";
-        this.existingEffectsEl.style.display = "none";
-        this.editingEffects.innerHTML = "";
+        if(this.addEffectButton) this.addEffectButton.style.display = "none";
+        if(this.existingEffectsEl) this.existingEffectsEl.style.display = "none";
+        if(this.editingEffects) this.editingEffects.innerHTML = "";
         const effectTemplate = EffectHtmlRenderer.createEffectTemplate(index);
         this.changeInitialColorModalVisibility("none");
         this.editingEffects.append(effectTemplate);
 
         const effectType = index !== null ? WorldDataHandler.effects[index].type : this.effectTypes.SFXLayer;
         const attributesAccordion = document.getElementById("attributesAccordion");
-        attributesAccordion.style.display = effectType in this.htmlTemplateObject ? "block" : "none";
-    }
+        if(attributesAccordion) attributesAccordion.style.display = effectType in this.htmlTemplateObject ? "block" : "none";
+    }*/
 
-    static getFlashlightColors(effect, color) {
+    static getFlashlightColors(effect: { color: any; lighterColor: any; }, color: string) {
         effect.color = AnimationHelper.hexToRGB(color)
         const lighterColor = AnimationHelper.lightenDarkenColor(color, 70);
         effect.lighterColor = AnimationHelper.hexToRGB(lighterColor)
     }
 
-    static getCurrentLevelEffects(currentLevel) {
-        const currentLevelEffects = WorldDataHandler.effects.filter(effect => {
+    static getCurrentLevelEffects(currentLevel: any) {
+        const currentLevelEffects = WorldDataHandler.effects.filter((effect: any) => {
             return effect.activeLevels.includes(currentLevel);
         });
-        currentLevelEffects.forEach(effect => {
+        currentLevelEffects.forEach((effect: any) => {
             if (effect.type === this.effectTypes.Flashlight) {
-                this.getFlashlightColors(effect, currentLevelEffects.some(effect => effect.type === this.effectTypes.BlackAndWhite)
+                this.getFlashlightColors(effect, currentLevelEffects.some((effect: { type: string; }) => effect.type === this.effectTypes.BlackAndWhite)
                     ? '000000' : '000000')
             }
             else if (effect.type === this.effectTypes.Noise) {
                 effect.flicker = this.noiseFlickerIntensities[effect.flickerIntensity];
             }
         });
-        return currentLevelEffects.sort((a, b) => {
+        return currentLevelEffects.sort((a: { type: any; }, b: { type: any; }) => {
             const aOrder = this.effectsOrder.indexOf(a.type);
             const bOrder = this.effectsOrder.indexOf(b.type);
             return aOrder < bOrder ? -1 : 1;
         });;
     }
 } class EffectsRenderer {
-    static staticConstructor(tileMapHandler) {
+    public tileMapHandler: any;
+    public noiseCanvas: any;
+    public noisePositions: any;
+    public intensity: any;
+    public sfxIndex: any;
+    public growByStep: any;
+    public duration: any;
+    public xSpeed: any;
+    public ySpeed: any;
+    public left: any;
+    public top: any;
+    public width: any;
+    public height: any;
+    static tileMapHandler: any;
+    static noiseCanvas: HTMLCanvasElement | null;
+    static noisePositions: { left: number; top: number; };
+
+    static staticConstructor(tileMapHandler: TileMapHandler) {
         this.tileMapHandler = tileMapHandler;
-        this.noiseCanvas = document.getElementById("noiseCanvas");
+        this.noiseCanvas = <HTMLCanvasElement>document.getElementById("noiseCanvas");
         this.createNoiseCanvas();
         this.noisePositions = {
             left: 0,
@@ -6864,7 +7417,7 @@ SoundHandler.jumpReset = undefined;
         }
     }
 
-    static displayBackgroundSFX(effect, currentFrame, tileSize = 24) {
+    static displayBackgroundSFX(effect: { intensity: any; sfxIndex: any; growByStep: any; duration: any; xSpeed: any; ySpeed: any; }, currentFrame: number, tileSize = 24) {
         const { intensity, sfxIndex, growByStep, duration, xSpeed, ySpeed } = effect;
         if (currentFrame % intensity === 0) {
             let parsedXSpeed = this.getSFXSpeedFromEffect(xSpeed);
@@ -6878,11 +7431,11 @@ SoundHandler.jumpReset = undefined;
         }
     }
 
-    static getSFXLeftPositionFromEffect(effect, tileSize, standardStart, standardEnd, dimensionName) {
+    static getSFXLeftPositionFromEffect(effect: any, tileSize: number, standardStart: any, standardEnd: any, dimensionName: string) {
         return MathHelpers.getRandomNumberBetweenTwoNumbers(standardStart, standardEnd);
     }
 
-    static getSFXSpeedFromEffect(speedObject) {
+    static getSFXSpeedFromEffect(speedObject: { speedFrom: any; speedTo: number; }) {
         return speedObject.speedFrom === speedObject.speedTo ? speedObject.speedFrom
             : MathHelpers.getRandomNumberBetweenTwoNumbers(speedObject.speedFrom, speedObject.speedTo + 1, false);
     }
@@ -6895,7 +7448,7 @@ SoundHandler.jumpReset = undefined;
         }
     }
 
-    static displayNoise(effect) {
+    static displayNoise(effect: { flicker: number; alpha: any; }) {
         if (tileMapHandler.currentGeneralFrameCounter % effect.flicker === 0) {
             this.noisePositions.left = MathHelpers.getRandomNumberBetweenTwoNumbers(0, 100);
             this.noisePositions.top = MathHelpers.getRandomNumberBetweenTwoNumbers(0, 100);
@@ -6906,10 +7459,10 @@ SoundHandler.jumpReset = undefined;
             Camera.viewport.width, Camera.viewport.height, effect.alpha);
     }
 
-    static displayFleshlight(currentLevel, playerx, playery, radius = 200, flickerIntensity = 0,
+    static displayFleshlight(currentLevel: number, playerx: any, playery: any, radius = 200, flickerIntensity = 0,
         orgColor = { r: 0, g: 0, b: 0 }, lighterColor = { r: 70, g: 70, b: 70 }) {
         if (currentLevel !== 0 && currentLevel !== WorldDataHandler.levels.length - 1) {
-            var radius = flickerIntensity ? MathHelpers.getRandomNumberBetweenTwoNumbers(radius, radius + flickerIntensity) : radius;
+            var radius: number = flickerIntensity ? MathHelpers.getRandomNumberBetweenTwoNumbers(radius, radius + flickerIntensity) : radius;
             Display.ctx.fillStyle = `rgb(${orgColor.r},${orgColor.g},${orgColor.b})`;
             Display.ctx.beginPath();
             Display.ctx.rect(Camera.viewport.left, Camera.viewport.top, Camera.viewport.width, Camera.viewport.height);
@@ -6927,10 +7480,13 @@ SoundHandler.jumpReset = undefined;
     }
 
     static createNoiseCanvas() {
-        const ctx = this.noiseCanvas.getContext("2d");
-        const noiseCanvasWidth = this.noiseCanvas.width;
-        const noiseCanvasHeight = this.noiseCanvas.height;
-        const pixelSize = 3;
+        var ctx = (this.noiseCanvas)?.getContext("2d");
+        var noiseCanvasWidth = this.noiseCanvas?.width;
+        var noiseCanvasHeight = this.noiseCanvas?.height;
+        var pixelSize = 3;
+        if (!noiseCanvasWidth) noiseCanvasWidth = NaN;
+        if (!noiseCanvasHeight) noiseCanvasHeight = NaN;
+        if (!ctx) return;
 
         const horizontalSteps = Math.round(noiseCanvasWidth / pixelSize);
         const verticalSteps = Math.round(noiseCanvasHeight / pixelSize);
@@ -6948,7 +7504,7 @@ SoundHandler.jumpReset = undefined;
 
 
     static displayEffects(layer = 0) {
-        this.tileMapHandler.effects.forEach(effect => {
+        this.tileMapHandler.effects.forEach((effect: any) => {
             if (layer === 0) {
                 if (effect.type === EffectsHandler.effectTypes.SFXLayer) {
                     EffectsRenderer.displayBackgroundSFX(effect, this.tileMapHandler.currentGeneralFrameCounter, this.tileMapHandler.tileSize);
@@ -6976,6 +7532,36 @@ SoundHandler.jumpReset = undefined;
         });
     }
 } class DialogueHandler {
+    public dialogueWidth: any;
+    public dialogueHeight: any;
+    public paddingFromBorder: any;
+    public upButtonReleased: any;
+    public animationDurationFrames: any;
+    public linesAmount: any;
+    public maxLineLength: any;
+    public active: any;
+    public dialogue: any;
+    public currentIndex: any;
+    public currentAnimationFrame: any;
+    public arrowUpFrameIndex: any;
+    public leftPos: any;
+    public topPos: any;
+    public pixelArrayUnitSize: any;
+    public tileSize: any;
+    static dialogueWidth: number;
+    static dialogueHeight: number;
+    static paddingFromBorder: number;
+    static upButtonReleased: boolean;
+    static animationDurationFrames: number;
+    static linesAmount: number;
+    static maxLineLength: number;
+    static active: boolean;
+    static dialogue: any[];
+    static currentIndex: number;
+    static currentAnimationFrame: number;
+    static arrowUpFrameIndex: number;
+    static leftPos: any;
+    static topPos: number;
 
     static staticConstructor() {
         this.setDialogueWindowToInactive();
@@ -7066,7 +7652,7 @@ SoundHandler.jumpReset = undefined;
         }
     }
 
-    static animateText(leftPos, topPos, lineIndex) {
+    static animateText(leftPos: number, topPos: number, lineIndex: number) {
         let previousLinesLength = 0;
         const dialoguesLines = this.dialogue[this.currentIndex].lines;
         for (var i = 0; i < lineIndex; i++) {
@@ -7077,9 +7663,9 @@ SoundHandler.jumpReset = undefined;
         Display.displayText(currentText, leftPos + 20, topPos + 30 + (lineIndex * 30), 17, "#FFFFFF", "left");
     }
 
-    static calculateTextLines(dialogue) {
+    static calculateTextLines(dialogue: any) {
         let text = dialogue;
-        const lines = [];
+        const lines: any[] = [];
 
         for (var i = 0; i < this.linesAmount; i++) {
             if (text.length > 0) {
@@ -7101,7 +7687,7 @@ SoundHandler.jumpReset = undefined;
         return lines;
     }
 
-    static showDialogueUpArrow(xPos, yPos) {
+    static showDialogueUpArrow(xPos: number, yPos: number) {
         const { pixelArrayUnitSize, tileSize } = tileMapHandler;
         const yAnchor = yPos + tileSize - pixelArrayUnitSize;
 
@@ -7113,15 +7699,20 @@ SoundHandler.jumpReset = undefined;
             pixelArrayUnitSize * 2, pixelArrayUnitSize, "FFFFFF")
     }
 
-    static createDialogObject(dialogue) {
+    static createDialogObject(dialogue: string | any[]) {
         return {
             textLength: dialogue.length,
             lines: this.calculateTextLines(dialogue)
         }
     }
 } class SFXHandler {
+    static this_array: { [key: string]: any };
+    static tileSize: any;
+    static spriteCanvas: any;
+    static sfxAnimations: any;
+    static backgroundSFX: any;
 
-    static staticConstructor(tileSize, spriteCanvas) {
+    static staticConstructor(tileSize: any, spriteCanvas: HTMLElement | null) {
         this.tileSize = tileSize;
         this.spriteCanvas = spriteCanvas;
         this.sfxAnimations = [];
@@ -7129,12 +7720,10 @@ SoundHandler.jumpReset = undefined;
     }
 
     static updateSfxAnimations(type = "sfxAnimations") {
-        //if(this[type].length != 0) console.log("this[", type, "] = ", this[type]);
-        if(this[type].length != 0) console.log("this", "=", this);
-        for (var i = this[type].length - 1; i >= 0; i--) {
-            this[type][i].draw(this.spriteCanvas);
-            if (this[type][i].ended) {
-                this[type].splice(i, 1);
+        for (var i = this.this_array[type].length - 1; i >= 0; i--) {
+            this.this_array[type][i].draw(this.spriteCanvas);
+            if (this.this_array[type][i].ended) {
+                this.this_array[type].splice(i, 1);
             }
         }
     }
@@ -7144,21 +7733,20 @@ SoundHandler.jumpReset = undefined;
         this.backgroundSFX = [];
     }
 
-    static createSFX(x, y, sfxIndex, direction, xspeed = 0, yspeed = 0, reduceAlpha = false, animationLength = 8, growByTimes = 0, type = "sfxAnimations") {
-        const sfxAnimation = new SFX(x, y, this.tileSize, sfxIndex, direction, xspeed, yspeed, reduceAlpha, animationLength, growByTimes);
-        console.log("PUSH \n " + this[type]);
-        this[type].push(sfxAnimation);
+    static createSFX(x: any, y: number, sfxIndex: number, direction?: undefined, xspeed = 0, yspeed = 0, reduceAlpha = false, animationLength = 8, growByTimes = 0, type = "sfxAnimations") {
+        const sfxAnimation = new SFX(x, y, this.tileSize, ObjectTypes.SFX, sfxIndex, direction, xspeed, yspeed, reduceAlpha, animationLength, growByTimes);
+        this.this_array[type].push(sfxAnimation);
     }
 } class ModalHandler {
-
+    /*
     static showModal(id) {
         let el = document.getElementById(id);
         if (Game.playMode === Game.PLAY_MODE) {
             Game.changeGameMode();
-            el.setAttribute('data-initial-game-mode', Game.PLAY_MODE);
+            el?.setAttribute('data-initial-game-mode', Game.PLAY_MODE);
         }
         else {
-            el.setAttribute('data-initial-game-mode', Game.BUILD_MODE);
+            el?.setAttribute('data-initial-game-mode', Game.BUILD_MODE);
         }
 
         let body = document.querySelector("body");
@@ -7180,8 +7768,8 @@ SoundHandler.jumpReset = undefined;
             el.removeChild(closeButton);
         };
         el.appendChild(closeButton);
-    }
-
+    }*/
+    /*
     static closeModal(id) {
         let body = document.querySelector("body");
         let el = document.getElementById(id);
@@ -7192,9 +7780,13 @@ SoundHandler.jumpReset = undefined;
         let overlay = body.querySelector(".modal-js-overlay");
         el.classList.remove('on');
         body.removeChild(overlay);
-    }
+    }*/
 } class PlayerAttributesHandler {
-
+    static this_array: { [key: string]: any };
+    static player: any;
+    static sliderValues: any;
+    static checkBoxValues: any;
+    /*
     static staticConstructor(player) {
         this.player = player;
         this.sliderValues = ["groundAcceleration", "air_acceleration", "maxSpeed", "groundFriction", "air_friction", "jumpSpeed", "maxFallSpeed"];
@@ -7222,8 +7814,9 @@ SoundHandler.jumpReset = undefined;
         this.checkBoxValues.forEach(checkBoxValue => {
             this.setInitialCheckboxValue(checkBoxValue);
         });
-    }
-
+        
+    }*/
+    /*
     static setInitialSliderValue(sliderValue) {
         let playerAttrValue = this.player[sliderValue];
         if (sliderValue === "jumpSpeed") {
@@ -7235,25 +7828,25 @@ SoundHandler.jumpReset = undefined;
         this[sliderValue + "Value"] = document.getElementById(sliderValue + "Value");
         this[sliderValue + "Value"].innerHTML = playerAttrValue;
         this.adjustAccelerationRelatedToSpeed(sliderValue, playerAttrValue);
-    }
+    }*/
 
-    static adjustAccelerationRelatedToSpeed(sliderValue, playerAttrValue) {
+    static adjustAccelerationRelatedToSpeed(sliderValue: string, playerAttrValue: number) {
         if (sliderValue === "maxSpeed") {
             ["groundAcceleration", "air_acceleration"].forEach(accelerationValue => {
                 const sliderName = accelerationValue + "Slider"
-                const sliderValueBeforeUpdate = parseFloat(this[sliderName].value).toFixed(2);
-                this[sliderName].max = playerAttrValue;
-                this[sliderName].min = playerAttrValue / 100;
-                this[sliderName].step = playerAttrValue / 100;
-                const sliderValueAfterUpdate = parseFloat(this[sliderName].value).toFixed(2);
+                const sliderValueBeforeUpdate = parseFloat(this.this_array[sliderName].value).toFixed(2);
+                this.this_array[sliderName].max = playerAttrValue;
+                this.this_array[sliderName].min = playerAttrValue / 100;
+                this.this_array[sliderName].step = playerAttrValue / 100;
+                const sliderValueAfterUpdate = parseFloat(this.this_array[sliderName].value).toFixed(2);
                 //if value was shrunk down, because max-speed is smaller then acceleration
                 if (sliderValueBeforeUpdate !== sliderValueAfterUpdate) {
-                    this[accelerationValue + "Value"].innerHTML = sliderValueAfterUpdate;
+                    this.this_array[accelerationValue + "Value"].innerHTML = sliderValueAfterUpdate;
                 }
             });
         }
     }
-
+    /*
     static setInitialCheckboxValue(checkBoxValue) {
         let playerAttrValue = this.player[checkBoxValue];
         this[checkBoxValue + "CheckBox"] = document.getElementById(checkBoxValue);
@@ -7268,8 +7861,8 @@ SoundHandler.jumpReset = undefined;
                 this.player[checkBoxValue] = false;
             }
         }
-    }
-
+    }*/
+    /*
     static updateUniqueCheckboxes(checkBoxValue) {
         if (checkBoxValue === dashChecked) {
             this.updateCheckboxValueFromOutside(runChecked, false);
@@ -7277,44 +7870,44 @@ SoundHandler.jumpReset = undefined;
         else if (checkBoxValue === runChecked) {
             this.updateCheckboxValueFromOutside(dashChecked, false);
         }
-    }
+    }*/
 
-    static updateCheckboxValueFromOutside(checkBoxValue, value) {
-        this[checkBoxValue + "CheckBox"] = document.getElementById(checkBoxValue);
-        this[checkBoxValue + "CheckBox"].checked = value;
+    static updateCheckboxValueFromOutside(checkBoxValue: string, value: any) {
+        this.this_array[checkBoxValue + "CheckBox"] = document.getElementById(checkBoxValue);
+        this.this_array[checkBoxValue + "CheckBox"].checked = value;
         this.player[checkBoxValue] = value;
     }
-
+    /*
     static mapJumpValueToSliderValue(value) {
         const jumpSpeedObj = jumpSpeedMapValues.filter(jumpSpeedObj => jumpSpeedObj.jumpSpeed === value);
         return jumpSpeedObj;
-    }
-
+    }*/
+    /*
     static mapJumpSliderValueToRealValue(value) {
         const jumpSpeedObj = jumpSpeedMapValues.filter(jumpSpeedObj => jumpSpeedObj.sliderValue === value);
         return jumpSpeedObj;
-    }
+    }*/
 } class MathHelpers {
-    static getRandomNumberBetweenTwoNumbers(min, max, round = true) {
+    static getRandomNumberBetweenTwoNumbers(min: number, max: number, round = true) {
         const randomNumber = Math.random() * (max - min) + min;
         return round ? Math.floor(randomNumber) : randomNumber;
     }
 
-    static getSometimesNegativeRandomNumber(min, max, round = true) {
+    static getSometimesNegativeRandomNumber(min: number, max: number, round = true) {
         let randomNumber = this.getRandomNumberBetweenTwoNumbers(min, max, round);
         return randomNumber *= Math.round(Math.random()) ? 1 : -1;
     }
 
-    static sortNumbers(numberArray) {
-        return numberArray.sort((a, b) => a - b)
+    static sortNumbers(numberArray: any[]) {
+        return numberArray.sort((a: number, b: number) => a - b)
     }
 
-    static getAngle(x1, y1, x2, y2) {
+    static getAngle(x1: number, y1: number, x2: number, y2: number) {
         let result = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
         return result < 0 ? 360 + result : result; // range [0, 360)
     }
 
-    static normalizeAngle(newAngle) {
+    static normalizeAngle(newAngle: number) {
         if (newAngle > 360) {
             return Math.abs(360 - newAngle);
         }
@@ -7324,12 +7917,33 @@ SoundHandler.jumpReset = undefined;
         return newAngle;
     }
 
-    static getRadians(angle) {
+    static getRadians(angle: number) {
         return angle * Math.PI / 180;
     }
 } class Path {
+    public tileMapHandler: TileMapHandler;
+    public tileSize: number;
+    public pathPoints: any;
+    public objectsOnPath: any;
+    public speed: number;
+    public startPointKey: any;
+    public endPointKey: any;
+    public movementDirection: any;
+    public stopFrames: number;
+    public pathVariant: any;
+    public key: string;
+    public movementSteps: number = 0;
+    public currentDirection: any;
+    public currentMovementStep: any;
+    public currentStopFrame: number = 0;
+    public startPoint: any;
+    public endPoint: any;
+    public currentPathPoint: any;
+    public nextPathPoint: any;
+    public forwards: any;
+    public backwards: any;
 
-    constructor(tileMapHandler, speed = 3, stopFrames = 10, movementDirection = AnimationHelper.possibleDirections.forwards) {
+    constructor(tileMapHandler: TileMapHandler, speed = 3, stopFrames = 10, movementDirection = AnimationHelper.possibleDirections.forwards) {
         this.tileMapHandler = tileMapHandler;
         this.tileSize = tileMapHandler.tileSize;
         this.pathPoints = [];
@@ -7357,7 +7971,7 @@ SoundHandler.jumpReset = undefined;
     }
 
     resetObjectsToInitialPosition() {
-        this.objectsOnPath.forEach(objectOnPath => {
+        this.objectsOnPath.forEach((objectOnPath: { xspeed: number; yspeed: number; x: number; initialX: number; y: number; initialY: number; }) => {
             objectOnPath.xspeed = 0;
             objectOnPath.yspeed = 0;
             objectOnPath.x = objectOnPath.initialX * this.tileSize;
@@ -7391,8 +8005,8 @@ SoundHandler.jumpReset = undefined;
 
     checkObjectsOnPath() {
         this.objectsOnPath = [];
-        this.pathPoints.forEach(pathPoint => {
-            const objectOnPath = this.tileMapHandler?.levelObjects && this.tileMapHandler.levelObjects.find(levelObject =>
+        this.pathPoints.forEach((pathPoint: { initialX: any; initialY: any; }) => {
+            const objectOnPath = this.tileMapHandler?.levelObjects && this.tileMapHandler.levelObjects.find((levelObject: { initialX: any; initialY: any; type: any; }) =>
                 levelObject.initialX === pathPoint.initialX && levelObject.initialY === pathPoint.initialY &&
                 !SpritePixelArrays.backgroundSprites.includes(levelObject.type)
             );
@@ -7401,15 +8015,15 @@ SoundHandler.jumpReset = undefined;
     }
 
     rearrangePathPointsAlignment() {
-        let endPoints = [];
-        this.pathPoints.forEach(pathPoint => {
-            let rightTouched;
-            let leftTouched;
-            let topTouched;
-            let bottomTouched;
+        let endPoints: any[] = [];
+        this.pathPoints.forEach((pathPoint: { key: any; initialY: number; initialX: number; alignment: any; }) => {
+            let rightTouched: boolean;
+            let leftTouched: boolean;
+            let topTouched: boolean;
+            let bottomTouched: boolean;
             let neighboursAmount = 0;
 
-            this.pathPoints.forEach(comparingPathPoint => {
+            this.pathPoints.forEach((comparingPathPoint: { key: any; initialY: number; initialX: number; }) => {
                 if (pathPoint.key !== comparingPathPoint.key) {
                     if (!rightTouched && (pathPoint.initialY === comparingPathPoint.initialY && pathPoint.initialX + 1 === comparingPathPoint.initialX)) {
                         neighboursAmount++;
@@ -7447,8 +8061,8 @@ SoundHandler.jumpReset = undefined;
         return endPoints;
     }
 
-    draw(spriteCanvas) {
-        this.pathPoints.forEach(pathPoint => {
+    draw(spriteCanvas: any) {
+        this.pathPoints.forEach((pathPoint: { draw: (arg0: any) => void; }) => {
             pathPoint.draw(spriteCanvas);
         });
 
@@ -7472,7 +8086,7 @@ SoundHandler.jumpReset = undefined;
     }
 
     getSpeedForObjectsOnPath() {
-        this.objectsOnPath.forEach(objectOnPath => {
+        this.objectsOnPath.forEach((objectOnPath: { x: any; xspeed: any; y: any; yspeed: any; }) => {
             if (this.currentMovementStep === 0) {
                 const { currentPathPoint, nextPathPoint } = this.getCurrentAndNextPathPointForObject(objectOnPath);
                 this.getNeededSpeedForNextPathPoint(objectOnPath, currentPathPoint, nextPathPoint);
@@ -7482,10 +8096,10 @@ SoundHandler.jumpReset = undefined;
         });
     }
 
-    getCurrentPathPointIndexForObject(objectOnPath) {
+    getCurrentPathPointIndexForObject(objectOnPath: { y: any; x: any; }) {
         const tilePosY = this.tileMapHandler.getTileValueForPosition(objectOnPath.y);
         const tilePosX = this.tileMapHandler.getTileValueForPosition(objectOnPath.x);
-        return this.pathPoints.findIndex(pathPoint =>
+        return this.pathPoints.findIndex((pathPoint: { initialX: any; initialY: any; }) =>
             pathPoint.initialX === tilePosX && pathPoint.initialY === tilePosY
         );
     }
@@ -7504,7 +8118,7 @@ SoundHandler.jumpReset = undefined;
         }
     }
 
-    getCurrentAndNextPathPointForObject(objectOnPath) {
+    getCurrentAndNextPathPointForObject(objectOnPath: any) {
         const { forwards, backwards } = AnimationHelper.possibleDirections;
         const currentPathIndex = this.getCurrentPathPointIndexForObject(objectOnPath);
         let nextPathIndex = this.currentDirection === forwards ?
@@ -7521,7 +8135,7 @@ SoundHandler.jumpReset = undefined;
         return { currentPathPoint: this.pathPoints[currentPathIndex], nextPathPoint: this.pathPoints[nextPathIndex] };
     }
 
-    getNeededSpeedForNextPathPoint(objectOnPath, currentPathPoint, nextPathPoint) {
+    getNeededSpeedForNextPathPoint(objectOnPath: { xspeed: number; yspeed: number; }, currentPathPoint: { initialX: number; initialY: number; }, nextPathPoint: { initialX: number; initialY: number; }) {
         objectOnPath.xspeed = 0;
         objectOnPath.yspeed = 0;
 
@@ -7541,8 +8155,11 @@ SoundHandler.jumpReset = undefined;
         }
     }
 } class PathPoint extends LevelObject {
+    public alignment: string;
+    public changeableInBuildMode: boolean;
+    public key: string;
 
-    constructor(x, y, tileSize, alignment = AnimationHelper.alignments.horizontal) {
+    constructor(x: number, y: number, tileSize: number, alignment:string = AnimationHelper.alignments?.horizontal) {
         super(x, y, tileSize, ObjectTypes.PATH_POINT);
         this.alignment = alignment;
         this.changeableInBuildMode = true;
@@ -7550,23 +8167,23 @@ SoundHandler.jumpReset = undefined;
     }
 
     getPath() {
-        return tileMapHandler?.paths.find(path => {
-            return path?.pathPoints.find(pathPoint =>
+        return tileMapHandler?.paths?.find((path: { pathPoints: any[]; }) => {
+            return path?.pathPoints.find((pathPoint: { key: any; }) =>
                 pathPoint.key === this.key
             )
         });
     }
 
-    getPathValue(attributeName) {
+    getPathValue(attributeName: string | number) {
         return this.getPath()?.[attributeName];
     }
 
-    addChangeableAttribute(attributeName, value) {
+    addChangeableAttribute(attributeName: string | number, value: any) {
         const currentPath = this.getPath();
         currentPath[attributeName] = value;
         currentPath.recalculateSteps();
-        WorldDataHandler?.levels[tileMapHandler.currentLevel]?.paths.forEach(path => {
-            path.pathPoints.forEach(pathPoint => {
+        WorldDataHandler?.levels[tileMapHandler.currentLevel]?.paths.forEach((path: { [x: string]: any; pathPoints: any[]; }) => {
+            path.pathPoints.forEach((pathPoint: { initialX: any; initialY: any; }) => {
                 if (pathPoint.initialX === this.initialX && pathPoint.initialY === this.initialY) {
                     path[attributeName] = value;
                 }
@@ -7574,28 +8191,36 @@ SoundHandler.jumpReset = undefined;
         });
     }
 
-    draw(spriteCanvas) {
+    draw(spriteCanvas: HTMLElement | null) {
         const animationLength = this?.spriteObject?.[0].animation.length || 0;
-        const cornerAlignment = this.alignment === AnimationHelper.alignments.corner;
-        const extraCanvasX = this.alignment === AnimationHelper.alignments.vertical || cornerAlignment
+        const cornerAlignment = this.alignment === AnimationHelper.alignments?.corner;
+        const extraCanvasX = this.alignment === AnimationHelper.alignments?.vertical || cornerAlignment
             ? animationLength * this.tileSize : 0;
 
         if (animationLength > 1 && Game.playMode === Game.PLAY_MODE) {
             const frameModulo = tileMapHandler.currentGeneralFrameCounter % 40;
-            this.displaySprite(spriteCanvas, frameModulo < AnimationHelper.defaultFrameDuration ? this.canvasXSpritePos : this.canvasXSpritePos + this.tileSize, extraCanvasX, cornerAlignment);
+            if (AnimationHelper.defaultFrameDuration != undefined) {
+                this.displaySprite(spriteCanvas, frameModulo < AnimationHelper.defaultFrameDuration ? this.canvasXSpritePos : this.canvasXSpritePos + this.tileSize, extraCanvasX, cornerAlignment);
+            }
         }
         else {
             this.displaySprite(spriteCanvas, this.canvasXSpritePos, extraCanvasX, cornerAlignment);
         }
     }
 
-    displaySprite(spriteCanvas, canvasXSpritePos, extraCanvasX, showBothAlignedSpritesOnTop) {
+    displaySprite(spriteCanvas: any, canvasXSpritePos: any, extraCanvasX: number, showBothAlignedSpritesOnTop: boolean) {
         super.drawSingleFrame(spriteCanvas, canvasXSpritePos + extraCanvasX);
         if (showBothAlignedSpritesOnTop) {
             super.drawSingleFrame(spriteCanvas, canvasXSpritePos);
         }
     }
 } class GameStatistics {
+    static startTime: any;
+    static alreadyStopped: boolean;
+    static deathCounter: number;
+    static endTime: any;
+    static timeBetweenPauses: number;
+    static timesPauseWasPressed: number;
 
     static staticConstructor() {
         this.resetPlayerStatistics();
@@ -7608,8 +8233,8 @@ SoundHandler.jumpReset = undefined;
     }
 
     static resetPermanentObjects() {
-        WorldDataHandler.levels.forEach(level => {
-            level.levelObjects.forEach(levelObject => {
+        WorldDataHandler.levels.forEach((level: { levelObjects: any[]; }) => {
+            level.levelObjects.forEach((levelObject: { type: string; extraAttributes: { collected: boolean; }; }) => {
                 if (levelObject.type === ObjectTypes.COLLECTIBLE) {
                     levelObject.extraAttributes.collected = false;
                 }
@@ -7631,16 +8256,17 @@ SoundHandler.jumpReset = undefined;
     }
 
     static getTimeDifference() {
-        const endTime = this.endTime.getTime();
+        const endTime = this.endTime?.getTime();
         const startTime = this.startTime.getTime();
         if (startTime > endTime) {
-            return null;
+            return 0;
+            //return null;
         }
         return endTime - startTime + this.timeBetweenPauses;
     }
 
     static updateTimeBetweenPauses() {
-        if (!this.endTime || !this.startTime) {
+        if (!this.endTime || !this.startTimer) {
             return null;
         }
         /*
@@ -7655,10 +8281,11 @@ SoundHandler.jumpReset = undefined;
     }
 
     static getFinalTime() {
-        if (!this.endTime || !this.startTime) {
+        if (!this.endTime || !this.startTimer) {
             return null;
         }
         var diff = this.getTimeDifference();
+        if (diff == null) diff = 0;
 
         var msec = diff;
         var hh = Math.floor(msec / 1000 / 60 / 60);
@@ -7671,7 +8298,7 @@ SoundHandler.jumpReset = undefined;
             `${this.leadingZero(mm)}:${this.leadingZero(ss)}:${msec}`;
     }
 
-    static leadingZero(num) {
+    static leadingZero(num: number) {
         return `0${num}`.slice(-2);
     }
 
@@ -7680,6 +8307,29 @@ SoundHandler.jumpReset = undefined;
         this.alreadyStopped = true;
     }
 } class PauseHandler {
+    public options: any;
+    public downArrowReleased: any;
+    public restartedGame: any;
+    public upArrowReleased: any;
+    public restartGameMaxFrames: any;
+    public justClosedPauseScreen: any;
+    public paused: any;
+    public currentRestartGameFrameCounter: any;
+    public currentOptionIndex: any;
+    public left: any;
+    public top: any;
+    public width: any;
+    public height: any;
+    public context: any;
+    static options: string[];
+    static downArrowReleased: boolean;
+    static restartedGame: boolean;
+    static upArrowReleased: boolean;
+    static restartGameMaxFrames: number;
+    static justClosedPauseScreen: boolean;
+    static paused: boolean;
+    static currentRestartGameFrameCounter: number;
+    static currentOptionIndex: number;
 
     static staticConstructor() {
         this.options = ["Continue", "Restart game"];
@@ -7788,39 +8438,47 @@ SoundHandler.jumpReset = undefined;
         }
     }
 } class TilemapHelpers {
+    public left: any;
+    public top: any;
+    public right: any;
+    public bottom: any;
+    public firstX: any;
+    public firstY: any;
+    public secondX: any;
+    public secondY: any;
 
-    static check8DirectionsNeighbours(oX, oY, nX, nY) {
+    static check8DirectionsNeighbours(oX: number, oY: number, nX: number, nY: number) {
         if (nX === oX && nY === oY - 1) {
-            return { x: oX, y: oY - 1, alignment: AnimationHelper.alignments.vertical };
+            return { x: oX, y: oY - 1, alignment: AnimationHelper.alignments?.vertical };
         }
         else if (nX === oX && nY === oY + 1) {
-            return { x: oX, y: oY + 1, alignment: AnimationHelper.alignments.vertical };
+            return { x: oX, y: oY + 1, alignment: AnimationHelper.alignments?.vertical };
         }
         else if (nX === oX - 1 && nY === oY) {
-            return { x: oX - 1, y: oY + 1, alignment: AnimationHelper.alignments.horizontal };
+            return { x: oX - 1, y: oY + 1, alignment: AnimationHelper.alignments?.horizontal };
         }
         else if (nX === oX + 1 && nY === oY) {
-            return { x: oX + 1, y: oY + 1, alignment: AnimationHelper.alignments.horizontal };
+            return { x: oX + 1, y: oY + 1, alignment: AnimationHelper.alignments?.horizontal };
         }
         else if (nX === oX - 1 && nY === oY - 1) {
-            return { x: oX - 1, y: oY - 1, alignment: AnimationHelper.alignments.corner };
+            return { x: oX - 1, y: oY - 1, alignment: AnimationHelper.alignments?.corner };
         }
         else if (nX === oX + 1 && nY === oY - 1) {
-            return { x: oX + 1, y: oY - 1, alignment: AnimationHelper.alignments.corner };
+            return { x: oX + 1, y: oY - 1, alignment: AnimationHelper.alignments?.corner };
         }
         else if (nX === oX + 1 && nY === oY + 1) {
-            return { x: oX + 1, y: oY + 1, alignment: AnimationHelper.alignments.corner };
+            return { x: oX + 1, y: oY + 1, alignment: AnimationHelper.alignments?.corner };
         }
         else if (nX === oX - 1 && nY === oY + 1) {
-            return { x: oX - 1, y: oY + 1, alignment: AnimationHelper.alignments.corner };
+            return { x: oX - 1, y: oY + 1, alignment: AnimationHelper.alignments?.corner };
         }
         return null;
     }
 
-    static sortArrayByXandY(firstEl, secondEl, firstElDir, secondElDir, firstElPos, secondElPos) {
+    static sortArrayByXandY(firstEl: { type: string; }, secondEl: { type: string; }, firstElDir: any, secondElDir: any, firstElPos: { x: any; y: any; }, secondElPos: { x: any; y: any; }) {
         const bothStompers = firstEl.type === ObjectTypes.STOMPER && secondEl.type === ObjectTypes.STOMPER;
 
-        if (bothStompers) {
+        if (bothStompers && AnimationHelper.facingDirections != undefined) {
             const { left, top, right, bottom } = AnimationHelper.facingDirections;
             const bottomSame = firstElDir === bottom && secondElDir === bottom || !firstElDir && !secondElDir;
             const topSame = firstElDir === top && secondElDir === top;
@@ -7842,13 +8500,13 @@ SoundHandler.jumpReset = undefined;
         return 0;
     }
 
-    static splitArrayIn2(array, filter) {
-        let pass = [], fail = [];
-        array.forEach((e, idx, arr) => (filter(e, idx, arr) ? pass : fail).push(e));
+    static splitArrayIn2(array: any[], filter: { (e: any): any; (arg0: any, arg1: any, arg2: any): any; }) {
+        let pass: any[] = [], fail: any[] = [];
+        array.forEach((e: any, idx: any, arr: any) => (filter(e, idx, arr) ? pass : fail).push(e));
         return [pass, fail];
     }
 
-    static resortPath(pathPoints, startPoint, endPoint) {
+    static resortPath(pathPoints: any, startPoint: { key: any; }, endPoint: { key: any; }) {
         let arr = [...pathPoints];
         arr = arr.filter(item => item.key !== startPoint.key);
         arr.unshift(startPoint);
@@ -7858,7 +8516,7 @@ SoundHandler.jumpReset = undefined;
                 const neightbourAtDirection = TilemapHelpers.check8DirectionsNeighbours(arr[i].initialX, arr[i].initialY, arr[j].initialX, arr[j].initialY);
                 if (!(arr[i].key === startPoint.key && arr[j].key === endPoint.key) &&
                     arr[i + 1].key !== arr[j].key && i + 1 !== j && j > i && neightbourAtDirection &&
-                    (neightbourAtDirection.alignment === AnimationHelper.alignments.horizontal || neightbourAtDirection.alignment === AnimationHelper.alignments.vertical)) {
+                    (neightbourAtDirection.alignment === AnimationHelper.alignments?.horizontal || neightbourAtDirection.alignment === AnimationHelper.alignments?.vertical)) {
                     var temp = arr[j]
                     arr[j] = arr[i + 1]
                     arr[i + 1] = temp
@@ -7868,7 +8526,7 @@ SoundHandler.jumpReset = undefined;
         return arr;
     }
 
-    static findStartAndEndPointForLine(endpoints) {
+    static findStartAndEndPointForLine(endpoints: any[]) {
         let startPoint = endpoints[0];
         let endPoint = endpoints[1];
 
@@ -7879,19 +8537,19 @@ SoundHandler.jumpReset = undefined;
         return { startPoint, endPoint };
     }
 
-    static findStartAndEndPointForEnclosedPath(pathPoints) {
+    static findStartAndEndPointForEnclosedPath(pathPoints: any[]) {
         //find the highest lane in a path
-        const sortedByY = pathPoints.sort((a, b) => a.initialY - b.initialY);
-        const highestLane = sortedByY.filter(pathPoint => pathPoint.initialY === sortedByY[0].initialY);
+        const sortedByY = pathPoints.sort((a: { initialY: number; }, b: { initialY: number; }) => a.initialY - b.initialY);
+        const highestLane = sortedByY.filter((pathPoint: { initialY: any; }) => pathPoint.initialY === sortedByY[0].initialY);
 
         //sort hightest lane by x
-        const sortHightestLaneByX = highestLane.sort((a, b) => b.initialX - a.initialX);
+        const sortHightestLaneByX = highestLane.sort((a: { initialX: number; }, b: { initialX: number; }) => b.initialX - a.initialX);
 
         //idea behind that is, that the pathpoints going from left to right on the highest lane, go clockwise (forwards)
         return { startPoint: sortHightestLaneByX[0], endPoint: sortHightestLaneByX[1] };
     }
 
-    static doTwoObjectsSeeEachOther(obj1, obj2, tilemapHandler, angle) {
+    static doTwoObjectsSeeEachOther(obj1: any, obj2: Player, tilemapHandler: { tileSize: number; getTileLayerValueByIndex: (arg0: any, arg1: any) => any; getTileValueForPosition: (arg0: any) => any; }, angle: number) {
         let objectsSeeEachOther = true;
         const dx = obj2.x - obj1.x;
         const dy = obj2.y - obj1.y;
@@ -7918,7 +8576,7 @@ SoundHandler.jumpReset = undefined;
         return objectsSeeEachOther;
     }
 
-    static makeid(length) {
+    static makeid(length: number) {
         var result = '';
         var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         var charactersLength = characters.length;
@@ -7930,14 +8588,16 @@ SoundHandler.jumpReset = undefined;
     }
 }
 
-const canvas = document.getElementById("myCanvas");
-WorldDataHandler.staticConstructor();
-const spriteCanvas = document.getElementById("sprites");
-SoundHandler.staticConstructor();
+const canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
+WorldDataHandler._staticConstructor();
+const spriteCanvas = <HTMLCanvasElement>document.getElementById("sprites");
+SoundHandler._staticConstructor();
 AnimationHelper.staticConstructor();
 SpritePixelArrays.staticConstructor();
 const player = new Player(WorldDataHandler.initialPlayerPosition.x,
-    WorldDataHandler.initialPlayerPosition.y, WorldDataHandler.tileSize, spriteCanvas);
+    WorldDataHandler.initialPlayerPosition.y, WorldDataHandler.tileSize);
+//const player = new Player(WorldDataHandler.initialPlayerPosition.x,
+//    WorldDataHandler.initialPlayerPosition.y, WorldDataHandler.tileSize, spriteCanvas);
 Game.staticConstructor();
 
 const version = 1.1;
@@ -7951,7 +8611,7 @@ WorldDataHandler.backgroundColor = "000000";
 WorldDataHandler.textColor = "ffffff";
 //initialLevelDataEnd
 //changedSpritesStart
-SpritePixelArrays["TILE_1"] = { "name": 1, "descriptiveName": "Left top", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["00AA00", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "c26241", "c26241", "e1a45b", "e1a45b", "e1a45b", "e1a45b"]] }] }; SpritePixelArrays["TILE_2"] = { "name": 2, "descriptiveName": "Middle top", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["005500", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["c26241", "c26241", "c26241", "c26241", "e1a45b", "e1a45b", "e1a45b", "e1a45b"]] }] }; SpritePixelArrays["TILE_3"] = { "name": 3, "descriptiveName": "Right top", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["005500", "005500", "005500", "005500", "005500", "005500", "005500", "AAFF55"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["c26241", "c26241", "c26241", "c26241", "e1a45b", "e1a45b", "005500", "AAFF55"]] }] }; SpritePixelArrays["TILE_4"] = { "name": 4, "descriptiveName": "Left", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "005500", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "eeb39e", "eeb39e"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "c26241", "c26241", "e1a45b", "e1a45b", "e1a45b", "e1a45b"]] }] }; SpritePixelArrays["TILE_6"] = { "name": 6, "descriptiveName": "Middle", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["fbe7cf", "fbe7cf", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "eeb39e", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["c26241", "c26241", "c26241", "c26241", "e1a45b", "e1a45b", "e1a45b", "e1a45b"]] }] }; SpritePixelArrays["TILE_7"] = { "name": 7, "descriptiveName": "Right", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["fbe7cf", "fbe7cf", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "005500", "00AA00"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["c26241", "c26241", "c26241", "c26241", "e1a45b", "e1a45b", "005500", "AAFF55"]] }] }; SpritePixelArrays["TILE_8"] = { "name": 8, "descriptiveName": "Left bottom", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "005500", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "eeb39e", "eeb39e"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["AAFF55", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55"]] }] }; SpritePixelArrays["TILE_9"] = { "name": 9, "descriptiveName": "Middle bottom", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["fbe7cf", "fbe7cf", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "eeb39e", "eeb39e"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["005500", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55"]] }] }; SpritePixelArrays["TILE_10"] = { "name": 10, "descriptiveName": "Right bottom", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["fbe7cf", "fbe7cf", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "005500", "00AA00"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["005500", "005500", "005500", "005500", "005500", "005500", "005500", "00AA00"], ["00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55"]] }] }; SpritePixelArrays["TILE_11"] = { "name": 15, "descriptiveName": "Top and bottom", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["005500", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["005500", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"]] }] }; SpritePixelArrays["TILE_12"] = { "name": 16, "descriptiveName": "Left and right", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "005500", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "005500", "AAFF55"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["00AA00", "005500", "c26241", "c26241", "e1a45b", "e1a45b", "005500", "00AA00"]] }] }; SpritePixelArrays["TILE_13"] = { "name": 17, "descriptiveName": "All sides", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["00AA00", "005500", "005500", "005500", "005500", "005500", "005500", "AAFF55"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["AAFF55", "005500", "005500", "005500", "005500", "005500", "005500", "00AA00"], ["00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55"]] }] }; SpritePixelArrays["TILE_5"] = { "name": 5, "descriptiveName": "One way block", "description": "The player can jump through it, but will land on it when he falls", "type": "tiles", "animation": [{ "sprite": [["transp", "e97977", "e97977", "transp", "transp", "e97977", "e97977", "transp"], ["d55c5a", "d55c5a", "d55c5a", "e97977", "d55c5a", "d55c5a", "d55c5a", "e97977"], ["ba3d3b", "d55c5a", "d55c5a", "e97977", "ba3d3b", "d55c5a", "d55c5a", "e97977"], ["transp", "ba3d3b", "ba3d3b", "transp", "transp", "ba3d3b", "ba3d3b", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["TILE_edge"] = { "name": "edge", "descriptiveName": "Edge block", "description": "Will display on the edge of the game screen", "animation": [{ "sprite": [["b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4"], ["6c686c", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "6c686c"], ["6c686c", "6c686c", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "6c686c", "6c686c"], ["6c686c", "6c686c", "6c686c", "b3a1b4", "b3a1b4", "6c686c", "6c686c", "6c686c"], ["6c686c", "6c686c", "6c686c", "524f52", "524f52", "6c686c", "6c686c", "6c686c"], ["6c686c", "6c686c", "524f52", "524f52", "524f52", "524f52", "6c686c", "6c686c"], ["6c686c", "524f52", "524f52", "524f52", "524f52", "524f52", "524f52", "6c686c"], ["524f52", "524f52", "524f52", "524f52", "524f52", "524f52", "524f52", "524f52"]] }] }; SpritePixelArrays["PLAYER_IDLE_SPRITE"] = { "name": "playerIdle", "descriptiveName": "Player idle", "description": "The player sprite that is shown when you are not moving.", "directions": ["right", "left"], "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "4080BF", "4080BF", "4080BF", "4080BF", "transp", "transp"], ["transp", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF"], ["transp", "transp", "EABFBF", "FFFFFF", "80552B", "EABFBF", "80552B", "transp"], ["transp", "transp", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "transp"], ["transp", "transp", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "transp", "transp"], ["transp", "f2cbc9", "transp", "d55c5a", "d55c5a", "transp", "f2cbc9", "transp"], ["transp", "transp", "BF8040", "transp", "transp", "BF8040", "transp", "transp"]] }] }; SpritePixelArrays["PLAYER_JUMP_SPRITE"] = { "name": "playerJump", "descriptiveName": "Player jump", "description": "The player sprite that is shown when you are jumping.<br/><span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'SFX 1'} }, true)\">Jump SFX</span> will be displayed underneath.", "squishAble": true, "directions": ["right", "left"], "animation": [{ "sprite": [["transp", "transp", "4080BF", "4080BF", "4080BF", "4080BF", "transp", "4080BF"], ["transp", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "transp"], ["transp", "transp", "EABFBF", "FFFFFF", "80552B", "EABFBF", "80552B", "transp"], ["transp", "transp", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "transp"], ["transp", "EABFBF", "BF4040", "BF4040", "BF4040", "BF4040", "EABFBF", "transp"], ["transp", "transp", "transp", "BF4040", "BF4040", "FFAA55", "transp", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["PLAYER_WALL_JUMP_SPRITE"] = { "descriptiveName": "Player wall jump", "description": "The player sprite that is shown when you are jumping.", "squishAble": false, "hiddenEverywhere": true, "directions": ["right", "left"], "animation": [{ "sprite": [["transp", "transp", "4080BF", "4080BF", "4080BF", "4080BF", "transp", "4080BF"], ["transp", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "transp"], ["transp", "transp", "EABFBF", "FFFFFF", "80552B", "EABFBF", "80552B", "transp"], ["transp", "transp", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "transp"], ["transp", "EABFBF", "BF4040", "BF4040", "BF4040", "BF4040", "EABFBF", "transp"], ["transp", "transp", "transp", "BF4040", "BF4040", "FFAA55", "transp", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["PLAYER_WALK_SPRITE"] = { "name": "playerWalk", "descriptiveName": "Player walk", "description": "The player sprite that is shown when you are running.", "directions": ["right", "left"], "animation": [{ "sprite": [["transp", "transp", "4080BF", "4080BF", "4080BF", "4080BF", "transp", "transp"], ["transp", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF"], ["transp", "transp", "EABFBF", "FFFFFF", "80552B", "EABFBF", "80552B", "transp"], ["transp", "transp", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "transp"], ["transp", "transp", "BF4040", "BF4040", "BF4040", "BF4040", "EABFBF", "transp"], ["transp", "EABFBF", "BF4040", "BF4040", "BF4040", "BF8040", "transp", "transp"], ["transp", "transp", "BF8040", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "4080BF", "4080BF", "4080BF", "4080BF", "transp", "transp"], ["transp", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF"], ["transp", "transp", "EABFBF", "FFFFFF", "80552B", "EABFBF", "80552B", "transp"], ["transp", "transp", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "transp"], ["transp", "transp", "BF4040", "BF4040", "BF4040", "BF4040", "transp", "transp"], ["transp", "EABFBF", "BF8040", "BF4040", "BF4040", "transp", "EABFBF", "transp"], ["transp", "transp", "transp", "transp", "BF8040", "transp", "transp", "transp"]] }] }; SpritePixelArrays["START_FLAG_SPRITE"] = { "name": "startFlag", "descriptiveName": "Start flag", "description": "The starting point of a level. You also respawn here, if you die. <br/> If you create multiple start-flags, for non-linear games, you can click on a set start flag again, to declare it as the default start of a level.", "type": "objects", "animation": [{ "sprite": [["fdfdfd", "d55c5a", "d55c5a", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "transp", "transp", "transp"], ["fdfdfd", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "transp"], ["fdfdfd", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "transp", "transp", "transp"], ["fdfdfd", "d55c5a", "d55c5a", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["CHECKPOINT_FLAG"] = { "name": "checkpoint", "descriptiveName": "Checkpoint", "description": "If the player touches the checkpoint, he will respawn here after a death. If there are multiple checkpoints, the latest one the player touched will become the respawn point.", "type": "objects", "animation": [{ "sprite": [["fdfdfd", "E3E300", "E3E300", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "transp", "transp", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "E3E300", "transp", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "E3E300", "E3E300", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "E3E300", "E3E300", "E3E300", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["fdfdfd", "E3E300", "E3E300", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "E3E300", "transp", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "E3E300", "E3E300", "E3E300", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "E3E300", "transp", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["FINISH_FLAG_SPRITE"] = { "name": "finishFlag", "descriptiveName": "Finish flag", "changeableAttributes": [{ "name": "collectiblesNeeded", "defaultValue": false }], "description": "The goal of a level. If you touch it, by default you continue to the next level. If you want to specify a custom exit to a different level, click on a set finish flag again. <br/><span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Finish flag closed'} }, true)\">Closed finish flag sprite</span>", "type": "objects", "animation": [{ "sprite": [["fdfdfd", "208220", "208220", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "208220", "208220", "208220", "208220", "transp", "transp", "transp"], ["fdfdfd", "208220", "208220", "208220", "208220", "208220", "208220", "transp"], ["fdfdfd", "208220", "208220", "208220", "208220", "transp", "transp", "transp"], ["fdfdfd", "208220", "208220", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["FINISH_FLAG_CLOSED_SPRITE"] = { "name": "finishFlagClosed", "descriptiveName": "Finish flag closed", "description": "This sprite will be displayed if the player needs to collect collectibles to access the <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Finish flag'} }, true)\">Finish flag</span> (Can be configured by clicking on a set finish flag in the game screen).", "hiddenSprite": true, "type": "objects", "animation": [{ "sprite": [["fdfdfd", "8E8E8E", "8E8E8E", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "transp", "transp", "transp"], ["fdfdfd", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "transp"], ["fdfdfd", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "transp", "transp", "transp"], ["fdfdfd", "8E8E8E", "8E8E8E", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SPIKE_SPRITE"] = { "name": "spike", "descriptiveName": "Spike", "directions": ["bottom", "left", "top", "right"], "description": "A spike. If you touch it, you die", "type": "objects", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "b3a1b4", "transp", "transp", "transp"], ["transp", "transp", "transp", "b3a1b4", "b3a1b4", "transp", "transp", "transp"], ["transp", "transp", "b3a1b4", "6c686c", "6c686c", "b3a1b4", "transp", "transp"], ["b3a1b4", "b3a1b4", "6c686c", "524f52", "FFFFFF", "6c686c", "b3a1b4", "transp"], ["transp", "b3a1b4", "6c686c", "524f52", "524f52", "6c686c", "b3a1b4", "b3a1b4"], ["transp", "transp", "b3a1b4", "6c686c", "6c686c", "b3a1b4", "transp", "transp"], ["transp", "transp", "transp", "b3a1b4", "b3a1b4", "transp", "transp", "transp"], ["transp", "transp", "transp", "b3a1b4", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["TRAMPOLINE_SRPITE"] = { "name": "trampoline", "descriptiveName": "Trampoline", "description": "A trampoline. You will jump approximately twice as high when you land on it.", "animNotEditale": true, "squishAble": false, "type": "objects", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["e97977", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "e97977"], ["e97977", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "e97977"], ["transp", "transp", "6c686c", "6c686c", "b3a1b4", "fdfdfd", "transp", "transp"], ["transp", "transp", "524f52", "524f52", "524f52", "524f52", "transp", "transp"], ["transp", "transp", "6c686c", "6c686c", "b3a1b4", "fdfdfd", "transp", "transp"], ["transp", "transp", "524f52", "524f52", "524f52", "524f52", "transp", "transp"]] }, { "sprite": [["e97977", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "e97977"], ["e97977", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "e97977"], ["transp", "transp", "6c686c", "6c686c", "b3a1b4", "fdfdfd", "transp", "transp"], ["transp", "transp", "524f52", "524f52", "524f52", "524f52", "transp", "transp"], ["transp", "transp", "6c686c", "6c686c", "b3a1b4", "fdfdfd", "transp", "transp"], ["transp", "transp", "524f52", "524f52", "524f52", "524f52", "transp", "transp"], ["transp", "transp", "6c686c", "6c686c", "b3a1b4", "fdfdfd", "transp", "transp"], ["transp", "transp", "524f52", "524f52", "524f52", "524f52", "transp", "transp"]] }] }; SpritePixelArrays["CANON_SPRITE"] = { "name": "canon", "changeableAttributes": [{ "name": "speed", "defaultValue": 3, "minValue": 1, "maxValue": 10 }, { "name": "frequency", "defaultValue": 3, "minValue": 1, "maxValue": 8 }], "descriptiveName": "Cannon", "description": "A cannon. It shoots <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Cannon ball'} }, true)\">cannonballs</span> at certain time intervals. Click on it after placing it again, to change the attributes of the individual cannon.", "type": "objects", "squishAble": false, "directions": ["left", "top", "right", "bottom"], "animation": [{ "sprite": [["FFFFFF", "transp", "transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "transp"], ["FFFFFF", "FFFFFF", "transp", "FFFFFF", "000000", "000000", "000000", "FFFFFF"], ["FFFFFF", "000000", "FFFFFF", "000000", "000000", "000000", "000000", "FFFFFF"], ["FFFFFF", "000000", "000000", "000000", "000000", "000000", "000000", "FFFFFF"], ["FFFFFF", "000000", "000000", "000000", "000000", "000000", "000000", "FFFFFF"], ["FFFFFF", "000000", "FFFFFF", "000000", "000000", "000000", "000000", "FFFFFF"], ["FFFFFF", "FFFFFF", "transp", "FFFFFF", "000000", "000000", "000000", "FFFFFF"], ["FFFFFF", "transp", "transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "transp"]] }] }; SpritePixelArrays["STOMPER"] = { "name": "stomper", "type": "objects", "descriptiveName": "Stomper", "squishAble": false, "directions": ["bottom", "left", "top", "right"], "description": "A deadly hazard, that will fly torwards the player, if he is in it's way and move back to it's initial place once it hits a solid block. Can be rotated by clicking on a placed object again.", "animation": [{ "sprite": [["AAAAAA", "AAAAAA", "transp", "AAAAAA", "AAAAAA", "transp", "AAAAAA", "AAAAAA"], ["AAAAAA", "717171", "transp", "717171", "717171", "transp", "717171", "AAAAAA"], ["transp", "transp", "AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "transp", "transp"], ["AAAAAA", "717171", "FFFFFF", "AAAAAA", "AAAAAA", "FFFFFF", "717171", "AAAAAA"], ["AAAAAA", "717171", "FF1C1C", "AAAAAA", "AAAAAA", "FF1C1C", "717171", "AAAAAA"], ["transp", "transp", "AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "transp", "transp"], ["AAAAAA", "717171", "transp", "717171", "717171", "transp", "717171", "AAAAAA"], ["AAAAAA", "AAAAAA", "transp", "AAAAAA", "AAAAAA", "transp", "AAAAAA", "AAAAAA"]] }] }; SpritePixelArrays["TOGGLE_MINE"] = { "name": "toggleMine", "type": "objects", "descriptiveName": "Toggle mine", "description": "An object that is harmless at first, but once you step in and out of it, it becomes deadly.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "C6C6C6", "C6C6C6", "transp", "transp", "transp"], ["transp", "transp", "C6C6C6", "transp", "transp", "C6C6C6", "transp", "transp"], ["transp", "C6C6C6", "transp", "transp", "transp", "transp", "C6C6C6", "transp"], ["transp", "C6C6C6", "transp", "transp", "transp", "transp", "C6C6C6", "transp"], ["transp", "transp", "C6C6C6", "transp", "transp", "C6C6C6", "transp", "transp"], ["transp", "transp", "transp", "C6C6C6", "C6C6C6", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "FF1C1C", "FF1C1C", "transp", "transp", "transp"], ["transp", "transp", "FF1C1C", "transp", "transp", "FF1C1C", "transp", "transp"], ["transp", "FF1C1C", "transp", "transp", "transp", "transp", "FF1C1C", "transp"], ["FF1C1C", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "FF1C1C"], ["FF1C1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF1C1C"], ["transp", "FF1C1C", "transp", "transp", "transp", "transp", "FF1C1C", "transp"], ["transp", "transp", "FF1C1C", "transp", "transp", "FF1C1C", "transp", "transp"], ["transp", "transp", "transp", "FF1C1C", "FF1C1C", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DISAPPEARING_BLOCK_SPRITE"] = { "name": "disappearingBlock", "descriptiveName": "Disappearing block", "description": "A block that will disappear upon touching it. It will reappear after a certain time.", "type": "tiles", "animation": [{ "sprite": [["804c51", "9c6853", "f6c992", "f6c992", "9c6853", "804c51", "804c51", "804c51"], ["9c6853", "f6c992", "f6c992", "f6c992", "f6c992", "804c51", "f6c992", "9c6853"], ["f6c992", "f6c992", "f6c992", "f6c992", "9c6853", "804c51", "9c6853", "9c6853"], ["9c6853", "f6c992", "f6c992", "9c6853", "9c6853", "804c51", "804c51", "804c51"], ["9c6853", "9c6853", "9c6853", "9c6853", "804c51", "9c6853", "f6c992", "9c6853"], ["804c51", "9c6853", "9c6853", "804c51", "9c6853", "f6c992", "f6c992", "9c6853"], ["804c51", "804c51", "804c51", "804c51", "9c6853", "9c6853", "9c6853", "804c51"], ["804c51", "9c6853", "9c6853", "804c51", "804c51", "804c51", "804c51", "804c51"]] }] }; SpritePixelArrays["WATER"] = { "name": "water", "descriptiveName": "Water", "description": "A passable block that slows down gravity and let's you jump infinitely inside it. Every object can be placed on it.", "type": "tiles", "animation": [{ "sprite": [["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "C6E3FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "C6E3FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"]] }, { "sprite": [["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "C6E3FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "C6E3FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"]] }] }; SpritePixelArrays["RED_BLOCK"] = { "name": "redBlock", "descriptiveName": "Red block", "description": "There are red blocks and blue blocks. Only one them can be active at a time. By touching the switch (in the objects tab), the active tiles can be switched.", "type": "tiles", "animation": [{ "sprite": [["FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000"]] }, { "sprite": [["FF1C1C", "FF1C1C", "transp", "FF1C1C", "FF1C1C", "transp", "FF1C1C", "FF1C1C"], ["FF1C1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF1C1C"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["FF1C1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF1C1C"], ["FF1C1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF1C1C"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["FF1C1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF1C1C"], ["FF1C1C", "FF1C1C", "transp", "FF1C1C", "FF1C1C", "transp", "FF1C1C", "FF1C1C"]] }] }; SpritePixelArrays["BLUE_BLOCK"] = { "name": "blueBlock", "descriptiveName": "Blue block", "description": "There are red blocks and blue blocks. Only one them can be active at a time. By touching the switch (in the objects tab), the active tiles can be switched.", "type": "tiles", "animation": [{ "sprite": [["8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "0000AA", "0000AA", "0000AA", "0000AA", "0000AA", "0000AA", "0000AA"]] }, { "sprite": [["1C1CFF", "1C1CFF", "transp", "1C1CFF", "1C1CFF", "transp", "1C1CFF", "1C1CFF"], ["1C1CFF", "transp", "transp", "transp", "transp", "transp", "transp", "1C1CFF"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["1C1CFF", "transp", "transp", "transp", "transp", "transp", "transp", "1C1CFF"], ["1C1CFF", "transp", "transp", "transp", "transp", "transp", "transp", "1C1CFF"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["1C1CFF", "transp", "transp", "transp", "transp", "transp", "transp", "1C1CFF"], ["1C1CFF", "1C1CFF", "transp", "1C1CFF", "1C1CFF", "transp", "1C1CFF", "1C1CFF"]] }] }; SpritePixelArrays["RED_BLUE_BLOCK_SWITCH"] = { "name": "redblueblockswitch", "descriptiveName": "Red/blue switch", "description": "A switch for red/blue tiles. Can be activated by hitting it with your head, or if a stomper/cannon-ball/rocket hits it.", "type": "tiles", "squishAble": false, "animNotEditale": true, "animation": [{ "sprite": [["FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FFFFFF", "FFFFFF", "FFFFFF", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FFFFFF", "FF1C1C", "FF1C1C", "FFFFFF", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FFFFFF", "FFFFFF", "FFFFFF", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FFFFFF", "FF1C1C", "FF1C1C", "FFFFFF", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000"]] }, { "sprite": [["8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "FFFFFF", "FFFFFF", "FFFFFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "FFFFFF", "1C1CFF", "1C1CFF", "FFFFFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "FFFFFF", "FFFFFF", "FFFFFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "0000AA", "0000AA", "0000AA", "0000AA", "0000AA", "0000AA", "0000AA"]] }] }; SpritePixelArrays["ROCKET_LAUNCHER"] = { "name": "rocketLauncher", "type": "objects", "descriptiveName": "Rocket launcher", "changeableAttributes": [{ "name": "speed", "defaultValue": 3, "minValue": 1, "maxValue": 10 }, { "name": "frequency", "defaultValue": 3, "minValue": 1, "maxValue": 8 }, { "name": "rotationSpeed", "defaultValue": 8, "minValue": 0, "maxValue": 24, "descriptiveName": "rotation speed <span data-microtip-size='large'aria-label='Determines how fast the rockets will rotate to the players direction. 0 = rockets will decide direction once and not turn at all. 24 = basically following the player everywhere.'data-microtip-position='top-left' role='tooltip' class='songInputInfo'><img src='images/icons/info.svg' alt='info' width='16' height='16'>" }], "squishAble": false, "rotateable": true, "description": "A rocket-launcher. It shoots <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Rocket'} }, true)\">rockets</span> at certain time intervals that will follow the player. Click on it after placing it again, to change the attributes of the individual cannon.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "AAAAAA", "AAAAAA", "transp", "transp"], ["AAAAAA", "AAAAAA", "FF1C1C", "FF1C1C", "AAAAAA", "AAAAAA", "717171", "transp"], ["AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "717171", "717171"], ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "717171", "717171"], ["FFFFFF", "FFFFFF", "FF1C1C", "FF1C1C", "FFFFFF", "FFFFFF", "717171", "transp"], ["transp", "transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["NPC_SPRITE"] = { "name": "npc", "changeableAttributes": [{ "name": "dialogue", "defaultValue": [""] }], "descriptiveName": "Npc", "description": "An object that can display a dialogue. Click on it again after placing it, to display the dialogue window.", "type": "objects", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["FFAA55", "FFAA55", "FFAA55", "FFAA55", "FFAA55", "FFAA55", "FFAA55", "AA5500"], ["FFAA55", "FF8E1C", "FFFFFF", "FFFFFF", "FF8E1C", "FFFFFF", "FF8E1C", "AA5500"], ["FFAA55", "FF8E1C", "FF8E1C", "FF8E1C", "FF8E1C", "FF8E1C", "FF8E1C", "AA5500"], ["FFAA55", "FF8E1C", "FFFFFF", "FF8E1C", "FFFFFF", "FFFFFF", "FF8E1C", "AA5500"], ["AA5500", "AA5500", "AA5500", "AA5500", "AA5500", "AA5500", "AA5500", "AA5500"], ["transp", "transp", "transp", "713900", "713900", "transp", "transp", "transp"], ["transp", "transp", "transp", "713900", "713900", "transp", "transp", "transp"]] }] }; SpritePixelArrays["CANON_BALL_SPRITE"] = { "name": "canonBall", "descriptiveName": "Cannon ball", "directions": ["left", "top", "right", "bottom"], "description": "A cannonball. The <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Cannon'} }, true)\">cannon</span> shoots it. <br/>When it hits a wall, <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'SFX 2'} }, true)\">explosion</span> will be displayed.", "animation": [{ "sprite": [["transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "transp"], ["transp", "FFFFFF", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "FFFFFF", "transp"], ["FFFFFF", "ff5e7a", "ff5e7a", "ff5e7a", "FFFFFF", "ff5e7a", "ff5e7a", "FFFFFF"], ["FFFFFF", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "FFFFFF", "ff5e7a", "FFFFFF"], ["FFFFFF", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "FFFFFF"], ["FFFFFF", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "FFFFFF"], ["transp", "FFFFFF", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "FFFFFF", "transp"], ["transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "transp"]] }] }; SpritePixelArrays["ROCKET"] = { "name": "rocket", "descriptiveName": "Rocket", "description": "A rocket. The <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Rocket launcher'} }, true)\">rocket launcher</span> shoots it.<br/>When it hits a wall, <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'SFX 2'} }, true)\">explosion</span> will be displayed.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp"], ["FF1C1C", "FF1C1C", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFF8E", "FF8E1C"], ["FF1C1C", "FF1C1C", "AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "FFFF8E", "FF8E1C"], ["transp", "transp", "transp", "transp", "AAAAAA", "AAAAAA", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "AAAAAA", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp"], ["FF1C1C", "FF1C1C", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "FF8E1C"], ["FF1C1C", "FF1C1C", "AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "transp", "FF8E1C"], ["transp", "transp", "transp", "transp", "AAAAAA", "AAAAAA", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "AAAAAA", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["PORTAL"] = { "name": "portal", "type": "objects", "descriptiveName": "Portal", "squishAble": false, "description": "<b>Second Sprite:</b> <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Portal 2'} }, true)\">Here</span><br/><br/>A portal with 2 exits. <br/>Just draw 2 portals on the game screen. The odd one will automatically be the first, the even one the second.", "animation": [{ "sprite": [["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "0071E3", "0071E3", "0071E3", "0071E3", "transp", "transp"], ["transp", "0071E3", "0071E3", "55AAFF", "55AAFF", "0071E3", "0071E3", "transp"], ["FFFFFF", "0071E3", "55AAFF", "8EC6FF", "8EC6FF", "55AAFF", "0071E3", "FFFFFF"], ["FFFFFF", "0071E3", "55AAFF", "8EC6FF", "8EC6FF", "55AAFF", "0071E3", "FFFFFF"], ["transp", "0071E3", "0071E3", "55AAFF", "55AAFF", "0071E3", "0071E3", "transp"], ["transp", "transp", "0071E3", "0071E3", "0071E3", "0071E3", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"]] }] }; SpritePixelArrays["PORTAL2"] = { "name": "portal2", "type": "objects", "descriptiveName": "Portal 2", "description": "<b>First Sprite:</b> <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Portal'} }, true)\">Here</span><br/><br/>A portal with 2 exits. <br/>Just draw 2 portals on the game screen. The odd one will automatically be the first, the even one the second.", "squishAble": false, "hiddenSprite": true, "animation": [{ "sprite": [["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "E37100", "E37100", "E37100", "E37100", "transp", "transp"], ["transp", "E37100", "E37100", "FFAA55", "FFAA55", "E37100", "E37100", "transp"], ["FFFFFF", "E37100", "FFAA55", "FFC68E", "FFC68E", "FFAA55", "E37100", "FFFFFF"], ["FFFFFF", "E37100", "FFAA55", "FFC68E", "FFC68E", "FFAA55", "E37100", "FFFFFF"], ["transp", "E37100", "E37100", "FFAA55", "FFAA55", "E37100", "E37100", "transp"], ["transp", "transp", "E37100", "E37100", "E37100", "E37100", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"]] }] }; SpritePixelArrays["COLLECTIBLE"] = { "name": "collectible", "type": "objects", "descriptiveName": "Collectible", "description": "They can be placed to give the player an additional challenge. <br/> Inside the tool, the collectibles will reappear if you die or reset the level, in the exported game they are gone forever, once <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'SFX 4'} }, true)\">collected</span>.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFC6", "FFFFC6", "transp", "transp", "transp"], ["transp", "transp", "FFFFC6", "FFFF8E", "FFFF8E", "FFFF55", "transp", "transp"], ["transp", "transp", "FFFFC6", "FFFF8E", "FFFF8E", "FFFF55", "transp", "transp"], ["transp", "transp", "FFFFC6", "FFFF8E", "FFFF8E", "FFFF55", "transp", "transp"], ["transp", "transp", "FFFFC6", "FFFF8E", "FFFF8E", "FFFF55", "transp", "transp"], ["transp", "transp", "transp", "FFFF55", "FFFF55", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFC6", "FFFFC6", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFC6", "FFFF55", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFC6", "FFFF55", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFC6", "FFFF55", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFC6", "FFFF55", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFF55", "FFFF55", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["LASER_CANON"] = { "name": "laserCanon", "changeableAttributes": [{ "name": "laserDuration", "defaultValue": 60, "minValue": 10, "maxValue": 140, "step": 10, "descriptiveName": "laser duration" }, { "name": "pauseDuration", "defaultValue": 60, "minValue": 0, "maxValue": 140, "step": 10, "descriptiveName": "pause duration" }], "descriptiveName": "Laser cannon", "description": "A laser cannon. It shoots <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Laser'} }, true)\">lasers</span> until they hit a wall. Click on it after placing it again, to change the attributes of the individual laser cannon.", "type": "objects", "squishAble": false, "directions": ["left", "top", "right", "bottom"], "animation": [{ "sprite": [["transp", "transp", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E"], ["transp", "555555", "8E8E8E", "717171", "717171", "717171", "717171", "555555"], ["C6C6C6", "555555", "8E8E8E", "717171", "717171", "717171", "717171", "555555"], ["FFFFFF", "555555", "8E8E8E", "393939", "FF8E8E", "FF8E8E", "393939", "555555"], ["FFFFFF", "555555", "8E8E8E", "393939", "E30000", "E30000", "393939", "555555"], ["C6C6C6", "555555", "8E8E8E", "717171", "717171", "717171", "717171", "555555"], ["transp", "555555", "8E8E8E", "717171", "717171", "717171", "717171", "555555"], ["transp", "transp", "555555", "555555", "555555", "555555", "555555", "555555"]] }] }; SpritePixelArrays["LASER"] = { "name": "laser", "descriptiveName": "Laser", "directions": ["left", "top", "right", "bottom"], "description": "A laser. The <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Laser cannon'} }, true)\">laser cannon</span> shoots it. <br/>", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFC68E", "transp", "transp", "transp", "FFC68E", "transp"], ["transp", "transp", "FF1C1C", "transp", "transp", "transp", "FF1C1C", "transp"], ["transp", "FF1C1C", "transp", "FF1C1C", "transp", "FF1C1C", "transp", "FF1C1C"], ["FFC68E", "transp", "transp", "transp", "FFC68E", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["FFC68E", "transp", "transp", "transp", "FFC68E", "transp", "transp", "transp"], ["FF1C1C", "transp", "transp", "transp", "FF1C1C", "transp", "transp", "transp"], ["transp", "FF1C1C", "transp", "FF1C1C", "transp", "FF1C1C", "transp", "FF1C1C"], ["transp", "transp", "FFC68E", "transp", "transp", "transp", "FFC68E", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["BARREL_CANNON"] = { "name": "barrelCannon", "descriptiveName": "Barrel", "description": "A barrel. When the player touches it, he gets inside of it and stays there, until he presses the jump button - then he will be launched out of it in it's direction.", "type": "objects", "squishAble": true, "directions": ["left", "top", "right", "bottom"], "animation": [{ "sprite": [["transp", "transp", "717171", "FFAA55", "FFAA55", "717171", "transp", "transp"], ["transp", "FFAA55", "8E8E8E", "FF8E1C", "FF8E1C", "8E8E8E", "FFAA55", "transp"], ["717171", "FF8E1C", "8E8E8E", "FFFFFF", "E37100", "8E8E8E", "FF8E1C", "717171"], ["8E8E8E", "FF8E1C", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FF8E1C", "8E8E8E"], ["8E8E8E", "FF8E1C", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FF8E1C", "8E8E8E"], ["717171", "FF8E1C", "8E8E8E", "FFFFFF", "E37100", "8E8E8E", "FF8E1C", "717171"], ["transp", "FFAA55", "8E8E8E", "FF8E1C", "FF8E1C", "8E8E8E", "FFAA55", "transp"], ["transp", "transp", "717171", "FFAA55", "FFAA55", "717171", "transp", "transp"]] }] }; SpritePixelArrays["JUMP_RESET"] = { "name": "jumpReset", "descriptiveName": "Jump reset", "description": "It resets your jump in air. It is deactivated upon touching the ground or wall.", "type": "objects", "animation": [{ "sprite": [["transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["FFFFFF", "transp", "transp", "55AAFF", "55AAFF", "transp", "transp", "FFFFFF"], ["FFFFFF", "transp", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "transp", "FFFFFF"], ["FFFFFF", "transp", "transp", "55AAFF", "55AAFF", "transp", "transp", "FFFFFF"], ["FFFFFF", "transp", "transp", "55AAFF", "55AAFF", "transp", "transp", "FFFFFF"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "transp"]] }] }; SpritePixelArrays["FIXED_SPEED_RIGHT"] = { "name": "fixedSpeedRight", "descriptiveName": "Auto run", "directions": ["right", "left"], "description": "Activates auto-run mode upon touching. <br/> The auto-run can be stopped by the auto-run stopper tile. <br/> Jumping off a wall will change the run direction. Click on a set object again, to change it's default direction.", "type": "objects", "animation": [{ "sprite": [["FF8E1C", "FF8E1C", "transp", "transp", "transp", "transp", "FF8E1C", "FF8E1C"], ["FF8E1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF8E1C"], ["transp", "transp", "transp", "transp", "FF8E1C", "transp", "transp", "transp"], ["transp", "transp", "FF8E1C", "FF8E1C", "FF8E1C", "FF8E1C", "transp", "transp"], ["transp", "transp", "FF8E1C", "FF8E1C", "FF8E1C", "FF8E1C", "transp", "transp"], ["transp", "transp", "transp", "transp", "FF8E1C", "transp", "transp", "transp"], ["FF8E1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF8E1C"], ["FF8E1C", "FF8E1C", "transp", "transp", "transp", "transp", "FF8E1C", "FF8E1C"]] }, { "sprite": [["FF8E1C", "FF8E1C", "transp", "transp", "transp", "transp", "FF8E1C", "FF8E1C"], ["FF8E1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF8E1C"], ["transp", "transp", "transp", "transp", "AA5500", "transp", "transp", "transp"], ["transp", "transp", "AA5500", "AA5500", "AA5500", "AA5500", "transp", "transp"], ["transp", "transp", "AA5500", "AA5500", "AA5500", "AA5500", "transp", "transp"], ["transp", "transp", "transp", "transp", "AA5500", "transp", "transp", "transp"], ["FF8E1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF8E1C"], ["FF8E1C", "FF8E1C", "transp", "transp", "transp", "transp", "FF8E1C", "FF8E1C"]] }] }; SpritePixelArrays["FIXED_SPEED_STOPPER"] = { "name": "fixedSpeedStopper", "descriptiveName": "Auto-run stopper", "description": "This tile stops the auto-run activated by the <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Auto run'} }, true)\">auto-run sprite</span>.", "type": "objects", "animation": [{ "sprite": [["transp", "transp", "FFC6C6", "FFC6C6", "FFC6C6", "FFC6C6", "transp", "transp"], ["transp", "FFC6C6", "390000", "390000", "390000", "390000", "FFC6C6", "transp"], ["FFC6C6", "390000", "FFC6C6", "390000", "390000", "390000", "390000", "FFC6C6"], ["FFC6C6", "390000", "390000", "FFC6C6", "390000", "390000", "390000", "FFC6C6"], ["FFC6C6", "390000", "390000", "390000", "FFC6C6", "390000", "390000", "FFC6C6"], ["FFC6C6", "390000", "390000", "390000", "390000", "FFC6C6", "390000", "FFC6C6"], ["transp", "FFC6C6", "390000", "390000", "390000", "390000", "FFC6C6", "transp"], ["transp", "transp", "FFC6C6", "FFC6C6", "FFC6C6", "FFC6C6", "transp", "transp"]] }, { "sprite": [["transp", "transp", "FFC6C6", "FFC6C6", "FFC6C6", "FFC6C6", "transp", "transp"], ["transp", "FFC6C6", "710000", "710000", "710000", "710000", "FFC6C6", "transp"], ["FFC6C6", "710000", "FFC6C6", "710000", "710000", "710000", "710000", "FFC6C6"], ["FFC6C6", "710000", "710000", "FFC6C6", "710000", "710000", "710000", "FFC6C6"], ["FFC6C6", "710000", "710000", "710000", "FFC6C6", "710000", "710000", "FFC6C6"], ["FFC6C6", "710000", "710000", "710000", "710000", "FFC6C6", "710000", "FFC6C6"], ["transp", "FFC6C6", "710000", "710000", "710000", "710000", "FFC6C6", "transp"], ["transp", "transp", "FFC6C6", "FFC6C6", "FFC6C6", "FFC6C6", "transp", "transp"]] }] }; SpritePixelArrays["PATH_SPRITE"] = { "name": "pathPoint", "changeableAttributes": [{ "name": "speed", "defaultValue": 3, "minValue": 1, "maxValue": 7, "mapper": { "1": 1, "2": 2, "3": 3, "4": 4, "5": 6, "6": 8, "7": 12 } }, { "name": "stopFrames", "defaultValue": 10, "minValue": 0, "maxValue": 80, "step": 5, "descriptiveName": "wait <span data-microtip-size='large'aria-label='The objects on the path will wait that amount of time, if an object reaches the path´s end.'data-microtip-position='top-left' role='tooltip' class='songInputInfo'><img src='images/icons/info.svg' alt='info' width='16' height='16'>" }, { "name": "movementDirection", "formElement": "toggle", "defaultValue": "forwards", "options": [{ "true": "forwards" }, { "false": "backwards" }] }], "directions": ["top", "right"], "descriptiveName": "Path", "description": "<div>Draw paths, put objects on top and the objects will follow them. Click on an already set path-point, while paths are selected in build-tools to adjust the path's attributes.<div class='subSection'><details><summary>Compatible objects</summary><div class='marginTop8'><ul style='padding-left: 16px'><li>Finish flag</li><li>Spikes</li><li>Trampolines</li><li>Toggle mine</li><li>Rocket launchers</li><li>Portals</li><li>Collectibles</li><li>Barrel cannons</li><li>Jump reset</li></ul></div></details><details class='marginTop8'><summary>Rules</summary><div class='marginTop8'><ul style='padding-left: 16px'><li>Draw paths in a line or in an enclosed 'circle'</li><li>Place as many different objects on them as you want</li><li>You can't draw 2 paths above or beside each other. You need to leave 1 free space inbetween</li></ul></div></details></div></div>", "type": "objects", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["FFFFFF", "FFFFFF", "transp", "FFFFFF", "FFFFFF", "transp", "FFFFFF", "FFFFFF"], ["1C1C1C", "1C1C1C", "transp", "1C1C1C", "1C1C1C", "transp", "1C1C1C", "1C1C1C"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE"] = { "name": "deco", "type": "deco", "descriptiveName": "Deco 1", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "40BF40", "transp", "transp", "transp", "40BF40"], ["transp", "40BF40", "transp", "40BF40", "transp", "40BF40", "transp", "40BF40"], ["transp", "40BF40", "40BF40", "40BF40", "40BF40", "40BF40", "transp", "40BF40"], ["40BF40", "40BF40", "40BF40", "40BF40", "40BF40", "40BF40", "transp", "40BF40"]] }] }; SpritePixelArrays["DEKO_SPRITE2"] = { "name": "deco", "descriptiveName": "Deco 2", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "FF55FF", "FF55FF", "transp"], ["transp", "FF5555", "FF5555", "transp", "FF00FF", "transp", "transp", "FF00FF"], ["FF5555", "transp", "transp", "FF5555", "transp", "FF00FF", "FF00FF", "transp"], ["transp", "FF5555", "FF5555", "transp", "transp", "2B802B", "2B802B", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE3"] = { "name": "deco", "descriptiveName": "Deco 3", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["FFFFFF", "FFFFFF", "transp", "FFFFFF", "FFFFFF", "transp", "FFFFFF", "FFFFFF"], ["FFFFFF", "FFFFFF", "FFFFFF", "0000FF", "0000FF", "FFFFFF", "FFFFFF", "FFFFFF"], ["transp", "transp", "transp", "0000FF", "0000FF", "transp", "transp", "transp"], ["FFFFFF", "FFFFFF", "55AAFF", "transp", "transp", "55AAFF", "FFFFFF", "FFFFFF"], ["FFFFFF", "FFFFFF", "FFFFFF", "55AAFF", "55AAFF", "FFFFFF", "FFFFFF", "FFFFFF"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE4"] = { "name": "deco", "descriptiveName": "Deco 4", "type": "deco", "animation": [{ "sprite": [["transp", "2B8055", "transp", "15402A", "15402A", "transp", "2B8055", "transp"], ["transp", "2B8055", "2B8055", "15402A", "15402A", "2B8055", "2B8055", "transp"], ["transp", "transp", "2B8055", "15402A", "15402A", "2B8055", "transp", "transp"], ["transp", "transp", "transp", "15402A", "15402A", "transp", "transp", "transp"], ["transp", "2B8055", "transp", "15402A", "15402A", "transp", "2B8055", "transp"], ["transp", "2B8055", "2B8055", "15402A", "15402A", "2B8055", "2B8055", "transp"], ["transp", "transp", "2B8055", "15402A", "15402A", "2B8055", "transp", "transp"], ["transp", "transp", "transp", "15402A", "15402A", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE5"] = { "name": "deco", "descriptiveName": "Deco 5", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["713900", "transp", "transp", "transp", "transp", "transp", "transp", "AA5500"], ["713900", "E37100", "E37100", "E37100", "E37100", "E37100", "E37100", "AA5500"], ["713900", "transp", "transp", "transp", "transp", "transp", "transp", "AA5500"], ["713900", "E37100", "E37100", "E37100", "E37100", "E37100", "E37100", "AA5500"], ["713900", "transp", "transp", "transp", "transp", "transp", "transp", "AA5500"], ["713900", "E37100", "E37100", "E37100", "E37100", "E37100", "E37100", "AA5500"]] }] }; SpritePixelArrays["DEKO_SPRITE6"] = { "name": "deco", "descriptiveName": "Deco 6", "type": "deco", "animation": [{ "sprite": [["717171", "8E8E8E", "AAAAAA", "C6C6C6", "C6C6C6", "AAAAAA", "8E8E8E", "717171"], ["transp", "717171", "8E8E8E", "AAAAAA", "AAAAAA", "8E8E8E", "717171", "transp"], ["transp", "transp", "FFFF1C", "FFFF55", "FFFF55", "FFFF1C", "transp", "transp"], ["transp", "717171", "710071", "AA00AA", "AA00AA", "710071", "717171", "transp"], ["717171", "8E8E8E", "AAAAAA", "C6C6C6", "C6C6C6", "AAAAAA", "8E8E8E", "717171"], ["717171", "8E8E8E", "AAAAAA", "C6C6C6", "C6C6C6", "AAAAAA", "8E8E8E", "717171"], ["717171", "8E8E8E", "AAAAAA", "C6C6C6", "C6C6C6", "AAAAAA", "8E8E8E", "717171"], ["transp", "717171", "8E8E8E", "AAAAAA", "AAAAAA", "8E8E8E", "717171", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE7"] = { "name": "deco", "descriptiveName": "Deco 7", "type": "deco", "animation": [{ "sprite": [["2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A"], ["transp", "2A2A2A", "transp", "transp", "2A2A2A", "transp", "2A2A2A", "transp"], ["transp", "2A2A2A", "transp", "2A2A2A", "transp", "transp", "2A2A2A", "transp"], ["transp", "2A2A2A", "transp", "2A2A2A", "2A2A2A", "transp", "2A2A2A", "transp"], ["transp", "2A2A2A", "transp", "transp", "2A2A2A", "transp", "2A2A2A", "transp"], ["transp", "2A2A2A", "transp", "2A2A2A", "transp", "transp", "2A2A2A", "transp"], ["transp", "2A2A2A", "transp", "2A2A2A", "2A2A2A", "transp", "2A2A2A", "transp"], ["2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A"]] }] }; SpritePixelArrays["DEKO_SPRITE8"] = { "name": "deco", "descriptiveName": "Deco 8", "type": "deco", "animation": [{ "sprite": [["2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "transp", "2A2A2A", "2A2A2A"], ["2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "transp", "2A2A2A", "2A2A2A"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["2A2A2A", "2A2A2A", "transp", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A"], ["2A2A2A", "2A2A2A", "transp", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "transp", "2A2A2A", "2A2A2A"], ["2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "transp", "2A2A2A", "2A2A2A"]] }] }; SpritePixelArrays["DEKO_SPRITE9"] = { "name": "deco", "descriptiveName": "Deco 9", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "FF8E1C", "transp", "transp", "transp", "transp"], ["transp", "transp", "FF8E1C", "FFC68E", "FF8E1C", "transp", "transp", "transp"], ["transp", "FF8E1C", "FFC68E", "FFFFC6", "FFC68E", "FF8E1C", "transp", "transp"], ["transp", "FF8E1C", "FFC68E", "FFFFC6", "FFC68E", "FF8E1C", "transp", "transp"], ["transp", "8E8E8E", "AAAAAA", "AAAAAA", "AAAAAA", "8E8E8E", "transp", "transp"], ["transp", "transp", "8E8E8E", "AAAAAA", "8E8E8E", "transp", "transp", "transp"], ["transp", "transp", "transp", "8E8E8E", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "8E8E8E", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "AA5500", "transp", "transp", "transp", "transp"], ["transp", "transp", "AA5500", "FF8E1C", "AA5500", "transp", "transp", "transp"], ["transp", "AA5500", "FF8E1C", "FFFF8E", "FF8E1C", "AA5500", "transp", "transp"], ["transp", "AA5500", "FF8E1C", "FFFF8E", "FF8E1C", "AA5500", "transp", "transp"], ["transp", "8E8E8E", "AAAAAA", "AAAAAA", "AAAAAA", "8E8E8E", "transp", "transp"], ["transp", "transp", "8E8E8E", "AAAAAA", "8E8E8E", "transp", "transp", "transp"], ["transp", "transp", "transp", "8E8E8E", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "8E8E8E", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE10"] = { "name": "deco", "descriptiveName": "Deco 10", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "transp"], ["transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp"], ["C6E3FF", "C6E3FF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp"], ["C6E3FF", "C6E3FF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"], ["transp", "C6E3FF", "C6E3FF", "C6E3FF", "C6E3FF", "C6E3FF", "C6E3FF", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE11"] = { "name": "deco", "descriptiveName": "Deco 11", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFC6FF", "transp", "transp", "transp", "transp", "transp"], ["transp", "FFC6FF", "FFFFFF", "FFC6FF", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFC6FF", "transp", "transp", "FFC6FF", "transp", "transp"], ["transp", "transp", "transp", "transp", "FFC6FF", "FFFFFF", "FFC6FF", "transp"], ["transp", "transp", "FFC6FF", "transp", "transp", "FFC6FF", "transp", "transp"], ["transp", "FFC6FF", "FFFFFF", "FFC6FF", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFC6FF", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "393939", "transp", "transp", "transp", "transp", "transp"], ["transp", "393939", "FFC6FF", "393939", "transp", "transp", "transp", "transp"], ["transp", "transp", "393939", "transp", "transp", "393939", "transp", "transp"], ["transp", "transp", "transp", "transp", "393939", "FFC6FF", "393939", "transp"], ["transp", "transp", "393939", "transp", "transp", "393939", "transp", "transp"], ["transp", "393939", "FFC6FF", "393939", "transp", "transp", "transp", "transp"], ["transp", "transp", "393939", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE12"] = { "name": "deco", "descriptiveName": "Deco 12", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "0055AA", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "8EC6FF", "transp", "transp", "transp", "transp"], ["transp", "transp", "8EC6FF", "C6E3FF", "8EC6FF", "transp", "transp", "transp"], ["0055AA", "8EC6FF", "C6E3FF", "C6E3FF", "C6E3FF", "8EC6FF", "0055AA", "transp"], ["transp", "transp", "8EC6FF", "C6E3FF", "8EC6FF", "transp", "transp", "transp"], ["transp", "transp", "transp", "8EC6FF", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "0055AA", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "003971", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "0055AA", "transp", "transp", "transp", "transp"], ["transp", "transp", "0055AA", "C6E3FF", "0055AA", "transp", "transp", "transp"], ["003971", "0055AA", "C6E3FF", "C6E3FF", "C6E3FF", "0055AA", "003971", "transp"], ["transp", "transp", "0055AA", "C6E3FF", "0055AA", "transp", "transp", "transp"], ["transp", "transp", "transp", "0055AA", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "003971", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE13"] = { "name": "deco", "descriptiveName": "Deco 13", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "55AA00", "397100", "transp", "transp", "transp"], ["transp", "55AA00", "transp", "55AA00", "397100", "transp", "transp", "transp"], ["transp", "55AA00", "transp", "55AA00", "397100", "transp", "transp", "transp"], ["transp", "55AA00", "55AA00", "55AA00", "397100", "transp", "55AA00", "transp"], ["transp", "transp", "transp", "55AA00", "397100", "transp", "55AA00", "transp"], ["transp", "transp", "transp", "55AA00", "55AA00", "55AA00", "55AA00", "transp"], ["transp", "transp", "transp", "55AA00", "397100", "transp", "transp", "transp"], ["transp", "transp", "transp", "55AA00", "397100", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE14"] = { "name": "deco", "descriptiveName": "Deco 14", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "2B8055", "2B8055", "2B8055", "2B8055", "transp", "transp"], ["transp", "2B8055", "2B8055", "15402A", "2B8055", "15402A", "2B8055", "transp"], ["transp", "2B8055", "15402A", "2B8055", "15402A", "15402A", "2B8055", "transp"], ["transp", "2B8055", "2B8055", "15402A", "15402A", "2B8055", "2B8055", "transp"], ["transp", "2B8055", "15402A", "15402A", "391C00", "15402A", "2B8055", "transp"], ["transp", "transp", "2B8055", "391C00", "713900", "2B8055", "transp", "transp"], ["transp", "transp", "transp", "391C00", "713900", "transp", "transp", "transp"], ["transp", "transp", "transp", "391C00", "713900", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE15"] = { "name": "deco", "descriptiveName": "Deco 15", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "393939", "transp", "transp"], ["transp", "393939", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "713900", "transp", "transp", "transp"], ["transp", "transp", "713900", "713900", "713900", "713900", "transp", "transp"], ["transp", "713900", "713900", "713900", "713900", "713900", "713900", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "393939", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "393939", "transp"], ["transp", "transp", "transp", "transp", "713900", "transp", "transp", "transp"], ["transp", "transp", "713900", "713900", "713900", "713900", "transp", "transp"], ["transp", "713900", "713900", "713900", "713900", "713900", "713900", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE16"] = { "name": "deco", "descriptiveName": "Deco 16", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "transp", "transp", "transp"], ["transp", "55AAFF", "55AAFF", "transp", "55AAFF", "transp", "transp", "transp"], ["FFFF8E", "FFFF8E", "55AAFF", "55AAFF", "55AAFF", "transp", "transp", "transp"], ["transp", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF"], ["transp", "transp", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "transp"], ["transp", "transp", "transp", "FFFF8E", "FFFF8E", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "transp", "transp", "transp"], ["FFFF8E", "55AAFF", "55AAFF", "transp", "55AAFF", "transp", "transp", "transp"], ["transp", "FFFF8E", "55AAFF", "55AAFF", "55AAFF", "transp", "transp", "transp"], ["FFFF8E", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF"], ["transp", "transp", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "transp"], ["transp", "transp", "transp", "transp", "FFFF8E", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFF8E", "FFFF8E", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE17"] = { "name": "deco", "descriptiveName": "Deco 17", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "FFFFFF", "000000", "717171", "FFFFFF", "transp", "transp"], ["transp", "transp", "FFFFFF", "FFFFFF", "FF8E1C", "FF8E1C", "transp", "transp"], ["AA5500", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "AA5500"], ["transp", "AA5500", "FFFFFF", "FFFFFF", "000000", "FFFFFF", "AA5500", "transp"], ["transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp"], ["transp", "FFFFFF", "FFFFFF", "FFFFFF", "000000", "FFFFFF", "FFFFFF", "transp"], ["transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE18"] = { "name": "deco", "descriptiveName": "Deco 18", "type": "deco", "animation": [{ "sprite": [["E30000", "FF1C1C", "transp", "transp", "transp", "transp", "FF1C1C", "E30000"], ["AA0000", "transp", "1C1CFF", "FFFFFF", "1C1CFF", "FFFFFF", "transp", "E30000"], ["transp", "AA0000", "0000E3", "1C1CFF", "0000E3", "1C1CFF", "AA0000", "transp"], ["transp", "transp", "AA0000", "E30000", "E30000", "E30000", "transp", "transp"], ["transp", "transp", "transp", "AA0000", "E30000", "transp", "transp", "transp"], ["transp", "transp", "E30000", "AA0000", "E30000", "E30000", "transp", "transp"], ["transp", "transp", "transp", "AA0000", "E30000", "transp", "transp", "transp"], ["transp", "transp", "E30000", "transp", "transp", "E30000", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["E30000", "FF1C1C", "transp", "transp", "transp", "transp", "FF1C1C", "E30000"], ["AA0000", "transp", "AA0000", "FF1C1C", "AA0000", "FF1C1C", "transp", "E30000"], ["transp", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000", "transp"], ["transp", "transp", "AA0000", "E30000", "E30000", "E30000", "transp", "transp"], ["transp", "transp", "transp", "AA0000", "E30000", "transp", "transp", "transp"], ["transp", "transp", "E30000", "AA0000", "E30000", "E30000", "transp", "transp"], ["transp", "transp", "E30000", "transp", "transp", "E30000", "transp", "transp"]] }] }; SpritePixelArrays["SFX1"] = { "name": "sfx", "directions": ["bottom", "left", "top", "right"], "descriptiveName": "SFX 1", "description": "SFX that shows when the <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Player jump'} }, true)\">player jumps</span>.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"]] }] }; SpritePixelArrays["SFX2"] = { "name": "sfx", "descriptiveName": "SFX 2", "description": "SFX when <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Cannon ball'} }, true)\">cannon ball</span> or <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Rocket'} }, true)\">rocket</span> hit a wall.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX3"] = { "name": "sfx", "descriptiveName": "SFX 3", "description": "SFX when player dashes", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "393939", "393939", "transp", "transp", "transp"], ["transp", "transp", "transp", "393939", "393939", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "393939", "transp", "transp", "393939", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "393939", "transp", "transp", "393939", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX4"] = { "name": "sfx", "descriptiveName": "Build SFX", "hiddenEverywhere": true, "description": "SFX when an object is placed in build mode", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX5"] = { "name": "sfx", "descriptiveName": "SFX 4", "description": "Plays when the player touches a <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Collectible'} }, true)\">collectible</span>.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX6"] = { "name": "sfx", "descriptiveName": "SFX 5", "description": "Used for shaders", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "8EC6FF", "transp", "transp", "transp", "transp"], ["transp", "transp", "8EC6FF", "transp", "8EC6FF", "transp", "transp", "transp"], ["transp", "transp", "transp", "8EC6FF", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX7"] = { "name": "sfx", "descriptiveName": "SFX 6", "description": "Used for shaders", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FF8EFF", "FF8EFF", "FF8EFF", "FF8EFF", "transp", "transp"], ["transp", "transp", "FF8EFF", "transp", "transp", "FF8EFF", "transp", "transp"], ["transp", "transp", "FF8EFF", "transp", "transp", "FF8EFF", "transp", "transp"], ["transp", "transp", "FF8EFF", "FF8EFF", "FF8EFF", "FF8EFF", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX8"] = { "name": "sfx", "descriptiveName": "SFX 7", "description": "Used for shaders", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFFF55", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX9"] = { "name": "sfx", "descriptiveName": "SFX 8", "description": "Will be displayed behind the player, if the player is in auto-run mode.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFAA55", "FFAA55", "transp", "transp", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "FFAA55", "transp", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "FFAA55", "transp", "transp"], ["transp", "transp", "transp", "FFAA55", "FFAA55", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "FFAA55", "transp", "transp"], ["transp", "FFAA55", "transp", "transp", "transp", "transp", "FFAA55", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "FFAA55", "transp", "transp", "transp", "transp", "FFAA55", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "FFAA55", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["Customtile1"] = { "name": 18, "descriptiveName": "Custom tile 1", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["00AA00", "005500", "005500", "005500", "005500", "005500", "005500", "AAFF55"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["00AA00", "005500", "c26241", "c26241", "e1a45b", "e1a45b", "005500", "AAFF55"]] }], "custom": true }; SpritePixelArrays["Customtile2"] = { "name": 19, "descriptiveName": "Custom tile 2", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["00AA00", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"]] }], "custom": true };
+SpritePixelArrays["TILE_1"] = { "name": 1, "descriptiveName": "Left top", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["00AA00", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "c26241", "c26241", "e1a45b", "e1a45b", "e1a45b", "e1a45b"]] }] }; SpritePixelArrays["TILE_2"] = { "name": 2, "descriptiveName": "Middle top", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["005500", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["c26241", "c26241", "c26241", "c26241", "e1a45b", "e1a45b", "e1a45b", "e1a45b"]] }] }; SpritePixelArrays["TILE_3"] = { "name": 3, "descriptiveName": "Right top", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["005500", "005500", "005500", "005500", "005500", "005500", "005500", "AAFF55"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["c26241", "c26241", "c26241", "c26241", "e1a45b", "e1a45b", "005500", "AAFF55"]] }] }; SpritePixelArrays["TILE_4"] = { "name": 4, "descriptiveName": "Left", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "005500", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "eeb39e", "eeb39e"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "c26241", "c26241", "e1a45b", "e1a45b", "e1a45b", "e1a45b"]] }] }; SpritePixelArrays["TILE_6"] = { "name": 6, "descriptiveName": "Middle", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["fbe7cf", "fbe7cf", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "eeb39e", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["c26241", "c26241", "c26241", "c26241", "e1a45b", "e1a45b", "e1a45b", "e1a45b"]] }] }; SpritePixelArrays["TILE_7"] = { "name": 7, "descriptiveName": "Right", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["fbe7cf", "fbe7cf", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "005500", "00AA00"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["c26241", "c26241", "c26241", "c26241", "e1a45b", "e1a45b", "005500", "AAFF55"]] }] }; SpritePixelArrays["TILE_8"] = { "name": 8, "descriptiveName": "Left bottom", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "005500", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "eeb39e", "eeb39e"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["AAFF55", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55"]] }] }; SpritePixelArrays["TILE_9"] = { "name": 9, "descriptiveName": "Middle bottom", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["fbe7cf", "fbe7cf", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "eeb39e", "eeb39e"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["005500", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55"]] }] }; SpritePixelArrays["TILE_10"] = { "name": 10, "descriptiveName": "Right bottom", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["fbe7cf", "fbe7cf", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "005500", "00AA00"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["005500", "005500", "005500", "005500", "005500", "005500", "005500", "00AA00"], ["00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55"]] }] }; SpritePixelArrays["TILE_11"] = { "name": 15, "descriptiveName": "Top and bottom", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["005500", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["fbe7cf", "f6c992", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["eeb39e", "ee8764", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["005500", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"]] }] }; SpritePixelArrays["TILE_12"] = { "name": 16, "descriptiveName": "Left and right", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "005500", "fbe7cf", "fbe7cf", "eeb39e", "eeb39e", "005500", "AAFF55"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["00AA00", "005500", "c26241", "c26241", "e1a45b", "e1a45b", "005500", "00AA00"]] }] }; SpritePixelArrays["TILE_13"] = { "name": 17, "descriptiveName": "All sides", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["00AA00", "005500", "005500", "005500", "005500", "005500", "005500", "AAFF55"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["AAFF55", "005500", "005500", "005500", "005500", "005500", "005500", "00AA00"], ["00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55"]] }] }; SpritePixelArrays["TILE_5"] = { "name": 5, "descriptiveName": "One way block", "description": "The player can jump through it, but will land on it when he falls", "type": "tiles", "animation": [{ "sprite": [["transp", "e97977", "e97977", "transp", "transp", "e97977", "e97977", "transp"], ["d55c5a", "d55c5a", "d55c5a", "e97977", "d55c5a", "d55c5a", "d55c5a", "e97977"], ["ba3d3b", "d55c5a", "d55c5a", "e97977", "ba3d3b", "d55c5a", "d55c5a", "e97977"], ["transp", "ba3d3b", "ba3d3b", "transp", "transp", "ba3d3b", "ba3d3b", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["TILE_edge"] = { "name": "edge", "descriptiveName": "Edge block", "description": "Will display on the edge of the game screen", "animation": [{ "sprite": [["b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4"], ["6c686c", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "6c686c"], ["6c686c", "6c686c", "b3a1b4", "b3a1b4", "b3a1b4", "b3a1b4", "6c686c", "6c686c"], ["6c686c", "6c686c", "6c686c", "b3a1b4", "b3a1b4", "6c686c", "6c686c", "6c686c"], ["6c686c", "6c686c", "6c686c", "524f52", "524f52", "6c686c", "6c686c", "6c686c"], ["6c686c", "6c686c", "524f52", "524f52", "524f52", "524f52", "6c686c", "6c686c"], ["6c686c", "524f52", "524f52", "524f52", "524f52", "524f52", "524f52", "6c686c"], ["524f52", "524f52", "524f52", "524f52", "524f52", "524f52", "524f52", "524f52"]] }] }; SpritePixelArrays["PLAYER_IDLE_SPRITE"] = { "name": "playerIdle", "descriptiveName": "Player idle", "description": "The player sprite that is shown when you are not moving.", "directions": ["right", "left"], "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "4080BF", "4080BF", "4080BF", "4080BF", "transp", "transp"], ["transp", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF"], ["transp", "transp", "EABFBF", "FFFFFF", "80552B", "EABFBF", "80552B", "transp"], ["transp", "transp", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "transp"], ["transp", "transp", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "transp", "transp"], ["transp", "f2cbc9", "transp", "d55c5a", "d55c5a", "transp", "f2cbc9", "transp"], ["transp", "transp", "BF8040", "transp", "transp", "BF8040", "transp", "transp"]] }] }; SpritePixelArrays["PLAYER_JUMP_SPRITE"] = { "name": "playerJump", "descriptiveName": "Player jump", "description": "The player sprite that is shown when you are jumping.<br/><span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'SFX 1'} }, true)\">Jump SFX</span> will be displayed underneath.", "squishAble": true, "directions": ["right", "left"], "animation": [{ "sprite": [["transp", "transp", "4080BF", "4080BF", "4080BF", "4080BF", "transp", "4080BF"], ["transp", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "transp"], ["transp", "transp", "EABFBF", "FFFFFF", "80552B", "EABFBF", "80552B", "transp"], ["transp", "transp", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "transp"], ["transp", "EABFBF", "BF4040", "BF4040", "BF4040", "BF4040", "EABFBF", "transp"], ["transp", "transp", "transp", "BF4040", "BF4040", "FFAA55", "transp", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["PLAYER_WALL_JUMP_SPRITE"] = { "descriptiveName": "Player wall jump", "description": "The player sprite that is shown when you are jumping.", "squishAble": false, "hiddenEverywhere": true, "directions": ["right", "left"], "animation": [{ "sprite": [["transp", "transp", "4080BF", "4080BF", "4080BF", "4080BF", "transp", "4080BF"], ["transp", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "transp"], ["transp", "transp", "EABFBF", "FFFFFF", "80552B", "EABFBF", "80552B", "transp"], ["transp", "transp", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "transp"], ["transp", "EABFBF", "BF4040", "BF4040", "BF4040", "BF4040", "EABFBF", "transp"], ["transp", "transp", "transp", "BF4040", "BF4040", "FFAA55", "transp", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["PLAYER_WALK_SPRITE"] = { "name": "playerWalk", "descriptiveName": "Player walk", "description": "The player sprite that is shown when you are running.", "directions": ["right", "left"], "animation": [{ "sprite": [["transp", "transp", "4080BF", "4080BF", "4080BF", "4080BF", "transp", "transp"], ["transp", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF"], ["transp", "transp", "EABFBF", "FFFFFF", "80552B", "EABFBF", "80552B", "transp"], ["transp", "transp", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "transp"], ["transp", "transp", "BF4040", "BF4040", "BF4040", "BF4040", "EABFBF", "transp"], ["transp", "EABFBF", "BF4040", "BF4040", "BF4040", "BF8040", "transp", "transp"], ["transp", "transp", "BF8040", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "4080BF", "4080BF", "4080BF", "4080BF", "transp", "transp"], ["transp", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF", "4080BF"], ["transp", "transp", "EABFBF", "FFFFFF", "80552B", "EABFBF", "80552B", "transp"], ["transp", "transp", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "EABFBF", "transp"], ["transp", "transp", "BF4040", "BF4040", "BF4040", "BF4040", "transp", "transp"], ["transp", "EABFBF", "BF8040", "BF4040", "BF4040", "transp", "EABFBF", "transp"], ["transp", "transp", "transp", "transp", "BF8040", "transp", "transp", "transp"]] }] }; SpritePixelArrays["START_FLAG_SPRITE"] = { "name": "startFlag", "descriptiveName": "Start flag", "description": "The starting point of a level. You also respawn here, if you die. <br/> If you create multiple start-flags, for non-linear games, you can click on a set start flag again, to declare it as the default start of a level.", "type": "objects", "animation": [{ "sprite": [["fdfdfd", "d55c5a", "d55c5a", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "transp", "transp", "transp"], ["fdfdfd", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "transp"], ["fdfdfd", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "transp", "transp", "transp"], ["fdfdfd", "d55c5a", "d55c5a", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["CHECKPOINT_FLAG"] = { "name": "checkpoint", "descriptiveName": "Checkpoint", "description": "If the player touches the checkpoint, he will respawn here after a death. If there are multiple checkpoints, the latest one the player touched will become the respawn point.", "type": "objects", "animation": [{ "sprite": [["fdfdfd", "E3E300", "E3E300", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "transp", "transp", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "E3E300", "transp", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "E3E300", "E3E300", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "E3E300", "E3E300", "E3E300", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["fdfdfd", "E3E300", "E3E300", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "E3E300", "transp", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "E3E300", "E3E300", "E3E300", "transp"], ["fdfdfd", "E3E300", "E3E300", "E3E300", "E3E300", "transp", "transp", "transp"], ["fdfdfd", "E3E300", "E3E300", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["FINISH_FLAG_SPRITE"] = { "name": "finishFlag", "descriptiveName": "Finish flag", "changeableAttributes": [{ "name": "collectiblesNeeded", "defaultValue": false }], "description": "The goal of a level. If you touch it, by default you continue to the next level. If you want to specify a custom exit to a different level, click on a set finish flag again. <br/><span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Finish flag closed'} }, true)\">Closed finish flag sprite</span>", "type": "objects", "animation": [{ "sprite": [["fdfdfd", "208220", "208220", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "208220", "208220", "208220", "208220", "transp", "transp", "transp"], ["fdfdfd", "208220", "208220", "208220", "208220", "208220", "208220", "transp"], ["fdfdfd", "208220", "208220", "208220", "208220", "transp", "transp", "transp"], ["fdfdfd", "208220", "208220", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["FINISH_FLAG_CLOSED_SPRITE"] = { "name": "finishFlagClosed", "descriptiveName": "Finish flag closed", "description": "This sprite will be displayed if the player needs to collect collectibles to access the <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Finish flag'} }, true)\">Finish flag</span> (Can be configured by clicking on a set finish flag in the game screen).", "hiddenSprite": true, "type": "objects", "animation": [{ "sprite": [["fdfdfd", "8E8E8E", "8E8E8E", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "transp", "transp", "transp"], ["fdfdfd", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "transp"], ["fdfdfd", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "transp", "transp", "transp"], ["fdfdfd", "8E8E8E", "8E8E8E", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["fdfdfd", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SPIKE_SPRITE"] = { "name": "spike", "descriptiveName": "Spike", "directions": ["bottom", "left", "top", "right"], "description": "A spike. If you touch it, you die", "type": "objects", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "b3a1b4", "transp", "transp", "transp"], ["transp", "transp", "transp", "b3a1b4", "b3a1b4", "transp", "transp", "transp"], ["transp", "transp", "b3a1b4", "6c686c", "6c686c", "b3a1b4", "transp", "transp"], ["b3a1b4", "b3a1b4", "6c686c", "524f52", "FFFFFF", "6c686c", "b3a1b4", "transp"], ["transp", "b3a1b4", "6c686c", "524f52", "524f52", "6c686c", "b3a1b4", "b3a1b4"], ["transp", "transp", "b3a1b4", "6c686c", "6c686c", "b3a1b4", "transp", "transp"], ["transp", "transp", "transp", "b3a1b4", "b3a1b4", "transp", "transp", "transp"], ["transp", "transp", "transp", "b3a1b4", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["TRAMPOLINE_SRPITE"] = { "name": "trampoline", "descriptiveName": "Trampoline", "description": "A trampoline. You will jump approximately twice as high when you land on it.", "animNotEditale": true, "squishAble": false, "type": "objects", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["e97977", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "e97977"], ["e97977", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "e97977"], ["transp", "transp", "6c686c", "6c686c", "b3a1b4", "fdfdfd", "transp", "transp"], ["transp", "transp", "524f52", "524f52", "524f52", "524f52", "transp", "transp"], ["transp", "transp", "6c686c", "6c686c", "b3a1b4", "fdfdfd", "transp", "transp"], ["transp", "transp", "524f52", "524f52", "524f52", "524f52", "transp", "transp"]] }, { "sprite": [["e97977", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "e97977"], ["e97977", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "d55c5a", "e97977"], ["transp", "transp", "6c686c", "6c686c", "b3a1b4", "fdfdfd", "transp", "transp"], ["transp", "transp", "524f52", "524f52", "524f52", "524f52", "transp", "transp"], ["transp", "transp", "6c686c", "6c686c", "b3a1b4", "fdfdfd", "transp", "transp"], ["transp", "transp", "524f52", "524f52", "524f52", "524f52", "transp", "transp"], ["transp", "transp", "6c686c", "6c686c", "b3a1b4", "fdfdfd", "transp", "transp"], ["transp", "transp", "524f52", "524f52", "524f52", "524f52", "transp", "transp"]] }] }; SpritePixelArrays["CANON_SPRITE"] = { "name": "canon", "changeableAttributes": [{ "name": "speed", "defaultValue": 3, "minValue": 1, "maxValue": 10 }, { "name": "frequency", "defaultValue": 3, "minValue": 1, "maxValue": 8 }], "descriptiveName": "Cannon", "description": "A cannon. It shoots <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Cannon ball'} }, true)\">cannonballs</span> at certain time intervals. Click on it after placing it again, to change the attributes of the individual cannon.", "type": "objects", "squishAble": false, "directions": ["left", "top", "right", "bottom"], "animation": [{ "sprite": [["FFFFFF", "transp", "transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "transp"], ["FFFFFF", "FFFFFF", "transp", "FFFFFF", "000000", "000000", "000000", "FFFFFF"], ["FFFFFF", "000000", "FFFFFF", "000000", "000000", "000000", "000000", "FFFFFF"], ["FFFFFF", "000000", "000000", "000000", "000000", "000000", "000000", "FFFFFF"], ["FFFFFF", "000000", "000000", "000000", "000000", "000000", "000000", "FFFFFF"], ["FFFFFF", "000000", "FFFFFF", "000000", "000000", "000000", "000000", "FFFFFF"], ["FFFFFF", "FFFFFF", "transp", "FFFFFF", "000000", "000000", "000000", "FFFFFF"], ["FFFFFF", "transp", "transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "transp"]] }] }; SpritePixelArrays["STOMPER"] = { "name": "stomper", "type": "objects", "descriptiveName": "Stomper", "squishAble": false, "directions": ["bottom", "left", "top", "right"], "description": "A deadly hazard, that will fly torwards the player, if he is in it's way and move back to it's initial place once it hits a solid block. Can be rotated by clicking on a placed object again.", "animation": [{ "sprite": [["AAAAAA", "AAAAAA", "transp", "AAAAAA", "AAAAAA", "transp", "AAAAAA", "AAAAAA"], ["AAAAAA", "717171", "transp", "717171", "717171", "transp", "717171", "AAAAAA"], ["transp", "transp", "AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "transp", "transp"], ["AAAAAA", "717171", "FFFFFF", "AAAAAA", "AAAAAA", "FFFFFF", "717171", "AAAAAA"], ["AAAAAA", "717171", "FF1C1C", "AAAAAA", "AAAAAA", "FF1C1C", "717171", "AAAAAA"], ["transp", "transp", "AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "transp", "transp"], ["AAAAAA", "717171", "transp", "717171", "717171", "transp", "717171", "AAAAAA"], ["AAAAAA", "AAAAAA", "transp", "AAAAAA", "AAAAAA", "transp", "AAAAAA", "AAAAAA"]] }] }; SpritePixelArrays["TOGGLE_MINE"] = { "name": "toggleMine", "type": "objects", "descriptiveName": "Toggle mine", "description": "An object that is harmless at first, but once you step in and out of it, it becomes deadly.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "C6C6C6", "C6C6C6", "transp", "transp", "transp"], ["transp", "transp", "C6C6C6", "transp", "transp", "C6C6C6", "transp", "transp"], ["transp", "C6C6C6", "transp", "transp", "transp", "transp", "C6C6C6", "transp"], ["transp", "C6C6C6", "transp", "transp", "transp", "transp", "C6C6C6", "transp"], ["transp", "transp", "C6C6C6", "transp", "transp", "C6C6C6", "transp", "transp"], ["transp", "transp", "transp", "C6C6C6", "C6C6C6", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "FF1C1C", "FF1C1C", "transp", "transp", "transp"], ["transp", "transp", "FF1C1C", "transp", "transp", "FF1C1C", "transp", "transp"], ["transp", "FF1C1C", "transp", "transp", "transp", "transp", "FF1C1C", "transp"], ["FF1C1C", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "FF1C1C"], ["FF1C1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF1C1C"], ["transp", "FF1C1C", "transp", "transp", "transp", "transp", "FF1C1C", "transp"], ["transp", "transp", "FF1C1C", "transp", "transp", "FF1C1C", "transp", "transp"], ["transp", "transp", "transp", "FF1C1C", "FF1C1C", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DISAPPEARING_BLOCK_SPRITE"] = { "name": "disappearingBlock", "descriptiveName": "Disappearing block", "description": "A block that will disappear upon touching it. It will reappear after a certain time.", "type": "tiles", "animation": [{ "sprite": [["804c51", "9c6853", "f6c992", "f6c992", "9c6853", "804c51", "804c51", "804c51"], ["9c6853", "f6c992", "f6c992", "f6c992", "f6c992", "804c51", "f6c992", "9c6853"], ["f6c992", "f6c992", "f6c992", "f6c992", "9c6853", "804c51", "9c6853", "9c6853"], ["9c6853", "f6c992", "f6c992", "9c6853", "9c6853", "804c51", "804c51", "804c51"], ["9c6853", "9c6853", "9c6853", "9c6853", "804c51", "9c6853", "f6c992", "9c6853"], ["804c51", "9c6853", "9c6853", "804c51", "9c6853", "f6c992", "f6c992", "9c6853"], ["804c51", "804c51", "804c51", "804c51", "9c6853", "9c6853", "9c6853", "804c51"], ["804c51", "9c6853", "9c6853", "804c51", "804c51", "804c51", "804c51", "804c51"]] }] }; SpritePixelArrays["WATER"] = { "name": "water", "descriptiveName": "Water", "description": "A passable block that slows down gravity and let's you jump infinitely inside it. Every object can be placed on it.", "type": "tiles", "animation": [{ "sprite": [["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "C6E3FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "C6E3FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"]] }, { "sprite": [["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "C6E3FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "C6E3FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"], ["8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF", "8EC6FF"]] }] }; SpritePixelArrays["RED_BLOCK"] = { "name": "redBlock", "descriptiveName": "Red block", "description": "There are red blocks and blue blocks. Only one them can be active at a time. By touching the switch (in the objects tab), the active tiles can be switched.", "type": "tiles", "animation": [{ "sprite": [["FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000"]] }, { "sprite": [["FF1C1C", "FF1C1C", "transp", "FF1C1C", "FF1C1C", "transp", "FF1C1C", "FF1C1C"], ["FF1C1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF1C1C"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["FF1C1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF1C1C"], ["FF1C1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF1C1C"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["FF1C1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF1C1C"], ["FF1C1C", "FF1C1C", "transp", "FF1C1C", "FF1C1C", "transp", "FF1C1C", "FF1C1C"]] }] }; SpritePixelArrays["BLUE_BLOCK"] = { "name": "blueBlock", "descriptiveName": "Blue block", "description": "There are red blocks and blue blocks. Only one them can be active at a time. By touching the switch (in the objects tab), the active tiles can be switched.", "type": "tiles", "animation": [{ "sprite": [["8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "0000AA", "0000AA", "0000AA", "0000AA", "0000AA", "0000AA", "0000AA"]] }, { "sprite": [["1C1CFF", "1C1CFF", "transp", "1C1CFF", "1C1CFF", "transp", "1C1CFF", "1C1CFF"], ["1C1CFF", "transp", "transp", "transp", "transp", "transp", "transp", "1C1CFF"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["1C1CFF", "transp", "transp", "transp", "transp", "transp", "transp", "1C1CFF"], ["1C1CFF", "transp", "transp", "transp", "transp", "transp", "transp", "1C1CFF"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["1C1CFF", "transp", "transp", "transp", "transp", "transp", "transp", "1C1CFF"], ["1C1CFF", "1C1CFF", "transp", "1C1CFF", "1C1CFF", "transp", "1C1CFF", "1C1CFF"]] }] }; SpritePixelArrays["RED_BLUE_BLOCK_SWITCH"] = { "name": "redblueblockswitch", "descriptiveName": "Red/blue switch", "description": "A switch for red/blue tiles. Can be activated by hitting it with your head, or if a stomper/cannon-ball/rocket hits it.", "type": "tiles", "squishAble": false, "animNotEditale": true, "animation": [{ "sprite": [["FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E", "FF8E8E"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FFFFFF", "FFFFFF", "FFFFFF", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FFFFFF", "FF1C1C", "FF1C1C", "FFFFFF", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FFFFFF", "FFFFFF", "FFFFFF", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FFFFFF", "FF1C1C", "FF1C1C", "FFFFFF", "FF1C1C", "AA0000"], ["FF8E8E", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "FF1C1C", "AA0000"], ["FF8E8E", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000"]] }, { "sprite": [["8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF", "8E8EFF"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "FFFFFF", "FFFFFF", "FFFFFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "FFFFFF", "1C1CFF", "1C1CFF", "FFFFFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "FFFFFF", "FFFFFF", "FFFFFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "1C1CFF", "0000AA"], ["8E8EFF", "0000AA", "0000AA", "0000AA", "0000AA", "0000AA", "0000AA", "0000AA"]] }] }; SpritePixelArrays["ROCKET_LAUNCHER"] = { "name": "rocketLauncher", "type": "objects", "descriptiveName": "Rocket launcher", "changeableAttributes": [{ "name": "speed", "defaultValue": 3, "minValue": 1, "maxValue": 10 }, { "name": "frequency", "defaultValue": 3, "minValue": 1, "maxValue": 8 }, { "name": "rotationSpeed", "defaultValue": 8, "minValue": 0, "maxValue": 24, "descriptiveName": "rotation speed <span data-microtip-size='large'aria-label='Determines how fast the rockets will rotate to the players direction. 0 = rockets will decide direction once and not turn at all. 24 = basically following the player everywhere.'data-microtip-position='top-left' role='tooltip' class='songInputInfo'><img src='images/icons/info.svg' alt='info' width='16' height='16'>" }], "squishAble": false, "rotateable": true, "description": "A rocket-launcher. It shoots <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Rocket'} }, true)\">rockets</span> at certain time intervals that will follow the player. Click on it after placing it again, to change the attributes of the individual cannon.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "AAAAAA", "AAAAAA", "transp", "transp"], ["AAAAAA", "AAAAAA", "FF1C1C", "FF1C1C", "AAAAAA", "AAAAAA", "717171", "transp"], ["AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "717171", "717171"], ["FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "717171", "717171"], ["FFFFFF", "FFFFFF", "FF1C1C", "FF1C1C", "FFFFFF", "FFFFFF", "717171", "transp"], ["transp", "transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["NPC_SPRITE"] = { "name": "npc", "changeableAttributes": [{ "name": "dialogue", "defaultValue": [""] }], "descriptiveName": "Npc", "description": "An object that can display a dialogue. Click on it again after placing it, to display the dialogue window.", "type": "objects", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["FFAA55", "FFAA55", "FFAA55", "FFAA55", "FFAA55", "FFAA55", "FFAA55", "AA5500"], ["FFAA55", "FF8E1C", "FFFFFF", "FFFFFF", "FF8E1C", "FFFFFF", "FF8E1C", "AA5500"], ["FFAA55", "FF8E1C", "FF8E1C", "FF8E1C", "FF8E1C", "FF8E1C", "FF8E1C", "AA5500"], ["FFAA55", "FF8E1C", "FFFFFF", "FF8E1C", "FFFFFF", "FFFFFF", "FF8E1C", "AA5500"], ["AA5500", "AA5500", "AA5500", "AA5500", "AA5500", "AA5500", "AA5500", "AA5500"], ["transp", "transp", "transp", "713900", "713900", "transp", "transp", "transp"], ["transp", "transp", "transp", "713900", "713900", "transp", "transp", "transp"]] }] }; SpritePixelArrays["CANON_BALL_SPRITE"] = { "name": "canonBall", "descriptiveName": "Cannon ball", "directions": ["left", "top", "right", "bottom"], "description": "A cannonball. The <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Cannon'} }, true)\">cannon</span> shoots it. <br/>When it hits a wall, <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'SFX 2'} }, true)\">explosion</span> will be displayed.", "animation": [{ "sprite": [["transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "transp"], ["transp", "FFFFFF", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "FFFFFF", "transp"], ["FFFFFF", "ff5e7a", "ff5e7a", "ff5e7a", "FFFFFF", "ff5e7a", "ff5e7a", "FFFFFF"], ["FFFFFF", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "FFFFFF", "ff5e7a", "FFFFFF"], ["FFFFFF", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "FFFFFF"], ["FFFFFF", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "FFFFFF"], ["transp", "FFFFFF", "ff5e7a", "ff5e7a", "ff5e7a", "ff5e7a", "FFFFFF", "transp"], ["transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "transp"]] }] }; SpritePixelArrays["ROCKET"] = { "name": "rocket", "descriptiveName": "Rocket", "description": "A rocket. The <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Rocket launcher'} }, true)\">rocket launcher</span> shoots it.<br/>When it hits a wall, <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'SFX 2'} }, true)\">explosion</span> will be displayed.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp"], ["FF1C1C", "FF1C1C", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFF8E", "FF8E1C"], ["FF1C1C", "FF1C1C", "AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "FFFF8E", "FF8E1C"], ["transp", "transp", "transp", "transp", "AAAAAA", "AAAAAA", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "AAAAAA", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp"], ["FF1C1C", "FF1C1C", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "FF8E1C"], ["FF1C1C", "FF1C1C", "AAAAAA", "AAAAAA", "AAAAAA", "AAAAAA", "transp", "FF8E1C"], ["transp", "transp", "transp", "transp", "AAAAAA", "AAAAAA", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "AAAAAA", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["PORTAL"] = { "name": "portal", "type": "objects", "descriptiveName": "Portal", "squishAble": false, "description": "<b>Second Sprite:</b> <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Portal 2'} }, true)\">Here</span><br/><br/>A portal with 2 exits. <br/>Just draw 2 portals on the game screen. The odd one will automatically be the first, the even one the second.", "animation": [{ "sprite": [["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "0071E3", "0071E3", "0071E3", "0071E3", "transp", "transp"], ["transp", "0071E3", "0071E3", "55AAFF", "55AAFF", "0071E3", "0071E3", "transp"], ["FFFFFF", "0071E3", "55AAFF", "8EC6FF", "8EC6FF", "55AAFF", "0071E3", "FFFFFF"], ["FFFFFF", "0071E3", "55AAFF", "8EC6FF", "8EC6FF", "55AAFF", "0071E3", "FFFFFF"], ["transp", "0071E3", "0071E3", "55AAFF", "55AAFF", "0071E3", "0071E3", "transp"], ["transp", "transp", "0071E3", "0071E3", "0071E3", "0071E3", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"]] }] }; SpritePixelArrays["PORTAL2"] = { "name": "portal2", "type": "objects", "descriptiveName": "Portal 2", "description": "<b>First Sprite:</b> <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Portal'} }, true)\">Here</span><br/><br/>A portal with 2 exits. <br/>Just draw 2 portals on the game screen. The odd one will automatically be the first, the even one the second.", "squishAble": false, "hiddenSprite": true, "animation": [{ "sprite": [["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "E37100", "E37100", "E37100", "E37100", "transp", "transp"], ["transp", "E37100", "E37100", "FFAA55", "FFAA55", "E37100", "E37100", "transp"], ["FFFFFF", "E37100", "FFAA55", "FFC68E", "FFC68E", "FFAA55", "E37100", "FFFFFF"], ["FFFFFF", "E37100", "FFAA55", "FFC68E", "FFC68E", "FFAA55", "E37100", "FFFFFF"], ["transp", "E37100", "E37100", "FFAA55", "FFAA55", "E37100", "E37100", "transp"], ["transp", "transp", "E37100", "E37100", "E37100", "E37100", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"]] }] }; SpritePixelArrays["COLLECTIBLE"] = { "name": "collectible", "type": "objects", "descriptiveName": "Collectible", "description": "They can be placed to give the player an additional challenge. <br/> Inside the tool, the collectibles will reappear if you die or reset the level, in the exported game they are gone forever, once <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'SFX 4'} }, true)\">collected</span>.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFC6", "FFFFC6", "transp", "transp", "transp"], ["transp", "transp", "FFFFC6", "FFFF8E", "FFFF8E", "FFFF55", "transp", "transp"], ["transp", "transp", "FFFFC6", "FFFF8E", "FFFF8E", "FFFF55", "transp", "transp"], ["transp", "transp", "FFFFC6", "FFFF8E", "FFFF8E", "FFFF55", "transp", "transp"], ["transp", "transp", "FFFFC6", "FFFF8E", "FFFF8E", "FFFF55", "transp", "transp"], ["transp", "transp", "transp", "FFFF55", "FFFF55", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFC6", "FFFFC6", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFC6", "FFFF55", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFC6", "FFFF55", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFC6", "FFFF55", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFC6", "FFFF55", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFF55", "FFFF55", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["LASER_CANON"] = { "name": "laserCanon", "changeableAttributes": [{ "name": "laserDuration", "defaultValue": 60, "minValue": 10, "maxValue": 140, "step": 10, "descriptiveName": "laser duration" }, { "name": "pauseDuration", "defaultValue": 60, "minValue": 0, "maxValue": 140, "step": 10, "descriptiveName": "pause duration" }], "descriptiveName": "Laser cannon", "description": "A laser cannon. It shoots <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Laser'} }, true)\">lasers</span> until they hit a wall. Click on it after placing it again, to change the attributes of the individual laser cannon.", "type": "objects", "squishAble": false, "directions": ["left", "top", "right", "bottom"], "animation": [{ "sprite": [["transp", "transp", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E", "8E8E8E"], ["transp", "555555", "8E8E8E", "717171", "717171", "717171", "717171", "555555"], ["C6C6C6", "555555", "8E8E8E", "717171", "717171", "717171", "717171", "555555"], ["FFFFFF", "555555", "8E8E8E", "393939", "FF8E8E", "FF8E8E", "393939", "555555"], ["FFFFFF", "555555", "8E8E8E", "393939", "E30000", "E30000", "393939", "555555"], ["C6C6C6", "555555", "8E8E8E", "717171", "717171", "717171", "717171", "555555"], ["transp", "555555", "8E8E8E", "717171", "717171", "717171", "717171", "555555"], ["transp", "transp", "555555", "555555", "555555", "555555", "555555", "555555"]] }] }; SpritePixelArrays["LASER"] = { "name": "laser", "descriptiveName": "Laser", "directions": ["left", "top", "right", "bottom"], "description": "A laser. The <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Laser cannon'} }, true)\">laser cannon</span> shoots it. <br/>", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFC68E", "transp", "transp", "transp", "FFC68E", "transp"], ["transp", "transp", "FF1C1C", "transp", "transp", "transp", "FF1C1C", "transp"], ["transp", "FF1C1C", "transp", "FF1C1C", "transp", "FF1C1C", "transp", "FF1C1C"], ["FFC68E", "transp", "transp", "transp", "FFC68E", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["FFC68E", "transp", "transp", "transp", "FFC68E", "transp", "transp", "transp"], ["FF1C1C", "transp", "transp", "transp", "FF1C1C", "transp", "transp", "transp"], ["transp", "FF1C1C", "transp", "FF1C1C", "transp", "FF1C1C", "transp", "FF1C1C"], ["transp", "transp", "FFC68E", "transp", "transp", "transp", "FFC68E", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["BARREL_CANNON"] = { "name": "barrelCannon", "descriptiveName": "Barrel", "description": "A barrel. When the player touches it, he gets inside of it and stays there, until he presses the jump button - then he will be launched out of it in it's direction.", "type": "objects", "squishAble": true, "directions": ["left", "top", "right", "bottom"], "animation": [{ "sprite": [["transp", "transp", "717171", "FFAA55", "FFAA55", "717171", "transp", "transp"], ["transp", "FFAA55", "8E8E8E", "FF8E1C", "FF8E1C", "8E8E8E", "FFAA55", "transp"], ["717171", "FF8E1C", "8E8E8E", "FFFFFF", "E37100", "8E8E8E", "FF8E1C", "717171"], ["8E8E8E", "FF8E1C", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FF8E1C", "8E8E8E"], ["8E8E8E", "FF8E1C", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FF8E1C", "8E8E8E"], ["717171", "FF8E1C", "8E8E8E", "FFFFFF", "E37100", "8E8E8E", "FF8E1C", "717171"], ["transp", "FFAA55", "8E8E8E", "FF8E1C", "FF8E1C", "8E8E8E", "FFAA55", "transp"], ["transp", "transp", "717171", "FFAA55", "FFAA55", "717171", "transp", "transp"]] }] }; SpritePixelArrays["JUMP_RESET"] = { "name": "jumpReset", "descriptiveName": "Jump reset", "description": "It resets your jump in air. It is deactivated upon touching the ground or wall.", "type": "objects", "animation": [{ "sprite": [["transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["FFFFFF", "transp", "transp", "55AAFF", "55AAFF", "transp", "transp", "FFFFFF"], ["FFFFFF", "transp", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "transp", "FFFFFF"], ["FFFFFF", "transp", "transp", "55AAFF", "55AAFF", "transp", "transp", "FFFFFF"], ["FFFFFF", "transp", "transp", "55AAFF", "55AAFF", "transp", "transp", "FFFFFF"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "transp"]] }] }; SpritePixelArrays["FIXED_SPEED_RIGHT"] = { "name": "fixedSpeedRight", "descriptiveName": "Auto run", "directions": ["right", "left"], "description": "Activates auto-run mode upon touching. <br/> The auto-run can be stopped by the auto-run stopper tile. <br/> Jumping off a wall will change the run direction. Click on a set object again, to change it's default direction.", "type": "objects", "animation": [{ "sprite": [["FF8E1C", "FF8E1C", "transp", "transp", "transp", "transp", "FF8E1C", "FF8E1C"], ["FF8E1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF8E1C"], ["transp", "transp", "transp", "transp", "FF8E1C", "transp", "transp", "transp"], ["transp", "transp", "FF8E1C", "FF8E1C", "FF8E1C", "FF8E1C", "transp", "transp"], ["transp", "transp", "FF8E1C", "FF8E1C", "FF8E1C", "FF8E1C", "transp", "transp"], ["transp", "transp", "transp", "transp", "FF8E1C", "transp", "transp", "transp"], ["FF8E1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF8E1C"], ["FF8E1C", "FF8E1C", "transp", "transp", "transp", "transp", "FF8E1C", "FF8E1C"]] }, { "sprite": [["FF8E1C", "FF8E1C", "transp", "transp", "transp", "transp", "FF8E1C", "FF8E1C"], ["FF8E1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF8E1C"], ["transp", "transp", "transp", "transp", "AA5500", "transp", "transp", "transp"], ["transp", "transp", "AA5500", "AA5500", "AA5500", "AA5500", "transp", "transp"], ["transp", "transp", "AA5500", "AA5500", "AA5500", "AA5500", "transp", "transp"], ["transp", "transp", "transp", "transp", "AA5500", "transp", "transp", "transp"], ["FF8E1C", "transp", "transp", "transp", "transp", "transp", "transp", "FF8E1C"], ["FF8E1C", "FF8E1C", "transp", "transp", "transp", "transp", "FF8E1C", "FF8E1C"]] }] }; SpritePixelArrays["FIXED_SPEED_STOPPER"] = { "name": "fixedSpeedStopper", "descriptiveName": "Auto-run stopper", "description": "This tile stops the auto-run activated by the <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Auto run'} }, true)\">auto-run sprite</span>.", "type": "objects", "animation": [{ "sprite": [["transp", "transp", "FFC6C6", "FFC6C6", "FFC6C6", "FFC6C6", "transp", "transp"], ["transp", "FFC6C6", "390000", "390000", "390000", "390000", "FFC6C6", "transp"], ["FFC6C6", "390000", "FFC6C6", "390000", "390000", "390000", "390000", "FFC6C6"], ["FFC6C6", "390000", "390000", "FFC6C6", "390000", "390000", "390000", "FFC6C6"], ["FFC6C6", "390000", "390000", "390000", "FFC6C6", "390000", "390000", "FFC6C6"], ["FFC6C6", "390000", "390000", "390000", "390000", "FFC6C6", "390000", "FFC6C6"], ["transp", "FFC6C6", "390000", "390000", "390000", "390000", "FFC6C6", "transp"], ["transp", "transp", "FFC6C6", "FFC6C6", "FFC6C6", "FFC6C6", "transp", "transp"]] }, { "sprite": [["transp", "transp", "FFC6C6", "FFC6C6", "FFC6C6", "FFC6C6", "transp", "transp"], ["transp", "FFC6C6", "710000", "710000", "710000", "710000", "FFC6C6", "transp"], ["FFC6C6", "710000", "FFC6C6", "710000", "710000", "710000", "710000", "FFC6C6"], ["FFC6C6", "710000", "710000", "FFC6C6", "710000", "710000", "710000", "FFC6C6"], ["FFC6C6", "710000", "710000", "710000", "FFC6C6", "710000", "710000", "FFC6C6"], ["FFC6C6", "710000", "710000", "710000", "710000", "FFC6C6", "710000", "FFC6C6"], ["transp", "FFC6C6", "710000", "710000", "710000", "710000", "FFC6C6", "transp"], ["transp", "transp", "FFC6C6", "FFC6C6", "FFC6C6", "FFC6C6", "transp", "transp"]] }] }; SpritePixelArrays["PATH_SPRITE"] = { "name": "pathPoint", "changeableAttributes": [{ "name": "speed", "defaultValue": 3, "minValue": 1, "maxValue": 7, "mapper": { "1": 1, "2": 2, "3": 3, "4": 4, "5": 6, "6": 8, "7": 12 } }, { "name": "stopFrames", "defaultValue": 10, "minValue": 0, "maxValue": 80, "step": 5, "descriptiveName": "wait <span data-microtip-size='large'aria-label='The objects on the path will wait that amount of time, if an object reaches the path´s end.'data-microtip-position='top-left' role='tooltip' class='songInputInfo'><img src='images/icons/info.svg' alt='info' width='16' height='16'>" }, { "name": "movementDirection", "formElement": "toggle", "defaultValue": "forwards", "options": [{ "true": "forwards" }, { "false": "backwards" }] }], "directions": ["top", "right"], "descriptiveName": "Path", "description": "<div>Draw paths, put objects on top and the objects will follow them. Click on an already set path-point, while paths are selected in build-tools to adjust the path's attributes.<div class='subSection'><details><summary>Compatible objects</summary><div class='marginTop8'><ul style='padding-left: 16px'><li>Finish flag</li><li>Spikes</li><li>Trampolines</li><li>Toggle mine</li><li>Rocket launchers</li><li>Portals</li><li>Collectibles</li><li>Barrel cannons</li><li>Jump reset</li></ul></div></details><details class='marginTop8'><summary>Rules</summary><div class='marginTop8'><ul style='padding-left: 16px'><li>Draw paths in a line or in an enclosed 'circle'</li><li>Place as many different objects on them as you want</li><li>You can't draw 2 paths above or beside each other. You need to leave 1 free space inbetween</li></ul></div></details></div></div>", "type": "objects", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["FFFFFF", "FFFFFF", "transp", "FFFFFF", "FFFFFF", "transp", "FFFFFF", "FFFFFF"], ["1C1C1C", "1C1C1C", "transp", "1C1C1C", "1C1C1C", "transp", "1C1C1C", "1C1C1C"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE"] = { "name": "deco", "type": "deco", "descriptiveName": "Deco 1", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "40BF40", "transp", "transp", "transp", "40BF40"], ["transp", "40BF40", "transp", "40BF40", "transp", "40BF40", "transp", "40BF40"], ["transp", "40BF40", "40BF40", "40BF40", "40BF40", "40BF40", "transp", "40BF40"], ["40BF40", "40BF40", "40BF40", "40BF40", "40BF40", "40BF40", "transp", "40BF40"]] }] }; SpritePixelArrays["DEKO_SPRITE2"] = { "name": "deco", "descriptiveName": "Deco 2", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "FF55FF", "FF55FF", "transp"], ["transp", "FF5555", "FF5555", "transp", "FF00FF", "transp", "transp", "FF00FF"], ["FF5555", "transp", "transp", "FF5555", "transp", "FF00FF", "FF00FF", "transp"], ["transp", "FF5555", "FF5555", "transp", "transp", "2B802B", "2B802B", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE3"] = { "name": "deco", "descriptiveName": "Deco 3", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["FFFFFF", "FFFFFF", "transp", "FFFFFF", "FFFFFF", "transp", "FFFFFF", "FFFFFF"], ["FFFFFF", "FFFFFF", "FFFFFF", "0000FF", "0000FF", "FFFFFF", "FFFFFF", "FFFFFF"], ["transp", "transp", "transp", "0000FF", "0000FF", "transp", "transp", "transp"], ["FFFFFF", "FFFFFF", "55AAFF", "transp", "transp", "55AAFF", "FFFFFF", "FFFFFF"], ["FFFFFF", "FFFFFF", "FFFFFF", "55AAFF", "55AAFF", "FFFFFF", "FFFFFF", "FFFFFF"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE4"] = { "name": "deco", "descriptiveName": "Deco 4", "type": "deco", "animation": [{ "sprite": [["transp", "2B8055", "transp", "15402A", "15402A", "transp", "2B8055", "transp"], ["transp", "2B8055", "2B8055", "15402A", "15402A", "2B8055", "2B8055", "transp"], ["transp", "transp", "2B8055", "15402A", "15402A", "2B8055", "transp", "transp"], ["transp", "transp", "transp", "15402A", "15402A", "transp", "transp", "transp"], ["transp", "2B8055", "transp", "15402A", "15402A", "transp", "2B8055", "transp"], ["transp", "2B8055", "2B8055", "15402A", "15402A", "2B8055", "2B8055", "transp"], ["transp", "transp", "2B8055", "15402A", "15402A", "2B8055", "transp", "transp"], ["transp", "transp", "transp", "15402A", "15402A", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE5"] = { "name": "deco", "descriptiveName": "Deco 5", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["713900", "transp", "transp", "transp", "transp", "transp", "transp", "AA5500"], ["713900", "E37100", "E37100", "E37100", "E37100", "E37100", "E37100", "AA5500"], ["713900", "transp", "transp", "transp", "transp", "transp", "transp", "AA5500"], ["713900", "E37100", "E37100", "E37100", "E37100", "E37100", "E37100", "AA5500"], ["713900", "transp", "transp", "transp", "transp", "transp", "transp", "AA5500"], ["713900", "E37100", "E37100", "E37100", "E37100", "E37100", "E37100", "AA5500"]] }] }; SpritePixelArrays["DEKO_SPRITE6"] = { "name": "deco", "descriptiveName": "Deco 6", "type": "deco", "animation": [{ "sprite": [["717171", "8E8E8E", "AAAAAA", "C6C6C6", "C6C6C6", "AAAAAA", "8E8E8E", "717171"], ["transp", "717171", "8E8E8E", "AAAAAA", "AAAAAA", "8E8E8E", "717171", "transp"], ["transp", "transp", "FFFF1C", "FFFF55", "FFFF55", "FFFF1C", "transp", "transp"], ["transp", "717171", "710071", "AA00AA", "AA00AA", "710071", "717171", "transp"], ["717171", "8E8E8E", "AAAAAA", "C6C6C6", "C6C6C6", "AAAAAA", "8E8E8E", "717171"], ["717171", "8E8E8E", "AAAAAA", "C6C6C6", "C6C6C6", "AAAAAA", "8E8E8E", "717171"], ["717171", "8E8E8E", "AAAAAA", "C6C6C6", "C6C6C6", "AAAAAA", "8E8E8E", "717171"], ["transp", "717171", "8E8E8E", "AAAAAA", "AAAAAA", "8E8E8E", "717171", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE7"] = { "name": "deco", "descriptiveName": "Deco 7", "type": "deco", "animation": [{ "sprite": [["2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A"], ["transp", "2A2A2A", "transp", "transp", "2A2A2A", "transp", "2A2A2A", "transp"], ["transp", "2A2A2A", "transp", "2A2A2A", "transp", "transp", "2A2A2A", "transp"], ["transp", "2A2A2A", "transp", "2A2A2A", "2A2A2A", "transp", "2A2A2A", "transp"], ["transp", "2A2A2A", "transp", "transp", "2A2A2A", "transp", "2A2A2A", "transp"], ["transp", "2A2A2A", "transp", "2A2A2A", "transp", "transp", "2A2A2A", "transp"], ["transp", "2A2A2A", "transp", "2A2A2A", "2A2A2A", "transp", "2A2A2A", "transp"], ["2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A"]] }] }; SpritePixelArrays["DEKO_SPRITE8"] = { "name": "deco", "descriptiveName": "Deco 8", "type": "deco", "animation": [{ "sprite": [["2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "transp", "2A2A2A", "2A2A2A"], ["2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "transp", "2A2A2A", "2A2A2A"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["2A2A2A", "2A2A2A", "transp", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A"], ["2A2A2A", "2A2A2A", "transp", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "transp", "2A2A2A", "2A2A2A"], ["2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "2A2A2A", "transp", "2A2A2A", "2A2A2A"]] }] }; SpritePixelArrays["DEKO_SPRITE9"] = { "name": "deco", "descriptiveName": "Deco 9", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "FF8E1C", "transp", "transp", "transp", "transp"], ["transp", "transp", "FF8E1C", "FFC68E", "FF8E1C", "transp", "transp", "transp"], ["transp", "FF8E1C", "FFC68E", "FFFFC6", "FFC68E", "FF8E1C", "transp", "transp"], ["transp", "FF8E1C", "FFC68E", "FFFFC6", "FFC68E", "FF8E1C", "transp", "transp"], ["transp", "8E8E8E", "AAAAAA", "AAAAAA", "AAAAAA", "8E8E8E", "transp", "transp"], ["transp", "transp", "8E8E8E", "AAAAAA", "8E8E8E", "transp", "transp", "transp"], ["transp", "transp", "transp", "8E8E8E", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "8E8E8E", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "AA5500", "transp", "transp", "transp", "transp"], ["transp", "transp", "AA5500", "FF8E1C", "AA5500", "transp", "transp", "transp"], ["transp", "AA5500", "FF8E1C", "FFFF8E", "FF8E1C", "AA5500", "transp", "transp"], ["transp", "AA5500", "FF8E1C", "FFFF8E", "FF8E1C", "AA5500", "transp", "transp"], ["transp", "8E8E8E", "AAAAAA", "AAAAAA", "AAAAAA", "8E8E8E", "transp", "transp"], ["transp", "transp", "8E8E8E", "AAAAAA", "8E8E8E", "transp", "transp", "transp"], ["transp", "transp", "transp", "8E8E8E", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "8E8E8E", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE10"] = { "name": "deco", "descriptiveName": "Deco 10", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "transp"], ["transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp"], ["C6E3FF", "C6E3FF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp"], ["C6E3FF", "C6E3FF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF"], ["transp", "C6E3FF", "C6E3FF", "C6E3FF", "C6E3FF", "C6E3FF", "C6E3FF", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE11"] = { "name": "deco", "descriptiveName": "Deco 11", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFC6FF", "transp", "transp", "transp", "transp", "transp"], ["transp", "FFC6FF", "FFFFFF", "FFC6FF", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFC6FF", "transp", "transp", "FFC6FF", "transp", "transp"], ["transp", "transp", "transp", "transp", "FFC6FF", "FFFFFF", "FFC6FF", "transp"], ["transp", "transp", "FFC6FF", "transp", "transp", "FFC6FF", "transp", "transp"], ["transp", "FFC6FF", "FFFFFF", "FFC6FF", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFC6FF", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "393939", "transp", "transp", "transp", "transp", "transp"], ["transp", "393939", "FFC6FF", "393939", "transp", "transp", "transp", "transp"], ["transp", "transp", "393939", "transp", "transp", "393939", "transp", "transp"], ["transp", "transp", "transp", "transp", "393939", "FFC6FF", "393939", "transp"], ["transp", "transp", "393939", "transp", "transp", "393939", "transp", "transp"], ["transp", "393939", "FFC6FF", "393939", "transp", "transp", "transp", "transp"], ["transp", "transp", "393939", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE12"] = { "name": "deco", "descriptiveName": "Deco 12", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "0055AA", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "8EC6FF", "transp", "transp", "transp", "transp"], ["transp", "transp", "8EC6FF", "C6E3FF", "8EC6FF", "transp", "transp", "transp"], ["0055AA", "8EC6FF", "C6E3FF", "C6E3FF", "C6E3FF", "8EC6FF", "0055AA", "transp"], ["transp", "transp", "8EC6FF", "C6E3FF", "8EC6FF", "transp", "transp", "transp"], ["transp", "transp", "transp", "8EC6FF", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "0055AA", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "003971", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "0055AA", "transp", "transp", "transp", "transp"], ["transp", "transp", "0055AA", "C6E3FF", "0055AA", "transp", "transp", "transp"], ["003971", "0055AA", "C6E3FF", "C6E3FF", "C6E3FF", "0055AA", "003971", "transp"], ["transp", "transp", "0055AA", "C6E3FF", "0055AA", "transp", "transp", "transp"], ["transp", "transp", "transp", "0055AA", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "003971", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE13"] = { "name": "deco", "descriptiveName": "Deco 13", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "55AA00", "397100", "transp", "transp", "transp"], ["transp", "55AA00", "transp", "55AA00", "397100", "transp", "transp", "transp"], ["transp", "55AA00", "transp", "55AA00", "397100", "transp", "transp", "transp"], ["transp", "55AA00", "55AA00", "55AA00", "397100", "transp", "55AA00", "transp"], ["transp", "transp", "transp", "55AA00", "397100", "transp", "55AA00", "transp"], ["transp", "transp", "transp", "55AA00", "55AA00", "55AA00", "55AA00", "transp"], ["transp", "transp", "transp", "55AA00", "397100", "transp", "transp", "transp"], ["transp", "transp", "transp", "55AA00", "397100", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE14"] = { "name": "deco", "descriptiveName": "Deco 14", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "2B8055", "2B8055", "2B8055", "2B8055", "transp", "transp"], ["transp", "2B8055", "2B8055", "15402A", "2B8055", "15402A", "2B8055", "transp"], ["transp", "2B8055", "15402A", "2B8055", "15402A", "15402A", "2B8055", "transp"], ["transp", "2B8055", "2B8055", "15402A", "15402A", "2B8055", "2B8055", "transp"], ["transp", "2B8055", "15402A", "15402A", "391C00", "15402A", "2B8055", "transp"], ["transp", "transp", "2B8055", "391C00", "713900", "2B8055", "transp", "transp"], ["transp", "transp", "transp", "391C00", "713900", "transp", "transp", "transp"], ["transp", "transp", "transp", "391C00", "713900", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE15"] = { "name": "deco", "descriptiveName": "Deco 15", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "393939", "transp", "transp"], ["transp", "393939", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "713900", "transp", "transp", "transp"], ["transp", "transp", "713900", "713900", "713900", "713900", "transp", "transp"], ["transp", "713900", "713900", "713900", "713900", "713900", "713900", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "393939", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "393939", "transp"], ["transp", "transp", "transp", "transp", "713900", "transp", "transp", "transp"], ["transp", "transp", "713900", "713900", "713900", "713900", "transp", "transp"], ["transp", "713900", "713900", "713900", "713900", "713900", "713900", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE16"] = { "name": "deco", "descriptiveName": "Deco 16", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "transp", "transp", "transp"], ["transp", "55AAFF", "55AAFF", "transp", "55AAFF", "transp", "transp", "transp"], ["FFFF8E", "FFFF8E", "55AAFF", "55AAFF", "55AAFF", "transp", "transp", "transp"], ["transp", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF"], ["transp", "transp", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "transp"], ["transp", "transp", "transp", "FFFF8E", "FFFF8E", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "transp", "transp", "transp"], ["FFFF8E", "55AAFF", "55AAFF", "transp", "55AAFF", "transp", "transp", "transp"], ["transp", "FFFF8E", "55AAFF", "55AAFF", "55AAFF", "transp", "transp", "transp"], ["FFFF8E", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF"], ["transp", "transp", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "55AAFF", "transp"], ["transp", "transp", "transp", "transp", "FFFF8E", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFF8E", "FFFF8E", "transp", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE17"] = { "name": "deco", "descriptiveName": "Deco 17", "type": "deco", "animation": [{ "sprite": [["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "FFFFFF", "000000", "717171", "FFFFFF", "transp", "transp"], ["transp", "transp", "FFFFFF", "FFFFFF", "FF8E1C", "FF8E1C", "transp", "transp"], ["AA5500", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "AA5500"], ["transp", "AA5500", "FFFFFF", "FFFFFF", "000000", "FFFFFF", "AA5500", "transp"], ["transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp"], ["transp", "FFFFFF", "FFFFFF", "FFFFFF", "000000", "FFFFFF", "FFFFFF", "transp"], ["transp", "transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp", "transp"]] }] }; SpritePixelArrays["DEKO_SPRITE18"] = { "name": "deco", "descriptiveName": "Deco 18", "type": "deco", "animation": [{ "sprite": [["E30000", "FF1C1C", "transp", "transp", "transp", "transp", "FF1C1C", "E30000"], ["AA0000", "transp", "1C1CFF", "FFFFFF", "1C1CFF", "FFFFFF", "transp", "E30000"], ["transp", "AA0000", "0000E3", "1C1CFF", "0000E3", "1C1CFF", "AA0000", "transp"], ["transp", "transp", "AA0000", "E30000", "E30000", "E30000", "transp", "transp"], ["transp", "transp", "transp", "AA0000", "E30000", "transp", "transp", "transp"], ["transp", "transp", "E30000", "AA0000", "E30000", "E30000", "transp", "transp"], ["transp", "transp", "transp", "AA0000", "E30000", "transp", "transp", "transp"], ["transp", "transp", "E30000", "transp", "transp", "E30000", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["E30000", "FF1C1C", "transp", "transp", "transp", "transp", "FF1C1C", "E30000"], ["AA0000", "transp", "AA0000", "FF1C1C", "AA0000", "FF1C1C", "transp", "E30000"], ["transp", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000", "AA0000", "transp"], ["transp", "transp", "AA0000", "E30000", "E30000", "E30000", "transp", "transp"], ["transp", "transp", "transp", "AA0000", "E30000", "transp", "transp", "transp"], ["transp", "transp", "E30000", "AA0000", "E30000", "E30000", "transp", "transp"], ["transp", "transp", "E30000", "transp", "transp", "E30000", "transp", "transp"]] }] }; SpritePixelArrays["SFX1"] = { "name": "sfx", "directions": ["bottom", "left", "top", "right"], "descriptiveName": "SFX 1", "description": "SFX that shows when the <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Player jump'} }, true)\">player jumps</span>.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"]] }] }; SpritePixelArrays["SFX2"] = { "name": "sfx", "descriptiveName": "SFX 2", "description": "SFX when <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Cannon ball'} }, true)\">cannon ball</span> or <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Rocket'} }, true)\">rocket</span> hit a wall.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX3"] = { "name": "sfx", "descriptiveName": "SFX 3", "description": "SFX when player dashes", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "393939", "393939", "transp", "transp", "transp"], ["transp", "transp", "transp", "393939", "393939", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "393939", "transp", "transp", "393939", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "393939", "transp", "transp", "393939", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX4"] = { "name": "sfx", "descriptiveName": "Build SFX", "hiddenEverywhere": true, "description": "SFX when an object is placed in build mode", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "FFFFFF", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX5"] = { "name": "sfx", "descriptiveName": "SFX 4", "description": "Plays when the player touches a <span class='textAsLink' onclick=\"DrawSectionHandler.changeSelectedSprite({ target: { value:  'Collectible'} }, true)\">collectible</span>.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "FFFFFF", "FFFFFF", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "FFFFFF", "transp", "transp", "transp", "transp", "FFFFFF", "transp"], ["transp", "transp", "FFFFFF", "transp", "transp", "FFFFFF", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX6"] = { "name": "sfx", "descriptiveName": "SFX 5", "description": "Used for shaders", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "8EC6FF", "transp", "transp", "transp", "transp"], ["transp", "transp", "8EC6FF", "transp", "8EC6FF", "transp", "transp", "transp"], ["transp", "transp", "transp", "8EC6FF", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX7"] = { "name": "sfx", "descriptiveName": "SFX 6", "description": "Used for shaders", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FF8EFF", "FF8EFF", "FF8EFF", "FF8EFF", "transp", "transp"], ["transp", "transp", "FF8EFF", "transp", "transp", "FF8EFF", "transp", "transp"], ["transp", "transp", "FF8EFF", "transp", "transp", "FF8EFF", "transp", "transp"], ["transp", "transp", "FF8EFF", "FF8EFF", "FF8EFF", "FF8EFF", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX8"] = { "name": "sfx", "descriptiveName": "SFX 7", "description": "Used for shaders", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFFF55", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays["SFX9"] = { "name": "sfx", "descriptiveName": "SFX 8", "description": "Will be displayed behind the player, if the player is in auto-run mode.", "animation": [{ "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "FFAA55", "FFAA55", "transp", "transp", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "FFAA55", "transp", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "FFAA55", "transp", "transp"], ["transp", "transp", "transp", "FFAA55", "FFAA55", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }, { "sprite": [["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "FFAA55", "transp", "transp"], ["transp", "FFAA55", "transp", "transp", "transp", "transp", "FFAA55", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"], ["transp", "FFAA55", "transp", "transp", "transp", "transp", "FFAA55", "transp"], ["transp", "transp", "FFAA55", "transp", "transp", "FFAA55", "transp", "transp"], ["transp", "transp", "transp", "transp", "transp", "transp", "transp", "transp"]] }] }; SpritePixelArrays.this_array["Customtile1"] = { "name": 18, "descriptiveName": "Custom tile 1", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["00AA00", "005500", "005500", "005500", "005500", "005500", "005500", "AAFF55"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "00AA00"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "005500", "AAFF55"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "AAFF55"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "005500", "00AA00"], ["00AA00", "005500", "c26241", "c26241", "e1a45b", "e1a45b", "005500", "AAFF55"]] }], "custom": true }; SpritePixelArrays.this_array["Customtile2"] = { "name": 19, "descriptiveName": "Custom tile 2", "description": "Just a solid block. <br/><br/> Hold CTRL in game screen to draw bigger areas.", "type": "tiles", "animation": [{ "sprite": [["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"], ["00AA00", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["AAFF55", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["00AA00", "005500", "f6c992", "f6c992", "ee8764", "ee8764", "ee8764", "c26241"], ["AAFF55", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "ee8764", "ee8764", "f6c992", "f6c992", "f6c992", "e1a45b"], ["00AA00", "005500", "005500", "005500", "005500", "005500", "005500", "005500"], ["AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00", "AAFF55", "00AA00"]] }], "custom": true };
 player.setAnimationProperties();
 SpritePixelArrays.fillAllSprites();
 //changedSpritesEnd
@@ -7962,11 +8622,11 @@ player["groundAcceleration"] = 0.8; player["air_acceleration"] = 0.8; player["ma
 let startLevel = 0;
 
 const canvasSize = WorldDataHandler.calucalteCanvasSize();
-canvas.width = canvasSize.width;
-canvas.height = canvasSize.height;
+if (canvas) canvas.width = canvasSize.width;
+if (canvas) canvas.height = canvasSize.height;
 const canvasWidth = canvasSize.width;
 const canvasHeight = canvasSize.height;
-canvas.style.backgroundColor = WorldDataHandler.backgroundColor;
+if (canvas) canvas.style.backgroundColor = WorldDataHandler.backgroundColor;
 var canvasOffsetLeft = canvas.offsetLeft;
 var canvasOffsetTop = canvas.offsetTop;
 const ctx = canvas.getContext("2d");
@@ -7974,13 +8634,14 @@ Camera.staticConstructor(ctx, canvasSize.width, canvasHeight, WorldDataHandler.l
     WorldDataHandler.levels[startLevel].tileData.length * WorldDataHandler.tileSize);
 EffectsHandler.staticConstructor();
 let tileMapHandler = new TileMapHandler(WorldDataHandler.tileSize, startLevel, spriteCanvas, player);
-DialogueHandler.staticConstructor(tileMapHandler);
-Display.staticConstructor(ctx, canvasWidth, canvasHeight);
+//DialogueHandler.staticConstructor(tileMapHandler);
+DialogueHandler.staticConstructor();
+if (ctx) Display.staticConstructor(ctx, canvasWidth, canvasHeight);
 Controller.staticConstructor();
 Collision.staticConstructor(tileMapHandler);
-const spriteSheetCreator = new SpriteSheetCreator(tileMapHandler, spriteCanvas);
+const spriteSheetCreator = spriteCanvas? new SpriteSheetCreator(tileMapHandler, spriteCanvas): 0;
 CharacterCollision.staticConstructor(tileMapHandler);
-PlayMode.staticConstructor(player, tileMapHandler);
+PlayMode._staticConstructor(player, tileMapHandler);
 SFXHandler.staticConstructor(tileMapHandler.tileSize, spriteCanvas);
 GameStatistics.staticConstructor();
 PauseHandler.staticConstructor();
@@ -7988,11 +8649,11 @@ EffectsRenderer.staticConstructor(tileMapHandler);
 
 
 
-function play(timestamp) {
+function play(timestamp: any) {
     Game.updateFPSInterval(timestamp);
     // if enough time has elapsed, draw the next frame
     if (!Game.refreshRateHigher60 || Game.elapsed > Game.fpsInterval) {
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        ctx?.clearRect(0, 0, canvasWidth, canvasHeight);
         Camera.begin();
         tileMapHandler.displayLevel();
         if (tileMapHandler.currentLevel === 0) {
@@ -8028,19 +8689,19 @@ function play(timestamp) {
 function loading() {
     let loadedAssets = 0;
     SoundHandler.sounds.forEach(soundRawData => {
-        const sound = SoundHandler[soundRawData.key];
+        const sound = SoundHandler.this_array[soundRawData.key];
         if (sound.loaded || sound.errorWhileLoading) {
             loadedAssets++;
         }
     })
     if (loadedAssets === SoundHandler.sounds.length) {
         Game.startAnimating(60);
-        console.log("loading -> loadedAssets == SoundHandler.sounds.length");
-        console.log(undefined);
-        undefined ? Game.changeGameMode(true) : Game.executeGameMode();
+
+        //undefined ? Game.changeGameMode(true) : Game.executeGameMode();
+        Game.executeGameMode();
     }
     else {
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        ctx?.clearRect(0, 0, canvasWidth, canvasHeight);
         Display.displayLoadingScreen(loadedAssets, SoundHandler.sounds.length);
         window.requestAnimationFrame(loading);
     }

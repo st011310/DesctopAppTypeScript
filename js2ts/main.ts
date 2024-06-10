@@ -1204,8 +1204,59 @@ class WorldDataHandler {
             const { type, x, y } = initialObject;
 
             const extraAttributes = initialObject.extraAttributes ? initialObject.extraAttributes : {};
-            var Type = ObjectTypes.objectToClass[type];
-            levelObjects.push(new Type(x, y, this.tileSize, type, this, extraAttributes));
+            switch (type) {
+                case ObjectTypes.BLUE_BLOCK:
+                    levelObjects.push(new BlueBlock(x,y,this.tileSize, ObjectTypes.BLUE_BLOCK, this, extraAttributes));
+                    break;
+                case ObjectTypes.RED_BLOCK:
+                    levelObjects.push(new RedBlock(x,y,this.tileSize, ObjectTypes.RED_BLOCK, this, extraAttributes));
+                    break;
+                case ObjectTypes.RED_BLUE_BLOCK_SWITCH:
+                    levelObjects.push(new RedBlueSwitch(x,y,this.tileSize, ObjectTypes.RED_BLUE_BLOCK_SWITCH, this, extraAttributes));
+                    break;
+                case ObjectTypes.START_FLAG:
+                    levelObjects.push(new StartFlag(x,y,this.tileSize, ObjectTypes.START_FLAG, this, extraAttributes));
+                    break;
+                case ObjectTypes.FINISH_FLAG:
+                    levelObjects.push(new FinishFlag(x,y,this.tileSize, ObjectTypes.FINISH_FLAG, this, extraAttributes));
+                    break;
+                case ObjectTypes.COLLECTIBLE:
+                    levelObjects.push(new Collectible(x,y,this.tileSize, ObjectTypes.COLLECTIBLE, this, extraAttributes));
+                    break;
+                case ObjectTypes.CANON:
+                    levelObjects.push(new Canon(x,y,this.tileSize, ObjectTypes.CANON, this, extraAttributes));
+                    break;
+                case ObjectTypes.FIXED_SPEED_RIGHT:
+                    levelObjects.push(new FixedSpeedRight(x,y,this.tileSize, ObjectTypes.FIXED_SPEED_RIGHT, this, extraAttributes));
+                    break;
+                case ObjectTypes.TOGGLE_MINE:
+                    levelObjects.push(new ToggleMine(x,y,this.tileSize, ObjectTypes.TOGGLE_MINE, this, extraAttributes));
+                    break;
+                case ObjectTypes.TRAMPOLINE:
+                    levelObjects.push(new Trampoline(x,y,this.tileSize, ObjectTypes.TOGGLE_MINE, this, extraAttributes));
+                    break;
+                case ObjectTypes.WATER:
+                    levelObjects.push(new Water(x,y,this.tileSize, ObjectTypes.WATER, this, extraAttributes));
+                    break;
+                case ObjectTypes.DISAPPEARING_BLOCK:
+                    levelObjects.push(new DisappearingBlock(x,y,this.tileSize, ObjectTypes.DISAPPEARING_BLOCK, this, extraAttributes));
+                    break;
+                case ObjectTypes.STOMPER:
+                    levelObjects.push(new Stomper(x,y,this.tileSize, ObjectTypes.STOMPER, this, extraAttributes));
+                    break;
+                case ObjectTypes.CHECKPOINT:
+                    levelObjects.push(new Checkpoint(x,y,this.tileSize, ObjectTypes.CHECKPOINT, this, extraAttributes));
+                    break;
+                case ObjectTypes.ROCKET_LAUNCHER:
+                    levelObjects.push(new RocketLauncher(x,y,this.tileSize, ObjectTypes.ROCKET_LAUNCHER, this, extraAttributes));
+                    break;
+                case ObjectTypes.JUMP_RESET:
+                    levelObjects.push(new JumpReset(x,y,this.tileSize, ObjectTypes.JUMP_RESET, this, extraAttributes));
+                    break;
+                default:
+                    console.log("ERROR: " + type);
+                    break;
+            }
         });
         return levelObjects;
     }

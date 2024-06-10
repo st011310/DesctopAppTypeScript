@@ -1152,7 +1152,7 @@ class Game {
                     levelObjects.push(new ToggleMine(x,y,this.tileSize, ObjectTypes.TOGGLE_MINE, this, extraAttributes));
                     break;
                 case ObjectTypes.TRAMPOLINE:
-                    levelObjects.push(new Trampoline(x,y,this.tileSize, ObjectTypes.TOGGLE_MINE, this, extraAttributes));
+                    levelObjects.push(new Trampoline(x,y,this.tileSize, ObjectTypes.TRAMPOLINE, this, extraAttributes));
                     break;
                 case ObjectTypes.WATER:
                     levelObjects.push(new Water(x,y,this.tileSize, ObjectTypes.WATER, this, extraAttributes));
@@ -1383,52 +1383,50 @@ class Game {
     }
 
     static addMobileControls() {
-        if (!undefined) {
-            this.mobileArrows = document.getElementById("mobileArrows");
+        this.mobileArrows = document.getElementById("mobileArrows");
+        this.getMobileControlsPositions();
+
+        window.addEventListener("resize", () => {
             this.getMobileControlsPositions();
+        })
+        window.addEventListener('orientationchange', () => {
+            this.getMobileControlsPositions();
+        });
+        this.mobileArrows.addEventListener("touchstart", (e) => {
+            this.handleMobileArrowInput(e);
+        });
+        this.mobileArrows.addEventListener("touchmove", (e) => {
+            this.handleMobileArrowInput(e);
+        });
+        this.mobileArrows.addEventListener("touchend", (e) => {
+            this.handleMobileArrowTouchEnd(e);
+        });
 
-            window.addEventListener("resize", () => {
-                this.getMobileControlsPositions();
-            })
-            window.addEventListener('orientationchange', () => {
-                this.getMobileControlsPositions();
+        [{ elementName: "selectMobileControls", variableNames: ["pause"] },
+        { elementName: "startMobileControls", variableNames: ["enter"] },
+        { elementName: "jumpMobileControls", variableNames: ["jump", "confirm"] },
+        { elementName: "alternativeMobileControls", variableNames: ["alternativeActionButton"] },
+        ].forEach(control => {
+            const element = document.getElementById(control.elementName);
+            element.addEventListener("touchstart", (e) => {
+                e.preventDefault();
+                if (control.variableNames.includes("enter")) {
+                    this.mobileEnter = true;
+                }
+                control.variableNames.forEach(variable => this[variable] = true);
             });
-            this.mobileArrows.addEventListener("touchstart", (e) => {
-                this.handleMobileArrowInput(e);
+            element.addEventListener("touchend", (e) => {
+                e.preventDefault();
+                if (control.variableNames.includes("enter")) {
+                    this.mobileEnterReleased = true;
+                }
+                control.variableNames.forEach(variable => this[variable] = false);
             });
-            this.mobileArrows.addEventListener("touchmove", (e) => {
-                this.handleMobileArrowInput(e);
+            element.addEventListener("touchcancel", (e) => {
+                e.preventDefault();
+                this[control.variableName] = false;
             });
-            this.mobileArrows.addEventListener("touchend", (e) => {
-                this.handleMobileArrowTouchEnd(e);
-            });
-
-            [{ elementName: "selectMobileControls", variableNames: ["pause"] },
-            { elementName: "startMobileControls", variableNames: ["enter"] },
-            { elementName: "jumpMobileControls", variableNames: ["jump", "confirm"] },
-            { elementName: "alternativeMobileControls", variableNames: ["alternativeActionButton"] },
-            ].forEach(control => {
-                const element = document.getElementById(control.elementName);
-                element.addEventListener("touchstart", (e) => {
-                    e.preventDefault();
-                    if (control.variableNames.includes("enter")) {
-                        this.mobileEnter = true;
-                    }
-                    control.variableNames.forEach(variable => this[variable] = true);
-                });
-                element.addEventListener("touchend", (e) => {
-                    e.preventDefault();
-                    if (control.variableNames.includes("enter")) {
-                        this.mobileEnterReleased = true;
-                    }
-                    control.variableNames.forEach(variable => this[variable] = false);
-                });
-                element.addEventListener("touchcancel", (e) => {
-                    e.preventDefault();
-                    this[control.variableName] = false;
-                });
-            });
-        }
+        });
     }
 
     static handleGamepadInput() {

@@ -1940,6 +1940,7 @@ class Game {
 
         if (!player.death && this.currentPauseFrames === 0 && !DialogueHandler.active && !PauseHandler.paused) {
             this.updateGeneralFrameCounter();
+
             var walking = this.walkHandler();
             this.coyoteFrameHandler();
             this.wallJumpAllowedHandler();
@@ -1974,6 +1975,7 @@ class Game {
         var walking = false;
         if (!player.dashing && !player.fixedSpeed) {
             //const newMaxSpeed = Controller.alternativeActionButton && player.runChecked ? player.maxSpeed * 1.65 : player.maxSpeed;
+            
             const newMaxSpeed = player.currentMaxSpeed;
             //const newMaxSpeed = Controller.alternativeActionButton ? player.maxSpeed * 1.85 : player.maxSpeed;
 
@@ -2602,8 +2604,7 @@ PlayMode.customExit = undefined;
             PlayMode.currentPauseFrames = PlayMode.animationFrames;
             PlayMode.customExit = this.customExit;
 
-            if (this.tilemapHandler.currentLevel === WorldDataHandler.levels.length - 2 && !this.customExit
-                && !undefined) {
+            if (this.tilemapHandler.currentLevel === WorldDataHandler.levels.length - 2 && !this.customExit) {
                 SoundHandler.fadeAudio("mainSong");
             }
         }
@@ -2789,7 +2790,10 @@ PlayMode.customExit = undefined;
     }
 
     collisionEvent() {
+        console.log(player.collidingWithNpcId);
+        console.log(this.key);
         player.collidingWithNpcId = this.key;
+        console.log(player.collidingWithNpcId);
 
         this.arrowUpFrameIndex++;
         const frameModulo = this.arrowUpFrameIndex % 60;
@@ -6428,7 +6432,10 @@ ObjectTypes.PLAYER_WALL_JUMP = undefined;
             //console.log("Typeof allSprites = " + typeof this.allSprites);
 
             this.allSprites = Object.entries(this).filter(key =>
-                this[key[0]]?.descriptiveName
+            {
+                console.log("this = " + this);
+                console.log("key = " + key[0]);
+                return this[key[0]]?.descriptiveName}
             ).map(object => object[1])
         };
 
@@ -7129,8 +7136,6 @@ SoundHandler.jumpReset = undefined;
     }
 
     static updateSfxAnimations(type = "sfxAnimations") {
-        //if(this[type].length != 0) console.log("this[", type, "] = ", this[type]);
-        if(this[type].length != 0) console.log("this", "=", this);
         for (var i = this[type].length - 1; i >= 0; i--) {
             this[type][i].draw(this.spriteCanvas);
             if (this[type][i].ended) {
@@ -7146,7 +7151,6 @@ SoundHandler.jumpReset = undefined;
 
     static createSFX(x, y, sfxIndex, direction, xspeed = 0, yspeed = 0, reduceAlpha = false, animationLength = 8, growByTimes = 0, type = "sfxAnimations") {
         const sfxAnimation = new SFX(x, y, this.tileSize, sfxIndex, direction, xspeed, yspeed, reduceAlpha, animationLength, growByTimes);
-        console.log("PUSH \n " + this[type]);
         this[type].push(sfxAnimation);
     }
 } class ModalHandler {
@@ -8035,9 +8039,7 @@ function loading() {
     })
     if (loadedAssets === SoundHandler.sounds.length) {
         Game.startAnimating(60);
-        console.log("loading -> loadedAssets == SoundHandler.sounds.length");
-        console.log(undefined);
-        undefined ? Game.changeGameMode(true) : Game.executeGameMode();
+        Game.executeGameMode();
     }
     else {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);

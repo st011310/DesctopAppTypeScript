@@ -1114,50 +1114,48 @@ class Controller {
         this.right = false;
     }
     static addMobileControls() {
-        if (!undefined) {
-            this.mobileArrows = document.getElementById("mobileArrows");
+        this.mobileArrows = document.getElementById("mobileArrows");
+        this.getMobileControlsPositions();
+        window.addEventListener("resize", () => {
             this.getMobileControlsPositions();
-            window.addEventListener("resize", () => {
-                this.getMobileControlsPositions();
+        });
+        window.addEventListener('orientationchange', () => {
+            this.getMobileControlsPositions();
+        });
+        this.mobileArrows.addEventListener("touchstart", (e) => {
+            this.handleMobileArrowInput(e);
+        });
+        this.mobileArrows.addEventListener("touchmove", (e) => {
+            this.handleMobileArrowInput(e);
+        });
+        this.mobileArrows.addEventListener("touchend", (e) => {
+            this.handleMobileArrowTouchEnd(e);
+        });
+        [{ elementName: "selectMobileControls", variableNames: ["pause"] },
+            { elementName: "startMobileControls", variableNames: ["enter"] },
+            { elementName: "jumpMobileControls", variableNames: ["jump", "confirm"] },
+            { elementName: "alternativeMobileControls", variableNames: ["alternativeActionButton"] },
+        ].forEach(control => {
+            const element = document.getElementById(control.elementName);
+            element?.addEventListener("touchstart", (e) => {
+                e.preventDefault();
+                if (control.variableNames.includes("enter")) {
+                    this.mobileEnter = true;
+                }
+                control.variableNames.forEach((variable) => this.this_array[variable] = true);
             });
-            window.addEventListener('orientationchange', () => {
-                this.getMobileControlsPositions();
+            element?.addEventListener("touchend", (e) => {
+                e.preventDefault();
+                if (control.variableNames.includes("enter")) {
+                    this.enterReleased = true;
+                }
+                control.variableNames.forEach(variable => this.this_array[variable] = false);
             });
-            this.mobileArrows.addEventListener("touchstart", (e) => {
-                this.handleMobileArrowInput(e);
+            element?.addEventListener("touchcancel", (e) => {
+                e.preventDefault();
+                this.this_array[control.variableNames.toString()] = false;
             });
-            this.mobileArrows.addEventListener("touchmove", (e) => {
-                this.handleMobileArrowInput(e);
-            });
-            this.mobileArrows.addEventListener("touchend", (e) => {
-                this.handleMobileArrowTouchEnd(e);
-            });
-            [{ elementName: "selectMobileControls", variableNames: ["pause"] },
-                { elementName: "startMobileControls", variableNames: ["enter"] },
-                { elementName: "jumpMobileControls", variableNames: ["jump", "confirm"] },
-                { elementName: "alternativeMobileControls", variableNames: ["alternativeActionButton"] },
-            ].forEach(control => {
-                const element = document.getElementById(control.elementName);
-                element?.addEventListener("touchstart", (e) => {
-                    e.preventDefault();
-                    if (control.variableNames.includes("enter")) {
-                        this.mobileEnter = true;
-                    }
-                    control.variableNames.forEach((variable) => this.this_array[variable] = true);
-                });
-                element?.addEventListener("touchend", (e) => {
-                    e.preventDefault();
-                    if (control.variableNames.includes("enter")) {
-                        this.enterReleased = true;
-                    }
-                    control.variableNames.forEach(variable => this.this_array[variable] = false);
-                });
-                element?.addEventListener("touchcancel", (e) => {
-                    e.preventDefault();
-                    this.this_array[control.variableNames.toString()] = false;
-                });
-            });
-        }
+        });
     }
     static handleGamepadInput() {
         if (this.gamepadIndex !== null) {
@@ -1298,6 +1296,8 @@ class Controller {
 class Player {
     constructor(initialX, initialY, tileSize) {
         this.this_array = {};
+        this.bottom_right_pos = { x: 0, y: 0 };
+        this.dashing = false;
         this.tileSize = tileSize;
         this.width = this.tileSize - 2;
         /*
@@ -1331,7 +1331,6 @@ class Player {
         this.spriteCanvas = spriteCanvas;
         this.type = "player";
         this.radians = 0;
-        this.setBorderPositions();
         this.setAnimationProperties();
         this.setAbilities();
         this.resetAll();
@@ -1341,23 +1340,6 @@ class Player {
         const onePerfectOfMaxJumpHeight = -(maxJumpFrames - 1) * jumpSpeed / 100;
         this.maxSwimHeight = onePerfectOfMaxJumpHeight * 90;
         this.flapHeight = onePerfectOfMaxJumpHeight * 60 * -1;
-    }
-    setBorderPositions() {
-        this.right;
-        this.left;
-        this.bottom;
-        this.top;
-        this.top_right_pos;
-        this.top_left_pos;
-        this.bottom_right_pos;
-        this.bottom_left_pos;
-        this.top_right;
-        this.top_left;
-        this.bottom_left;
-        this.bottom_right;
-        this.prev_bottom;
-        this.wallJumpLeft;
-        this.wallJumpRight;
     }
     resetPosition(checkCheckpoints = false) {
         if (checkCheckpoints) {
@@ -1544,16 +1526,16 @@ class Player {
     }
     hitWall(direction) {
         switch (direction) {
-            case AnimationHelper.facingDirections?.bottom:
+            case AnimationHelper.facingDirections.bottom:
                 this.hitBottom();
                 break;
-            case AnimationHelper.facingDirections?.top:
+            case AnimationHelper.facingDirections.top:
                 this.hitTop();
                 break;
-            case AnimationHelper.facingDirections?.left:
+            case AnimationHelper.facingDirections.left:
                 this.horizontalHit();
                 break;
-            case AnimationHelper.facingDirections?.right:
+            case AnimationHelper.facingDirections.right:
                 this.horizontalHit();
         }
     }
@@ -1658,8 +1640,8 @@ class PlayMode {
         const { player } = this;
         var walking = false;
         if (!player.dashing && !player.fixedSpeed) {
-            //const newMaxSpeed = Controller.alternativeActionButton && player.runChecked ? player.maxSpeed * 1.65 : player.maxSpeed;
-            const newMaxSpeed = player.currentMaxSpeed;
+            const newMaxSpeed = Controller.alternativeActionButton && player.runChecked ? player.maxSpeed * 1.65 : player.maxSpeed;
+            //const newMaxSpeed = player.currentMaxSpeed;
             //const newMaxSpeed = Controller.alternativeActionButton ? player.maxSpeed * 1.85 : player.maxSpeed;
             if ((Controller.left || player.fixedSpeedLeft) && !player.fixedSpeedRight) {
                 //check should be player.xspeed + player.speed and an else with player.xspeed = player.maxSpeed
@@ -2205,9 +2187,7 @@ class FinishFlag extends InteractiveLevelObject {
         this.closedFinishedFlagSpriteIndex = SpritePixelArrays.getIndexOfSprite(ObjectTypes.FINISH_FLAG_CLOSED);
         this.closedFinishedFlagYSpritePos = this.closedFinishedFlagSpriteIndex * this.tileSize;
         this.closed = false;
-        if (!undefined) {
-            this.persistentCollectibles = WorldDataHandler.levels[this.tilemapHandler.currentLevel].levelObjects.filter((levelObject) => levelObject.type === ObjectTypes.COLLECTIBLE);
-        }
+        this.persistentCollectibles = WorldDataHandler.levels[this.tilemapHandler.currentLevel].levelObjects.filter((levelObject) => levelObject.type === ObjectTypes.COLLECTIBLE);
     }
     collisionEvent() {
         if (!this.collidedWithPlayer && !this.closed) {
@@ -2373,44 +2353,6 @@ class Npc extends InteractiveLevelObject {
         this.key = this.makeid(5);
         this.arrowUpFrameIndex = 0;
         this.upButtonReleased = false;
-    }
-    collisionEvent() {
-        player.collidingWithNpcId = this.key;
-        this.arrowUpFrameIndex++;
-        const frameModulo = this.arrowUpFrameIndex % 60;
-        if (frameModulo < 30) {
-            DialogueHandler.showDialogueUpArrow(this.x, this.y - this.tileSize);
-        }
-        if (!Controller.jump) {
-            this.upButtonReleased = true;
-        }
-        else {
-            if (this.upButtonReleased && !DialogueHandler.active) {
-                const parsedDialogue = [];
-                this.dialogue.forEach((singleDialogue) => {
-                    const singleDialogueObject = DialogueHandler.createDialogObject(singleDialogue);
-                    if (singleDialogueObject.textLength > 0) {
-                        parsedDialogue.push(singleDialogueObject);
-                    }
-                });
-                if (parsedDialogue.length > 0) {
-                    DialogueHandler.dialogue = parsedDialogue;
-                    DialogueHandler.active = true;
-                    DialogueHandler.calculateDialogueWindowPosition();
-                    player.xspeed = 0;
-                    player.yspeed = 0;
-                }
-            }
-            this.upButtonReleased = false;
-        }
-    }
-    draw(spriteCanvas) {
-        if (player.collidingWithNpcId === this.key && !Collision.objectsColliding(player, this)) {
-            player.collidingWithNpcId = null;
-            this.arrowUpFrameIndex = 0;
-            this.upButtonReleased = false;
-        }
-        super.draw(spriteCanvas);
     }
 }
 class ShootingObject extends InteractiveLevelObject {
@@ -5628,7 +5570,7 @@ class SpritePixelArrays {
         };
         this.allSprites = [];
         this.fillAllSprites = () => {
-            this.allSprites = Object.entries(this.this_array).filter((key) => this.this_array[key[0]]?.descriptiveName).map((object) => object[1]);
+            this.allSprites = Object.entries(this).filter((key) => (this[key[0]])?.descriptiveName).map((object) => object[1]);
         };
         this.fillAllSprites();
     }
@@ -6207,49 +6149,6 @@ class SFXHandler {
     }
 }
 class PlayerAttributesHandler {
-    /*
-    static staticConstructor(player) {
-        this.player = player;
-        this.sliderValues = ["groundAcceleration", "air_acceleration", "maxSpeed", "groundFriction", "air_friction", "jumpSpeed", "maxFallSpeed"];
-        this.checkBoxValues = ["jumpChecked", "wallJumpChecked", "doubleJumpChecked", dashChecked, runChecked];
-
-        this.sliderValues.forEach(sliderValue => {
-            this.setInitialSliderValue(sliderValue);
-
-            this[sliderValue + "Slider"].oninput = (event) => {
-                let newValue = Number(event.target.value);
-                //If value has decimals, put at least 2 decimals after coma
-                this[sliderValue + "Value"].innerHTML = newValue % 1 != 0 ? newValue.toFixed(2) : newValue;
-
-                if (sliderValue === "jumpSpeed") {
-                    const jumpValueObj = this.mapJumpSliderValueToRealValue(newValue)[0];
-                    newValue = Number(jumpValueObj.jumpSpeed);
-                    this.player.maxJumpFrames = jumpValueObj.maxJumpFrames;
-                    this.player.adjustSwimAttributes(this.player.maxJumpFrames, newValue);
-                }
-                this.player.this_array[sliderValue] = newValue;
-                this.adjustAccelerationRelatedToSpeed(sliderValue, newValue);
-            };
-        });
-
-        this.checkBoxValues.forEach(checkBoxValue => {
-            this.setInitialCheckboxValue(checkBoxValue);
-        });
-        
-    }*/
-    /*
-    static setInitialSliderValue(sliderValue) {
-        let playerAttrValue = this.player.this_array[sliderValue];
-        if (sliderValue === "jumpSpeed") {
-            const jumpSliderValueObj = this.mapJumpValueToSliderValue(playerAttrValue)[0];
-            playerAttrValue = jumpSliderValueObj.sliderValue;
-        }
-        this[sliderValue + "Slider"] = document.getElementById(sliderValue);
-        this[sliderValue + "Slider"].value = playerAttrValue;
-        this[sliderValue + "Value"] = document.getElementById(sliderValue + "Value");
-        this[sliderValue + "Value"].innerHTML = playerAttrValue;
-        this.adjustAccelerationRelatedToSpeed(sliderValue, playerAttrValue);
-    }*/
     static adjustAccelerationRelatedToSpeed(sliderValue, playerAttrValue) {
         if (sliderValue === "maxSpeed") {
             ["groundAcceleration", "air_acceleration"].forEach(accelerationValue => {
@@ -6266,31 +6165,6 @@ class PlayerAttributesHandler {
             });
         }
     }
-    /*
-    static setInitialCheckboxValue(checkBoxValue) {
-        let playerAttrValue = this.player.this_array[checkBoxValue];
-        this[checkBoxValue + "CheckBox"] = document.getElementById(checkBoxValue);
-        this[checkBoxValue + "CheckBox"].checked = playerAttrValue;
-
-        this[checkBoxValue + "CheckBox"].onclick = (event) => {
-            if (event.target.checked) {
-                this.player.this_array[checkBoxValue] = true;
-                this.updateUniqueCheckboxes(checkBoxValue);
-            }
-            else {
-                this.player.this_array[checkBoxValue] = false;
-            }
-        }
-    }*/
-    /*
-    static updateUniqueCheckboxes(checkBoxValue) {
-        if (checkBoxValue === dashChecked) {
-            this.updateCheckboxValueFromOutside(runChecked, false);
-        }
-        else if (checkBoxValue === runChecked) {
-            this.updateCheckboxValueFromOutside(dashChecked, false);
-        }
-    }*/
     static updateCheckboxValueFromOutside(checkBoxValue, value) {
         this.this_array[checkBoxValue + "CheckBox"] = document.getElementById(checkBoxValue);
         this.this_array[checkBoxValue + "CheckBox"].checked = value;
